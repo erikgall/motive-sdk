@@ -58,6 +58,12 @@ abstract class DataTransferObject implements Arrayable, JsonSerializable
      */
     public static function from(array $data): static
     {
+        // Apply property mappings first
+        $data = static::applyPropertyMappings($data);
+
+        // Allow subclasses to preprocess data
+        $data = static::preprocessData($data);
+
         $reflection = new ReflectionClass(static::class);
         $constructor = $reflection->getConstructor();
 
@@ -109,6 +115,26 @@ abstract class DataTransferObject implements Arrayable, JsonSerializable
         }
 
         return $value;
+    }
+
+    /**
+     * Apply property mappings to data.
+     *
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    protected static function applyPropertyMappings(array $data): array
+    {
+        $mappings = static::propertyMappings();
+
+        foreach ($mappings as $from => $to) {
+            if (array_key_exists($from, $data)) {
+                $data[$to] = $data[$from];
+                unset($data[$from]);
+            }
+        }
+
+        return $data;
     }
 
     /**
@@ -166,6 +192,31 @@ abstract class DataTransferObject implements Arrayable, JsonSerializable
      * @return array<string, class-string<DataTransferObject>>
      */
     protected static function nestedArrays(): array
+    {
+        return [];
+    }
+
+    /**
+     * Preprocess data before hydration.
+     *
+     * Override this method to transform data before it's hydrated into the DTO.
+     *
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    protected static function preprocessData(array $data): array
+    {
+        return $data;
+    }
+
+    /**
+     * Property mappings from API response keys to class properties.
+     *
+     * Override this method to define custom key mappings.
+     *
+     * @return array<string, string>
+     */
+    protected static function propertyMappings(): array
     {
         return [];
     }

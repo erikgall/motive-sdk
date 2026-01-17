@@ -251,104 +251,97 @@ This document tracks all implementation tasks organized by phase. Mark items wit
 
 ---
 
-## Phase 4: Dispatch & Location
+## Phase 4: Dispatch & Location ✅
 
 ### 4.1 Dispatches Resource
 
-- [ ] **4.1.1** Create `src/Resources/Dispatches/DispatchesResource.php`
-  - [ ] Standard CRUD operations
-  - [ ] Status filters
-- [ ] **4.1.2** Create `src/Data/Dispatch.php`
-  - [ ] External ID
-  - [ ] Status enum
-  - [ ] Driver and vehicle relationships
-  - [ ] Stops collection
-- [ ] **4.1.3** Create `src/Data/DispatchStop.php`
-- [ ] **4.1.4** Create `src/Enums/DispatchStatus.php`
-  - [ ] Pending, InProgress, Completed, Cancelled
-- [ ] **4.1.5** Create `src/Enums/StopType.php`
-  - [ ] Pickup, Delivery, Waypoint
+- [x] **4.1.1** Create `src/Resources/Dispatches/DispatchesResource.php`
+  - [x] Standard CRUD operations
+  - [x] Status filters
+- [x] **4.1.2** Create `src/Data/Dispatch.php`
+  - [x] External ID
+  - [x] Status enum
+  - [x] Driver and vehicle relationships
+  - [x] Stops collection
+- [x] **4.1.3** Create `src/Data/DispatchStop.php`
+- [x] **4.1.4** Create `src/Enums/DispatchStatus.php`
+  - [x] Pending, InProgress, Completed, Cancelled
+- [x] **4.1.5** Create `src/Enums/StopType.php`
+  - [x] Pickup, Delivery, Waypoint
 
-### 4.2 Dispatch Locations Resource
+### 4.2 Locations Resource
 
-- [ ] **4.2.1** Create `src/Resources/DispatchLocations/DispatchLocationsResource.php`
-  - [ ] CRUD scoped to dispatch
-  - [ ] `create(int|string $dispatchId, array $data): DispatchLocation`
-- [ ] **4.2.2** Create `src/Data/DispatchLocation.php`
+- [x] **4.2.1** Create `src/Resources/Locations/LocationsResource.php`
+  - [x] Standard CRUD operations
+  - [x] `findNearest(float $lat, float $lng, int $radius = 1000): Collection`
+- [x] **4.2.2** Create `src/Data/Location.php`
 
-### 4.3 Locations Resource
+### 4.3 Geofences Resource
 
-- [ ] **4.3.1** Create `src/Resources/Locations/LocationsResource.php`
-  - [ ] Standard CRUD operations
-  - [ ] `findNearest(float $lat, float $lng, int $radius = 1000): Collection`
-- [ ] **4.3.2** Create `src/Data/Location.php`
+- [x] **4.3.1** Create `src/Resources/Geofences/GeofencesResource.php`
+  - [x] Standard CRUD operations
+  - [x] Support for circle and polygon types
+- [x] **4.3.2** Create `src/Data/Geofence.php`
+- [x] **4.3.3** Create `src/Data/GeofenceCoordinate.php`
+- [x] **4.3.4** Create `src/Enums/GeofenceType.php`
 
-### 4.4 Geofences Resource
+### 4.4 Groups Resource
 
-- [ ] **4.4.1** Create `src/Resources/Geofences/GeofencesResource.php`
-  - [ ] Standard CRUD operations
-  - [ ] Support for circle and polygon types
-- [ ] **4.4.2** Create `src/Data/Geofence.php`
-- [ ] **4.4.3** Create `src/Data/GeofenceCoordinate.php`
-- [ ] **4.4.4** Create `src/Enums/GeofenceType.php`
-
-### 4.5 Groups Resource
-
-- [ ] **4.5.1** Create `src/Resources/Groups/GroupsResource.php`
-  - [ ] Standard CRUD operations
-  - [ ] `addMember(int|string $groupId, int|string $memberId, string $memberType): bool`
-  - [ ] `removeMember(int|string $groupId, int|string $memberId): bool`
-  - [ ] `members(int|string $groupId): Collection`
-- [ ] **4.5.2** Create `src/Data/Group.php`
-- [ ] **4.5.3** Create `src/Data/GroupMember.php`
+- [x] **4.4.1** Create `src/Resources/Groups/GroupsResource.php`
+  - [x] Standard CRUD operations
+  - [x] `addMember(int|string $groupId, int|string $memberId, string $memberType): bool`
+  - [x] `removeMember(int|string $groupId, int|string $memberId): bool`
+  - [x] `members(int|string $groupId): Collection`
+- [x] **4.4.2** Create `src/Data/Group.php`
+- [x] **4.4.3** Create `src/Data/GroupMember.php`
 
 ---
 
-## Phase 5: OAuth & Webhooks
+## Phase 5: OAuth & Webhooks ✅
 
 ### 5.1 OAuth Authentication
 
-- [ ] **5.1.1** Create `src/Auth/OAuthAuthenticator.php`
-  - [ ] Bearer token authentication
-  - [ ] Automatic token refresh when expired
-  - [ ] Token store integration
-- [ ] **5.1.2** Create `src/Auth/AccessToken.php`
-  - [ ] Access token, refresh token, expires at
-  - [ ] `isExpired(): bool`
-- [ ] **5.1.3** Create `src/Auth/OAuthFlow.php`
-  - [ ] `authorizationUrl(array $scopes, ?string $state = null): string`
-  - [ ] `exchangeCode(string $code): AccessToken`
-  - [ ] `refreshToken(string $refreshToken): AccessToken`
-- [ ] **5.1.4** Create `src/Enums/Scope.php`
-  - [ ] All OAuth scopes as enum cases
+- [x] **5.1.1** Create `src/Auth/OAuthAuthenticator.php`
+  - [x] Bearer token authentication
+  - [x] Automatic token refresh when expired
+  - [x] Token store integration
+- [x] **5.1.2** Create `src/Auth/AccessToken.php`
+  - [x] Access token, refresh token, expires at
+  - [x] `isExpired(): bool`
+- [x] **5.1.3** Create `src/Auth/OAuthFlow.php`
+  - [x] `authorizationUrl(array $scopes, ?string $state = null): string`
+  - [x] `exchangeCode(string $code): AccessToken`
+  - [x] `refreshToken(string $refreshToken): AccessToken`
+- [x] **5.1.4** Create `src/Enums/Scope.php`
+  - [x] All OAuth scopes as enum cases
 
 ### 5.2 Webhooks
 
-- [ ] **5.2.1** Create `src/Webhooks/WebhookSignature.php`
-  - [ ] `verify(string $payload, string $signature, string $secret): bool`
-  - [ ] `generate(string $payload, string $secret): string`
-  - [ ] Timestamp tolerance validation
-- [ ] **5.2.2** Create `src/Webhooks/WebhookPayload.php`
-  - [ ] `static fromRequest(Request $request): static`
-  - [ ] Event type enum property
-  - [ ] Data array accessor
-  - [ ] Timestamp
-- [ ] **5.2.3** Create `src/Http/Middleware/VerifyWebhookSignature.php`
-  - [ ] Verify signature header
-  - [ ] Throw WebhookVerificationException on failure
-- [ ] **5.2.4** Create `src/Exceptions/WebhookVerificationException.php`
+- [x] **5.2.1** Create `src/Webhooks/WebhookSignature.php`
+  - [x] `verify(string $payload, string $signature, string $secret): bool`
+  - [x] `generate(string $payload, string $secret): string`
+  - [x] Timestamp tolerance validation
+- [x] **5.2.2** Create `src/Webhooks/WebhookPayload.php`
+  - [x] `static fromRequest(Request $request): static`
+  - [x] Event type enum property
+  - [x] Data array accessor
+  - [x] Timestamp
+- [x] **5.2.3** Create `src/Http/Middleware/VerifyWebhookSignature.php`
+  - [x] Verify signature header
+  - [x] Throw WebhookVerificationException on failure
+- [x] **5.2.4** Create `src/Exceptions/WebhookVerificationException.php`
 
 ### 5.3 Webhooks Resource
 
-- [ ] **5.3.1** Create `src/Resources/Webhooks/WebhooksResource.php`
-  - [ ] Standard CRUD operations
-  - [ ] `test(int|string $id): bool`
-  - [ ] `logs(int|string $id): Collection`
-- [ ] **5.3.2** Create `src/Data/Webhook.php`
-- [ ] **5.3.3** Create `src/Data/WebhookLog.php`
-- [ ] **5.3.4** Create `src/Enums/WebhookEvent.php`
-  - [ ] All webhook event types
-- [ ] **5.3.5** Create `src/Enums/WebhookStatus.php`
+- [x] **5.3.1** Create `src/Resources/Webhooks/WebhooksResource.php`
+  - [x] Standard CRUD operations
+  - [x] `test(int|string $id): bool`
+  - [x] `logs(int|string $id): Collection`
+- [x] **5.3.2** Create `src/Data/Webhook.php`
+- [x] **5.3.3** Create `src/Data/WebhookLog.php`
+- [x] **5.3.4** Create `src/Enums/WebhookEvent.php`
+  - [x] All webhook event types
+- [x] **5.3.5** Create `src/Enums/WebhookStatus.php`
 
 ---
 
@@ -647,15 +640,15 @@ This document tracks all implementation tasks organized by phase. Mark items wit
 | Phase 1: Foundation | 28 | 28 | 100% |
 | Phase 2: Essential Resources | 14 | 14 | 100% |
 | Phase 3: HOS & Compliance | 15 | 15 | 100% |
-| Phase 4: Dispatch & Location | 15 | 0 | 0% |
-| Phase 5: OAuth & Webhooks | 14 | 0 | 0% |
+| Phase 4: Dispatch & Location | 13 | 13 | 100% |
+| Phase 5: OAuth & Webhooks | 14 | 14 | 100% |
 | Phase 6: Communication & Documents | 9 | 0 | 0% |
 | Phase 7: Fuel & Reporting | 12 | 0 | 0% |
 | Phase 8: Time & Forms | 10 | 0 | 0% |
 | Phase 9: Advanced Resources | 18 | 0 | 0% |
 | Phase 10: Testing Infrastructure | 25 | 0 | 0% |
 | Phase 11: Documentation & Polish | 15 | 0 | 0% |
-| **Total** | **175** | **57** | **33%** |
+| **Total** | **173** | **84** | **49%** |
 
 ---
 
