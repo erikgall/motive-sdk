@@ -1,0 +1,16 @@
+{
+    "name": "motive/sdk",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Motive\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Erik Galloway",
+            "email": "8866568+erikgall@users.noreply.github.com"
+        }
+    ],
+    "require": {}
+}
