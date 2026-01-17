@@ -15,6 +15,7 @@
 - Always prefer first-party Laravel packages over others
 - Install libraries as needed but if it is simple to do yourself just do not reinvent the wheel
 - ASK CLARIFYING QUESTIONS IN AN INTERACTIVE WAY. DO NOT MAKE ASSUMPTIONS.
+- DO NOT USE `declare(strict_types=1);`
 
 ## Code Quality Standards
 
