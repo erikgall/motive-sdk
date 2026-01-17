@@ -188,66 +188,66 @@ This document tracks all implementation tasks organized by phase. Mark items wit
 
 ---
 
-## Phase 3: HOS & Compliance
+## Phase 3: HOS & Compliance ✅
 
 ### 3.1 HOS Logs Resource
 
-- [ ] **3.1.1** Create `src/Resources/HoursOfService/HosLogsResource.php`
-  - [ ] List with date range and driver filters
-  - [ ] Create log entry
-  - [ ] Update log entry (with annotation)
-  - [ ] Delete log entry
-  - [ ] `certify(int|string $driverId, string $date): bool`
-- [ ] **3.1.2** Create `src/Data/HosLog.php`
-  - [ ] Duty status enum
-  - [ ] Start time, duration
-  - [ ] Location information
-  - [ ] Driver relationship
-  - [ ] Annotations
-- [ ] **3.1.3** Create `src/Enums/DutyStatus.php`
-  - [ ] OffDuty, SleeperBerth, Driving, OnDuty, PersonalConveyance, YardMove
+- [x] **3.1.1** Create `src/Resources/HoursOfService/HosLogsResource.php`
+  - [x] List with date range and driver filters
+  - [x] Create log entry
+  - [x] Update log entry (with annotation)
+  - [x] Delete log entry
+  - [x] `certify(int|string $driverId, string $date): bool`
+- [x] **3.1.2** Create `src/Data/HosLog.php`
+  - [x] Duty status enum
+  - [x] Start time, duration
+  - [x] Location information
+  - [x] Driver relationship
+  - [x] Annotations
+- [x] **3.1.3** Create `src/Enums/DutyStatus.php`
+  - [x] OffDuty, SleeperBerth, Driving, OnDuty, PersonalConveyance, YardMove
 
 ### 3.2 HOS Availability Resource
 
-- [ ] **3.2.1** Create `src/Resources/HoursOfService/HosAvailabilityResource.php`
-  - [ ] `list(array $params = []): LazyCollection`
-  - [ ] `forDriver(int|string $driverId): HosAvailability`
-- [ ] **3.2.2** Create `src/Data/HosAvailability.php`
-  - [ ] Drive time remaining
-  - [ ] Shift time remaining
-  - [ ] Cycle time remaining
-  - [ ] Break time required
-  - [ ] Driver relationship
+- [x] **3.2.1** Create `src/Resources/HoursOfService/HosAvailabilityResource.php`
+  - [x] `list(array $params = []): LazyCollection`
+  - [x] `forDriver(int|string $driverId): HosAvailability`
+- [x] **3.2.2** Create `src/Data/HosAvailability.php`
+  - [x] Drive time remaining
+  - [x] Shift time remaining
+  - [x] Cycle time remaining
+  - [x] Break time required
+  - [x] Driver relationship
 
 ### 3.3 HOS Violations Resource
 
-- [ ] **3.3.1** Create `src/Resources/HoursOfService/HosViolationsResource.php`
-  - [ ] List with date range and driver filters
-- [ ] **3.3.2** Create `src/Data/HosViolation.php`
-  - [ ] Violation type enum
-  - [ ] Start time, duration
-  - [ ] Driver relationship
-- [ ] **3.3.3** Create `src/Enums/HosViolationType.php`
+- [x] **3.3.1** Create `src/Resources/HoursOfService/HosViolationsResource.php`
+  - [x] List with date range and driver filters
+- [x] **3.3.2** Create `src/Data/HosViolation.php`
+  - [x] Violation type enum
+  - [x] Start time, duration
+  - [x] Driver relationship
+- [x] **3.3.3** Create `src/Enums/HosViolationType.php`
 
 ### 3.4 Inspection Reports Resource
 
-- [ ] **3.4.1** Create `src/Resources/InspectionReports/InspectionReportsResource.php`
-  - [ ] List with filters
-  - [ ] Find by ID
-  - [ ] `downloadPdf(int|string $id): string`
-- [ ] **3.4.2** Create `src/Data/InspectionReport.php`
-  - [ ] Type (pre_trip, post_trip)
-  - [ ] Status
-  - [ ] Vehicle and driver relationships
-  - [ ] Defects collection
-- [ ] **3.4.3** Create `src/Data/InspectionDefect.php`
-- [ ] **3.4.4** Create `src/Enums/InspectionType.php`
-- [ ] **3.4.5** Create `src/Enums/InspectionStatus.php`
+- [x] **3.4.1** Create `src/Resources/Inspections/InspectionReportsResource.php`
+  - [x] List with filters
+  - [x] Find by ID
+  - [x] forDriver, forVehicle methods
+- [x] **3.4.2** Create `src/Data/InspectionReport.php`
+  - [x] Type (pre_trip, post_trip)
+  - [x] Status
+  - [x] Vehicle and driver relationships
+  - [x] Defects collection
+- [x] **3.4.3** Create `src/Data/InspectionDefect.php`
+- [x] **3.4.4** Create `src/Enums/InspectionType.php`
+- [x] **3.4.5** Create `src/Enums/InspectionStatus.php`
 
 ### 3.5 Fault Codes Resource
 
-- [ ] **3.5.1** Create `src/Resources/FaultCodes/FaultCodesResource.php`
-- [ ] **3.5.2** Create `src/Data/FaultCode.php`
+- [x] **3.5.1** Create `src/Resources/Vehicles/FaultCodesResource.php`
+- [x] **3.5.2** Create `src/Data/FaultCode.php`
 
 ---
 
@@ -646,7 +646,7 @@ This document tracks all implementation tasks organized by phase. Mark items wit
 |-------|-------------|-----------|----------|
 | Phase 1: Foundation | 28 | 28 | 100% |
 | Phase 2: Essential Resources | 14 | 14 | 100% |
-| Phase 3: HOS & Compliance | 15 | 0 | 0% |
+| Phase 3: HOS & Compliance | 15 | 15 | 100% |
 | Phase 4: Dispatch & Location | 15 | 0 | 0% |
 | Phase 5: OAuth & Webhooks | 14 | 0 | 0% |
 | Phase 6: Communication & Documents | 9 | 0 | 0% |
@@ -655,7 +655,7 @@ This document tracks all implementation tasks organized by phase. Mark items wit
 | Phase 9: Advanced Resources | 18 | 0 | 0% |
 | Phase 10: Testing Infrastructure | 25 | 0 | 0% |
 | Phase 11: Documentation & Polish | 15 | 0 | 0% |
-| **Total** | **175** | **42** | **24%** |
+| **Total** | **175** | **57** | **33%** |
 
 ---
 
