@@ -78,7 +78,7 @@ abstract class DataTransferObject implements Arrayable, JsonSerializable
 
             $type = $parameter->getType();
             if ($type instanceof ReflectionNamedType) {
-                $value = static::castValue($value, $type);
+                $value = static::castValue($value, $type, $name);
             }
 
             $args[$name] = $value;
@@ -114,7 +114,7 @@ abstract class DataTransferObject implements Arrayable, JsonSerializable
     /**
      * Cast a value to its appropriate type.
      */
-    protected static function castValue(mixed $value, ReflectionNamedType $type): mixed
+    protected static function castValue(mixed $value, ReflectionNamedType $type, string $propertyName = ''): mixed
     {
         if ($value === null) {
             return null;
@@ -145,6 +145,28 @@ abstract class DataTransferObject implements Arrayable, JsonSerializable
             return $typeName::from($value);
         }
 
+        // Handle arrays of nested DTOs
+        if ($typeName === 'array' && is_array($value) && $propertyName !== '') {
+            $nestedArrays = static::nestedArrays();
+            if (isset($nestedArrays[$propertyName])) {
+                $dtoClass = $nestedArrays[$propertyName];
+
+                return array_map(fn (array $item) => $dtoClass::from($item), $value);
+            }
+        }
+
         return $value;
+    }
+
+    /**
+     * Properties that should be cast to arrays of DTOs.
+     *
+     * Override this method to define nested array mappings.
+     *
+     * @return array<string, class-string<DataTransferObject>>
+     */
+    protected static function nestedArrays(): array
+    {
+        return [];
     }
 }
