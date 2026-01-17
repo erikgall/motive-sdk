@@ -1,5 +1,21 @@
 # Motive ELD Laravel SDK - AI Agent Instructions
 
+## Workflow & Quick Guide
+
+- Follow test driven development
+- Always keep plan `PLAN.md` file updated and document and changes to the plan or new requirements that were discovered
+- Always keep `TODO.md` updated
+- Never stop a todo item half way. Complete the implementation.
+- Make small incremental commits if possible.
+- Small objects or value objects are better than raw arrays
+- Use common software design patterns to solve common problems
+- Test your code
+- Make sure all tests pass before marking your task as complete
+- Always run pint code fixer `./vendor/bin/pint --dirty` before committing
+- Always prefer first-party Laravel packages over others
+- Install libraries as needed but if it is simple to do yourself just do not reinvent the wheel
+- ASK CLARIFYING QUESTIONS IN AN INTERACTIVE WAY. DO NOT MAKE ASSUMPTIONS.
+
 ## Code Quality Standards
 
 ### Control Flow
