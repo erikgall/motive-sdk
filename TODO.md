@@ -373,48 +373,48 @@ This document tracks all implementation tasks organized by phase. Mark items wit
 
 ---
 
-## Phase 7: Fuel & Reporting
+## Phase 7: Fuel & Reporting ✅
 
 ### 7.1 Fuel Purchases Resource
 
-- [ ] **7.1.1** Create `src/Resources/FuelPurchases/FuelPurchasesResource.php`
-  - [ ] Standard CRUD operations
-  - [ ] Date range and vehicle filters
-- [ ] **7.1.2** Create `src/Data/FuelPurchase.php`
+- [x] **7.1.1** Create `src/Resources/FuelPurchases/FuelPurchasesResource.php`
+  - [x] Standard CRUD operations
+  - [x] Date range and vehicle filters
+- [x] **7.1.2** Create `src/Data/FuelPurchase.php`
 
 ### 7.2 IFTA Reports Resource
 
-- [ ] **7.2.1** Create `src/Resources/IftaReports/IftaReportsResource.php`
-  - [ ] `generate(array $params): IftaReport`
-  - [ ] `list(array $params = []): LazyCollection`
-- [ ] **7.2.2** Create `src/Data/IftaReport.php`
-- [ ] **7.2.3** Create `src/Data/IftaJurisdiction.php`
+- [x] **7.2.1** Create `src/Resources/IftaReports/IftaReportsResource.php`
+  - [x] `generate(array $params): IftaReport`
+  - [x] `list(array $params = []): LazyCollection`
+- [x] **7.2.2** Create `src/Data/IftaReport.php`
+- [x] **7.2.3** Create `src/Data/IftaJurisdiction.php`
 
 ### 7.3 Driver Performance Resource
 
-- [ ] **7.3.1** Create `src/Resources/DriverPerformance/DriverPerformanceEventsResource.php`
-  - [ ] List with filters
-  - [ ] Find by ID
-- [ ] **7.3.2** Create `src/Data/DriverPerformanceEvent.php`
-- [ ] **7.3.3** Create `src/Enums/PerformanceEventType.php`
-- [ ] **7.3.4** Create `src/Enums/EventSeverity.php`
+- [x] **7.3.1** Create `src/Resources/DriverPerformance/DriverPerformanceEventsResource.php`
+  - [x] List with filters
+  - [x] Find by ID
+- [x] **7.3.2** Create `src/Data/DriverPerformanceEvent.php`
+- [x] **7.3.3** Create `src/Enums/PerformanceEventType.php`
+- [x] **7.3.4** Create `src/Enums/EventSeverity.php`
 
 ### 7.4 Scorecard Resource
 
-- [ ] **7.4.1** Create `src/Resources/Scorecard/ScorecardResource.php`
-  - [ ] `forDriver(int|string $driverId, array $params = []): Scorecard`
-  - [ ] `forFleet(array $params = []): Scorecard`
-- [ ] **7.4.2** Create `src/Data/Scorecard.php`
+- [x] **7.4.1** Create `src/Resources/Scorecard/ScorecardResource.php`
+  - [x] `forDriver(int|string $driverId, array $params = []): Scorecard`
+  - [x] `forFleet(array $params = []): Scorecard`
+- [x] **7.4.2** Create `src/Data/Scorecard.php`
 
 ### 7.5 Utilization Resource
 
-- [ ] **7.5.1** Create `src/Resources/Utilization/UtilizationResource.php`
-  - [ ] `forVehicle(int|string $vehicleId, array $params = []): UtilizationReport`
-  - [ ] `forFleet(array $params = []): UtilizationReport`
-  - [ ] `daily(array $params = []): Collection`
-  - [ ] `summary(array $params = []): UtilizationReport`
-- [ ] **7.5.2** Create `src/Data/UtilizationReport.php`
-- [ ] **7.5.3** Create `src/Data/UtilizationDay.php`
+- [x] **7.5.1** Create `src/Resources/Utilization/UtilizationResource.php`
+  - [x] `forVehicle(int|string $vehicleId, array $params = []): UtilizationReport`
+  - [x] `forFleet(array $params = []): UtilizationReport`
+  - [x] `daily(array $params = []): Collection`
+  - [x] `summary(array $params = []): UtilizationReport`
+- [x] **7.5.2** Create `src/Data/UtilizationReport.php`
+- [x] **7.5.3** Create `src/Data/UtilizationDay.php`
 
 ---
 
@@ -643,12 +643,12 @@ This document tracks all implementation tasks organized by phase. Mark items wit
 | Phase 4: Dispatch & Location | 13 | 13 | 100% |
 | Phase 5: OAuth & Webhooks | 14 | 14 | 100% |
 | Phase 6: Communication & Documents | 9 | 9 | 100% |
-| Phase 7: Fuel & Reporting | 12 | 0 | 0% |
+| Phase 7: Fuel & Reporting | 12 | 12 | 100% |
 | Phase 8: Time & Forms | 10 | 0 | 0% |
 | Phase 9: Advanced Resources | 18 | 0 | 0% |
 | Phase 10: Testing Infrastructure | 25 | 0 | 0% |
 | Phase 11: Documentation & Polish | 15 | 0 | 0% |
-| **Total** | **173** | **93** | **54%** |
+| **Total** | **173** | **105** | **61%** |
 
 ---
 
