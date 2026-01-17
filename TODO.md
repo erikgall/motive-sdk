@@ -466,63 +466,63 @@ This document tracks all implementation tasks organized by phase. Mark items wit
 
 ---
 
-## Phase 9: Advanced Resources
+## Phase 9: Advanced Resources ✅
 
 ### 9.1 Motive Card Resource
 
-- [ ] **9.1.1** Create `src/Resources/MotiveCard/MotiveCardResource.php`
-  - [ ] List cards
-  - [ ] `transactions(int|string $cardId, array $params = []): Collection`
-  - [ ] `limits(int|string $cardId): CardLimit`
-- [ ] **9.1.2** Create `src/Data/MotiveCard.php`
-- [ ] **9.1.3** Create `src/Data/CardTransaction.php`
-- [ ] **9.1.4** Create `src/Data/CardLimit.php`
-- [ ] **9.1.5** Create `src/Enums/CardTransactionType.php`
+- [x] **9.1.1** Create `src/Resources/MotiveCard/MotiveCardResource.php`
+  - [x] List cards
+  - [x] `transactions(int|string $cardId, array $params = []): Collection`
+  - [x] `limits(int|string $cardId): CardLimit`
+- [x] **9.1.2** Create `src/Data/MotiveCard.php`
+- [x] **9.1.3** Create `src/Data/CardTransaction.php`
+- [x] **9.1.4** Create `src/Data/CardLimit.php`
+- [x] **9.1.5** Create `src/Enums/CardTransactionType.php`
 
 ### 9.2 Freight Visibility Resource
 
-- [ ] **9.2.1** Create `src/Resources/FreightVisibility/FreightVisibilityResource.php`
-  - [ ] `shipments(array $params = []): LazyCollection`
-  - [ ] `tracking(string $shipmentId): ShipmentTracking`
-  - [ ] `eta(string $shipmentId): ShipmentEta`
-- [ ] **9.2.2** Create `src/Data/Shipment.php`
-- [ ] **9.2.3** Create `src/Data/ShipmentTracking.php`
-- [ ] **9.2.4** Create `src/Data/ShipmentEta.php`
-- [ ] **9.2.5** Create `src/Enums/ShipmentStatus.php`
+- [x] **9.2.1** Create `src/Resources/FreightVisibility/FreightVisibilityResource.php`
+  - [x] `shipments(array $params = []): LazyCollection`
+  - [x] `tracking(string $shipmentId): ShipmentTracking`
+  - [x] `eta(string $shipmentId): ShipmentEta`
+- [x] **9.2.2** Create `src/Data/Shipment.php`
+- [x] **9.2.3** Create `src/Data/ShipmentTracking.php`
+- [x] **9.2.4** Create `src/Data/ShipmentEta.php`
+- [x] **9.2.5** Create `src/Enums/ShipmentStatus.php`
 
 ### 9.3 Camera Resources
 
-- [ ] **9.3.1** Create `src/Resources/Camera/CameraConnectionsResource.php`
-  - [ ] List camera connections
-- [ ] **9.3.2** Create `src/Resources/Camera/CameraControlResource.php`
-  - [ ] `requestVideo(array $params): VideoRequest`
-  - [ ] `getVideo(string $requestId): Video`
-- [ ] **9.3.3** Create `src/Data/CameraConnection.php`
-- [ ] **9.3.4** Create `src/Data/VideoRequest.php`
-- [ ] **9.3.5** Create `src/Data/Video.php`
-- [ ] **9.3.6** Create `src/Enums/CameraType.php`
-- [ ] **9.3.7** Create `src/Enums/VideoStatus.php`
+- [x] **9.3.1** Create `src/Resources/Camera/CameraConnectionsResource.php`
+  - [x] List camera connections
+- [x] **9.3.2** Create `src/Resources/Camera/CameraControlResource.php`
+  - [x] `requestVideo(array $params): VideoRequest`
+  - [x] `getVideo(string $requestId): Video`
+- [x] **9.3.3** Create `src/Data/CameraConnection.php`
+- [x] **9.3.4** Create `src/Data/VideoRequest.php`
+- [x] **9.3.5** Create `src/Data/Video.php`
+- [x] **9.3.6** Create `src/Enums/CameraType.php`
+- [x] **9.3.7** Create `src/Enums/VideoStatus.php`
 
 ### 9.4 External IDs Resource
 
-- [ ] **9.4.1** Create `src/Resources/ExternalIds/ExternalIdsResource.php`
-  - [ ] `set(string $resourceType, int|string $resourceId, string $externalId): bool`
-  - [ ] `get(string $resourceType, int|string $resourceId): ?string`
-  - [ ] `delete(string $resourceType, int|string $resourceId): bool`
-- [ ] **9.4.2** Create `src/Data/ExternalId.php`
+- [x] **9.4.1** Create `src/Resources/ExternalIds/ExternalIdsResource.php`
+  - [x] `set(string $resourceType, int|string $resourceId, string $externalId): bool`
+  - [x] `get(string $resourceType, int|string $resourceId): ?string`
+  - [x] `delete(string $resourceType, int|string $resourceId): bool`
+- [x] **9.4.2** Create `src/Data/ExternalId.php`
 
 ### 9.5 Vehicle Gateways Resource
 
-- [ ] **9.5.1** Create `src/Resources/VehicleGateways/VehicleGatewaysResource.php`
-  - [ ] List gateways
-- [ ] **9.5.2** Create `src/Data/VehicleGateway.php`
+- [x] **9.5.1** Create `src/Resources/VehicleGateways/VehicleGatewaysResource.php`
+  - [x] List gateways
+- [x] **9.5.2** Create `src/Data/VehicleGateway.php`
 
 ### 9.6 Reefer Activity Resource
 
-- [ ] **9.6.1** Create `src/Resources/ReeferActivity/ReeferActivityResource.php`
-  - [ ] `list(array $params = []): LazyCollection`
-  - [ ] `forVehicle(int|string $vehicleId, array $params = []): Collection`
-- [ ] **9.6.2** Create `src/Data/ReeferActivity.php`
+- [x] **9.6.1** Create `src/Resources/ReeferActivity/ReeferActivityResource.php`
+  - [x] `list(array $params = []): LazyCollection`
+  - [x] `forVehicle(int|string $vehicleId, array $params = []): Collection`
+- [x] **9.6.2** Create `src/Data/ReeferActivity.php`
 
 ---
 
@@ -611,14 +611,22 @@ This document tracks all implementation tasks organized by phase. Mark items wit
 
 ## Phase 11: Documentation & Polish
 
-### 11.1 Documentation
+### 11.1 Laravel Fluent DTO Upgrade
+
+- [ ] Install Laravel Fluent as a composer dependency
+- [ ] Upgrade all DTOs to use Laravel Fluent to manage data and casts
+- [ ] Update any usages of DTO in the application to work with new DTO structure
+- [ ] Add missing tests for each DTO
+- [ ] Run and fix any failing tests
+
+### 11.2 Documentation
 
 - [ ] **11.1.1** Update `README.md` with complete API examples
 - [ ] **11.1.2** Create `CHANGELOG.md`
 - [ ] **11.1.3** Create `CONTRIBUTING.md`
 - [ ] **11.1.4** Create `LICENSE.md` (MIT)
 
-### 11.2 PHPDoc
+### 11.3 PHPDoc
 
 - [ ] **11.2.1** Add PHPDoc to all public methods in MotiveManager
 - [ ] **11.2.2** Add PHPDoc to all public methods in Resources
@@ -626,14 +634,14 @@ This document tracks all implementation tasks organized by phase. Mark items wit
 - [ ] **11.2.4** Add PHPDoc to all Enums
 - [ ] **11.2.5** Add PHPDoc to Testing classes
 
-### 11.3 Code Quality
+### 11.4 Code Quality
 
 - [ ] **11.3.1** Run PHPStan at level 8 and fix all errors
 - [ ] **11.3.2** Run Laravel Pint and fix all style issues
 - [ ] **11.3.3** Ensure 100% test coverage on critical paths
 - [ ] **11.3.4** Review all exception messages for clarity
 
-### 11.4 Final Review
+### 11.5 Final Review
 
 - [ ] **11.4.1** Review all resource method signatures for consistency
 - [ ] **11.4.2** Review all DTO properties for completeness
@@ -656,10 +664,10 @@ This document tracks all implementation tasks organized by phase. Mark items wit
 | Phase 6: Communication & Documents | 9 | 9 | 100% |
 | Phase 7: Fuel & Reporting | 12 | 12 | 100% |
 | Phase 8: Time & Forms | 10 | 10 | 100% |
-| Phase 9: Advanced Resources | 18 | 0 | 0% |
+| Phase 9: Advanced Resources | 18 | 18 | 100% |
 | Phase 10: Testing Infrastructure | 25 | 0 | 0% |
 | Phase 11: Documentation & Polish | 15 | 0 | 0% |
-| **Total** | **173** | **115** | **66%** |
+| **Total** | **173** | **133** | **77%** |
 
 ---
 
