@@ -345,31 +345,31 @@ This document tracks all implementation tasks organized by phase. Mark items wit
 
 ---
 
-## Phase 6: Communication & Documents
+## Phase 6: Communication & Documents ✅
 
 ### 6.1 Messages Resource
 
-- [ ] **6.1.1** Create `src/Resources/Messages/MessagesResource.php`
-  - [ ] List with driver filter
-  - [ ] Find by ID
-  - [ ] `send(array $data): Message`
-  - [ ] `broadcast(array $data): Collection`
-- [ ] **6.1.2** Create `src/Data/Message.php`
-- [ ] **6.1.3** Create `src/Enums/MessageDirection.php`
+- [x] **6.1.1** Create `src/Resources/Messages/MessagesResource.php`
+  - [x] List with driver filter
+  - [x] Find by ID
+  - [x] `send(array $data): Message`
+  - [x] `broadcast(array $data): Collection`
+- [x] **6.1.2** Create `src/Data/Message.php`
+- [x] **6.1.3** Create `src/Enums/MessageDirection.php`
 
 ### 6.2 Documents Resource
 
-- [ ] **6.2.1** Create `src/Resources/Documents/DocumentsResource.php`
-  - [ ] List with filters
-  - [ ] Find by ID
-  - [ ] `upload(array $data): Document`
-  - [ ] `download(int|string $id): string`
-  - [ ] `updateStatus(int|string $id, DocumentStatus $status): Document`
-  - [ ] Delete
-- [ ] **6.2.2** Create `src/Data/Document.php`
-- [ ] **6.2.3** Create `src/Data/DocumentImage.php`
-- [ ] **6.2.4** Create `src/Enums/DocumentType.php`
-- [ ] **6.2.5** Create `src/Enums/DocumentStatus.php`
+- [x] **6.2.1** Create `src/Resources/Documents/DocumentsResource.php`
+  - [x] List with filters
+  - [x] Find by ID
+  - [x] `upload(array $data): Document`
+  - [x] `download(int|string $id): string`
+  - [x] `updateStatus(int|string $id, DocumentStatus $status): Document`
+  - [x] Delete
+- [x] **6.2.2** Create `src/Data/Document.php`
+- [x] **6.2.3** Create `src/Data/DocumentImage.php`
+- [x] **6.2.4** Create `src/Enums/DocumentType.php`
+- [x] **6.2.5** Create `src/Enums/DocumentStatus.php`
 
 ---
 
@@ -642,13 +642,13 @@ This document tracks all implementation tasks organized by phase. Mark items wit
 | Phase 3: HOS & Compliance | 15 | 15 | 100% |
 | Phase 4: Dispatch & Location | 13 | 13 | 100% |
 | Phase 5: OAuth & Webhooks | 14 | 14 | 100% |
-| Phase 6: Communication & Documents | 9 | 0 | 0% |
+| Phase 6: Communication & Documents | 9 | 9 | 100% |
 | Phase 7: Fuel & Reporting | 12 | 0 | 0% |
 | Phase 8: Time & Forms | 10 | 0 | 0% |
 | Phase 9: Advanced Resources | 18 | 0 | 0% |
 | Phase 10: Testing Infrastructure | 25 | 0 | 0% |
 | Phase 11: Documentation & Polish | 15 | 0 | 0% |
-| **Total** | **173** | **84** | **49%** |
+| **Total** | **173** | **93** | **54%** |
 
 ---
 
