@@ -418,40 +418,51 @@ This document tracks all implementation tasks organized by phase. Mark items wit
 
 ---
 
-## Phase 8: Time & Forms
+## Phase 8: Time & Forms ✅
 
 ### 8.1 Timecards Resource
 
-- [ ] **8.1.1** Create `src/Resources/Timecards/TimecardsResource.php`
-  - [ ] List with filters
-  - [ ] Find by ID
-  - [ ] Update
-- [ ] **8.1.2** Create `src/Data/Timecard.php`
-- [ ] **8.1.3** Create `src/Data/TimecardEntry.php`
-- [ ] **8.1.4** Create `src/Enums/TimecardStatus.php`
+- [x] **8.1.1** Create `src/Resources/Timecards/TimecardsResource.php`
+  - [x] List with filters
+  - [x] Find by ID
+  - [x] Update
+  - [x] forDriver filter
+- [x] **8.1.2** Create `src/Data/Timecard.php`
+- [x] **8.1.3** Create `src/Data/TimecardEntry.php`
+- [x] **8.1.4** Create `src/Enums/TimecardStatus.php`
 
 ### 8.2 Forms Resource
 
-- [ ] **8.2.1** Create `src/Resources/Forms/FormsResource.php`
-  - [ ] List available forms
-- [ ] **8.2.2** Create `src/Data/Form.php`
-- [ ] **8.2.3** Create `src/Data/FormField.php`
-- [ ] **8.2.4** Create `src/Enums/FormFieldType.php`
+- [x] **8.2.1** Create `src/Resources/Forms/FormsResource.php`
+  - [x] List available forms
+  - [x] Find by ID
+  - [x] Create
+  - [x] Update
+  - [x] Delete
+  - [x] Active filter
+- [x] **8.2.2** Create `src/Data/Form.php`
+- [x] **8.2.3** Create `src/Data/FormField.php`
+- [x] **8.2.4** Create `src/Enums/FormFieldType.php`
 
 ### 8.3 Form Entries Resource
 
-- [ ] **8.3.1** Create `src/Resources/Forms/FormEntriesResource.php`
-  - [ ] List with filters
-  - [ ] Find by ID
-- [ ] **8.3.2** Create `src/Data/FormEntry.php`
+- [x] **8.3.1** Create `src/Resources/FormEntries/FormEntriesResource.php`
+  - [x] List with filters
+  - [x] Find by ID
+  - [x] Create
+  - [x] forForm filter
+  - [x] forDriver filter
+- [x] **8.3.2** Create `src/Data/FormEntry.php`
 
 ### 8.4 Driving Periods Resource
 
-- [ ] **8.4.1** Create `src/Resources/DrivingPeriods/DrivingPeriodsResource.php`
-  - [ ] `list(array $params = []): LazyCollection`
-  - [ ] `current(int|string $driverId): DrivingPeriod`
-  - [ ] `history(int|string $driverId, array $params = []): Collection`
-- [ ] **8.4.2** Create `src/Data/DrivingPeriod.php`
+- [x] **8.4.1** Create `src/Resources/DrivingPeriods/DrivingPeriodsResource.php`
+  - [x] `list(array $params = []): LazyCollection`
+  - [x] `find(int|string $id): DrivingPeriod`
+  - [x] `forDriver(int|string $driverId): LazyCollection`
+  - [x] `forVehicle(int|string $vehicleId): LazyCollection`
+  - [x] `forDateRange(string $startDate, string $endDate): LazyCollection`
+- [x] **8.4.2** Create `src/Data/DrivingPeriod.php`
 
 ---
 
@@ -644,11 +655,11 @@ This document tracks all implementation tasks organized by phase. Mark items wit
 | Phase 5: OAuth & Webhooks | 14 | 14 | 100% |
 | Phase 6: Communication & Documents | 9 | 9 | 100% |
 | Phase 7: Fuel & Reporting | 12 | 12 | 100% |
-| Phase 8: Time & Forms | 10 | 0 | 0% |
+| Phase 8: Time & Forms | 10 | 10 | 100% |
 | Phase 9: Advanced Resources | 18 | 0 | 0% |
 | Phase 10: Testing Infrastructure | 25 | 0 | 0% |
 | Phase 11: Documentation & Polish | 15 | 0 | 0% |
-| **Total** | **173** | **105** | **61%** |
+| **Total** | **173** | **115** | **66%** |
 
 ---
 
