@@ -15,16 +15,6 @@ use Motive\Resources\HoursOfService\HosViolationsResource;
  */
 class HosViolationsResourceTest extends TestCase
 {
-    private MotiveClient $client;
-
-    private HosViolationsResource $resource;
-
-    protected function setUp(): void
-    {
-        $this->client = $this->createMock(MotiveClient::class);
-        $this->resource = new HosViolationsResource($this->client);
-    }
-
     #[Test]
     public function it_finds_violation_by_id(): void
     {
@@ -38,12 +28,14 @@ class HosViolationsResourceTest extends TestCase
 
         $response = $this->createMockResponse(['hos_violation' => $violationData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/hos_violations/123')
             ->willReturn($response);
 
-        $violation = $this->resource->find(123);
+        $resource = new HosViolationsResource($client);
+        $violation = $resource->find(123);
 
         $this->assertInstanceOf(HosViolation::class, $violation);
         $this->assertSame(123, $violation->id);
@@ -63,12 +55,14 @@ class HosViolationsResourceTest extends TestCase
 
         $response = $this->createMockResponse(['hos_violation' => $violationData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/hos_violations/driver/456')
             ->willReturn($response);
 
-        $violations = $this->resource->forDriver(456);
+        $resource = new HosViolationsResource($client);
+        $violations = $resource->forDriver(456);
 
         $this->assertIsArray($violations);
     }
@@ -76,13 +70,17 @@ class HosViolationsResourceTest extends TestCase
     #[Test]
     public function it_has_correct_base_path(): void
     {
-        $this->assertSame('hos_violations', $this->resource->getBasePath());
+        $resource = new HosViolationsResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('hos_violations', $resource->getBasePath());
     }
 
     #[Test]
     public function it_has_correct_resource_key(): void
     {
-        $this->assertSame('hos_violation', $this->resource->getResourceKey());
+        $resource = new HosViolationsResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('hos_violation', $resource->getResourceKey());
     }
 
     /**
@@ -92,7 +90,7 @@ class HosViolationsResourceTest extends TestCase
      */
     private function createMockResponse(array $data, int $status = 200): Response
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('json')->willReturnCallback(
             fn (?string $key = null) => $key !== null ? ($data[$key] ?? null) : $data
         );

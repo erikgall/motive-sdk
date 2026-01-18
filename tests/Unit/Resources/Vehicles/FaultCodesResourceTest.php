@@ -15,16 +15,6 @@ use Illuminate\Http\Client\Response as HttpResponse;
  */
 class FaultCodesResourceTest extends TestCase
 {
-    private MotiveClient $client;
-
-    private FaultCodesResource $resource;
-
-    protected function setUp(): void
-    {
-        $this->client = $this->createMock(MotiveClient::class);
-        $this->resource = new FaultCodesResource($this->client);
-    }
-
     #[Test]
     public function it_finds_fault_code_by_id(): void
     {
@@ -37,12 +27,14 @@ class FaultCodesResourceTest extends TestCase
 
         $response = $this->createMockResponse(['fault_code' => $faultCodeData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/fault_codes/123')
             ->willReturn($response);
 
-        $faultCode = $this->resource->find(123);
+        $resource = new FaultCodesResource($client);
+        $faultCode = $resource->find(123);
 
         $this->assertInstanceOf(FaultCode::class, $faultCode);
         $this->assertSame(123, $faultCode->id);
@@ -61,12 +53,14 @@ class FaultCodesResourceTest extends TestCase
 
         $response = $this->createMockResponse(['fault_codes' => [$faultCodeData]]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/fault_codes/vehicle/456', [])
             ->willReturn($response);
 
-        $faultCodes = $this->resource->forVehicle(456);
+        $resource = new FaultCodesResource($client);
+        $faultCodes = $resource->forVehicle(456);
 
         $this->assertIsArray($faultCodes);
         $this->assertCount(1, $faultCodes);
@@ -76,13 +70,17 @@ class FaultCodesResourceTest extends TestCase
     #[Test]
     public function it_has_correct_base_path(): void
     {
-        $this->assertSame('fault_codes', $this->resource->getBasePath());
+        $resource = new FaultCodesResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('fault_codes', $resource->getBasePath());
     }
 
     #[Test]
     public function it_has_correct_resource_key(): void
     {
-        $this->assertSame('fault_code', $this->resource->getResourceKey());
+        $resource = new FaultCodesResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('fault_code', $resource->getResourceKey());
     }
 
     #[Test]
@@ -96,12 +94,14 @@ class FaultCodesResourceTest extends TestCase
             'resolved_at' => '2024-01-15T10:00:00Z',
         ]]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('post')
             ->with('/v1/fault_codes/123/resolve', [])
             ->willReturn($response);
 
-        $faultCode = $this->resource->resolve(123);
+        $resource = new FaultCodesResource($client);
+        $faultCode = $resource->resolve(123);
 
         $this->assertInstanceOf(FaultCode::class, $faultCode);
         $this->assertTrue($faultCode->resolved);
@@ -114,7 +114,7 @@ class FaultCodesResourceTest extends TestCase
      */
     private function createMockResponse(array $data, int $status = 200): Response
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('json')->willReturnCallback(
             fn (?string $key = null) => $key !== null ? ($data[$key] ?? null) : $data
         );

@@ -16,21 +16,13 @@ use Motive\Resources\DrivingPeriods\DrivingPeriodsResource;
  */
 class DrivingPeriodsResourceTest extends TestCase
 {
-    private MotiveClient $client;
-
-    private DrivingPeriodsResource $resource;
-
-    protected function setUp(): void
-    {
-        $this->client = $this->createMock(MotiveClient::class);
-        $this->resource = new DrivingPeriodsResource($this->client);
-    }
-
     #[Test]
     public function it_builds_correct_full_path(): void
     {
-        $this->assertSame('/v1/driving_periods', $this->resource->fullPath());
-        $this->assertSame('/v1/driving_periods/123', $this->resource->fullPath('123'));
+        $resource = new DrivingPeriodsResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('/v1/driving_periods', $resource->fullPath());
+        $this->assertSame('/v1/driving_periods/123', $resource->fullPath('123'));
     }
 
     #[Test]
@@ -46,12 +38,14 @@ class DrivingPeriodsResourceTest extends TestCase
 
         $response = $this->createMockResponse(['driving_period' => $periodData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/driving_periods/123')
             ->willReturn($response);
 
-        $period = $this->resource->find(123);
+        $resource = new DrivingPeriodsResource($client);
+        $period = $resource->find(123);
 
         $this->assertInstanceOf(DrivingPeriod::class, $period);
         $this->assertSame(123, $period->id);
@@ -61,13 +55,17 @@ class DrivingPeriodsResourceTest extends TestCase
     #[Test]
     public function it_has_correct_base_path(): void
     {
-        $this->assertSame('driving_periods', $this->resource->getBasePath());
+        $resource = new DrivingPeriodsResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('driving_periods', $resource->getBasePath());
     }
 
     #[Test]
     public function it_has_correct_resource_key(): void
     {
-        $this->assertSame('driving_period', $this->resource->getResourceKey());
+        $resource = new DrivingPeriodsResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('driving_period', $resource->getResourceKey());
     }
 
     #[Test]
@@ -95,9 +93,11 @@ class DrivingPeriodsResourceTest extends TestCase
             'pagination'      => ['per_page' => 25, 'page_no' => 1, 'total' => 2],
         ]);
 
-        $this->client->method('get')->willReturn($response);
+        $client = $this->createStub(MotiveClient::class);
+        $client->method('get')->willReturn($response);
 
-        $periods = $this->resource->list();
+        $resource = new DrivingPeriodsResource($client);
+        $periods = $resource->list();
 
         $this->assertInstanceOf(LazyCollection::class, $periods);
 
@@ -122,7 +122,8 @@ class DrivingPeriodsResourceTest extends TestCase
             'pagination'      => ['per_page' => 25, 'page_no' => 1, 'total' => 1],
         ]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/driving_periods', [
                 'start_date' => '2024-01-01',
@@ -132,7 +133,8 @@ class DrivingPeriodsResourceTest extends TestCase
             ])
             ->willReturn($response);
 
-        $periods = $this->resource->forDateRange('2024-01-01', '2024-01-31');
+        $resource = new DrivingPeriodsResource($client);
+        $periods = $resource->forDateRange('2024-01-01', '2024-01-31');
 
         $this->assertInstanceOf(LazyCollection::class, $periods);
         $periodsArray = $periods->all();
@@ -155,12 +157,14 @@ class DrivingPeriodsResourceTest extends TestCase
             'pagination'      => ['per_page' => 25, 'page_no' => 1, 'total' => 1],
         ]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/driving_periods', ['driver_id' => 100, 'page_no' => 1, 'per_page' => 25])
             ->willReturn($response);
 
-        $periods = $this->resource->forDriver(100);
+        $resource = new DrivingPeriodsResource($client);
+        $periods = $resource->forDriver(100);
 
         $this->assertInstanceOf(LazyCollection::class, $periods);
         $periodsArray = $periods->all();
@@ -185,12 +189,14 @@ class DrivingPeriodsResourceTest extends TestCase
             'pagination'      => ['per_page' => 25, 'page_no' => 1, 'total' => 1],
         ]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/driving_periods', ['vehicle_id' => 200, 'page_no' => 1, 'per_page' => 25])
             ->willReturn($response);
 
-        $periods = $this->resource->forVehicle(200);
+        $resource = new DrivingPeriodsResource($client);
+        $periods = $resource->forVehicle(200);
 
         $this->assertInstanceOf(LazyCollection::class, $periods);
         $periodsArray = $periods->all();
@@ -205,7 +211,7 @@ class DrivingPeriodsResourceTest extends TestCase
      */
     private function createMockResponse(array $data, int $status = 200): Response
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('json')->willReturnCallback(
             fn (?string $key = null) => $key !== null ? ($data[$key] ?? null) : $data
         );

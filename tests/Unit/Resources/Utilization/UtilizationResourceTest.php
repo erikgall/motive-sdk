@@ -17,20 +17,12 @@ use Motive\Resources\Utilization\UtilizationResource;
  */
 class UtilizationResourceTest extends TestCase
 {
-    private MotiveClient $client;
-
-    private UtilizationResource $resource;
-
-    protected function setUp(): void
-    {
-        $this->client = $this->createMock(MotiveClient::class);
-        $this->resource = new UtilizationResource($this->client);
-    }
-
     #[Test]
     public function it_builds_correct_full_path(): void
     {
-        $this->assertSame('/v1/utilization', $this->resource->fullPath());
+        $resource = new UtilizationResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('/v1/utilization', $resource->fullPath());
     }
 
     #[Test]
@@ -43,12 +35,14 @@ class UtilizationResourceTest extends TestCase
 
         $response = $this->createMockResponse(['daily_utilization' => $dailyData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/utilization/daily', ['start_date' => '2024-01-01', 'end_date' => '2024-01-02', 'vehicle_id' => 789])
             ->willReturn($response);
 
-        $daily = $this->resource->daily([
+        $resource = new UtilizationResource($client);
+        $daily = $resource->daily([
             'start_date' => '2024-01-01',
             'end_date'   => '2024-01-02',
             'vehicle_id' => 789,
@@ -72,12 +66,14 @@ class UtilizationResourceTest extends TestCase
 
         $response = $this->createMockResponse(['utilization_report' => $reportData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/utilization/summary', ['start_date' => '2024-01-01', 'end_date' => '2024-01-31'])
             ->willReturn($response);
 
-        $report = $this->resource->summary([
+        $resource = new UtilizationResource($client);
+        $report = $resource->summary([
             'start_date' => '2024-01-01',
             'end_date'   => '2024-01-31',
         ]);
@@ -97,12 +93,14 @@ class UtilizationResourceTest extends TestCase
 
         $response = $this->createMockResponse(['utilization_report' => $reportData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/utilization/fleet', ['start_date' => '2024-01-01', 'end_date' => '2024-01-31'])
             ->willReturn($response);
 
-        $report = $this->resource->forFleet([
+        $resource = new UtilizationResource($client);
+        $report = $resource->forFleet([
             'start_date' => '2024-01-01',
             'end_date'   => '2024-01-31',
         ]);
@@ -123,12 +121,14 @@ class UtilizationResourceTest extends TestCase
 
         $response = $this->createMockResponse(['utilization_report' => $reportData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/utilization/vehicles/789', ['start_date' => '2024-01-01', 'end_date' => '2024-01-31'])
             ->willReturn($response);
 
-        $report = $this->resource->forVehicle(789, [
+        $resource = new UtilizationResource($client);
+        $report = $resource->forVehicle(789, [
             'start_date' => '2024-01-01',
             'end_date'   => '2024-01-31',
         ]);
@@ -141,13 +141,17 @@ class UtilizationResourceTest extends TestCase
     #[Test]
     public function it_has_correct_base_path(): void
     {
-        $this->assertSame('utilization', $this->resource->getBasePath());
+        $resource = new UtilizationResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('utilization', $resource->getBasePath());
     }
 
     #[Test]
     public function it_has_correct_resource_key(): void
     {
-        $this->assertSame('utilization_report', $this->resource->getResourceKey());
+        $resource = new UtilizationResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('utilization_report', $resource->getResourceKey());
     }
 
     /**
@@ -157,7 +161,7 @@ class UtilizationResourceTest extends TestCase
      */
     private function createMockResponse(array $data, int $status = 200): Response
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('json')->willReturnCallback(
             fn (?string $key = null) => $key !== null ? ($data[$key] ?? null) : $data
         );

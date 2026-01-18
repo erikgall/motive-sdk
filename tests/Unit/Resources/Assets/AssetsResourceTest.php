@@ -17,31 +17,23 @@ use Illuminate\Http\Client\Response as HttpResponse;
  */
 class AssetsResourceTest extends TestCase
 {
-    private MotiveClient $client;
-
-    private AssetsResource $resource;
-
-    protected function setUp(): void
-    {
-        $this->client = $this->createMock(MotiveClient::class);
-        $this->resource = new AssetsResource($this->client);
-    }
-
     #[Test]
     public function it_assigns_asset_to_vehicle(): void
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('status')->willReturn(200);
         $httpResponse->method('successful')->willReturn(true);
 
         $response = new Response($httpResponse);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('post')
             ->with('/v1/assets/123/assign', ['vehicle_id' => 456])
             ->willReturn($response);
 
-        $result = $this->resource->assignToVehicle(123, 456);
+        $resource = new AssetsResource($client);
+        $result = $resource->assignToVehicle(123, 456);
 
         $this->assertTrue($result);
     }
@@ -58,7 +50,8 @@ class AssetsResourceTest extends TestCase
 
         $response = $this->createMockResponse(['asset' => $assetData], 201);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('post')
             ->with('/v1/assets', ['asset' => [
                 'name'       => 'New Trailer',
@@ -66,7 +59,8 @@ class AssetsResourceTest extends TestCase
             ]])
             ->willReturn($response);
 
-        $asset = $this->resource->create([
+        $resource = new AssetsResource($client);
+        $asset = $resource->create([
             'name'       => 'New Trailer',
             'asset_type' => 'trailer',
         ]);
@@ -78,18 +72,20 @@ class AssetsResourceTest extends TestCase
     #[Test]
     public function it_deletes_asset(): void
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('status')->willReturn(204);
         $httpResponse->method('successful')->willReturn(true);
 
         $response = new Response($httpResponse);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('delete')
             ->with('/v1/assets/123')
             ->willReturn($response);
 
-        $result = $this->resource->delete(123);
+        $resource = new AssetsResource($client);
+        $result = $resource->delete(123);
 
         $this->assertTrue($result);
     }
@@ -107,12 +103,14 @@ class AssetsResourceTest extends TestCase
 
         $response = $this->createMockResponse(['asset' => $assetData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/assets/123')
             ->willReturn($response);
 
-        $asset = $this->resource->find(123);
+        $resource = new AssetsResource($client);
+        $asset = $resource->find(123);
 
         $this->assertInstanceOf(Asset::class, $asset);
         $this->assertSame(123, $asset->id);
@@ -124,30 +122,36 @@ class AssetsResourceTest extends TestCase
     #[Test]
     public function it_has_correct_base_path(): void
     {
-        $this->assertSame('assets', $this->resource->getBasePath());
+        $resource = new AssetsResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('assets', $resource->getBasePath());
     }
 
     #[Test]
     public function it_has_correct_resource_key(): void
     {
-        $this->assertSame('asset', $this->resource->getResourceKey());
+        $resource = new AssetsResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('asset', $resource->getResourceKey());
     }
 
     #[Test]
     public function it_unassigns_asset_from_vehicle(): void
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('status')->willReturn(200);
         $httpResponse->method('successful')->willReturn(true);
 
         $response = new Response($httpResponse);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('post')
             ->with('/v1/assets/123/unassign')
             ->willReturn($response);
 
-        $result = $this->resource->unassignFromVehicle(123);
+        $resource = new AssetsResource($client);
+        $result = $resource->unassignFromVehicle(123);
 
         $this->assertTrue($result);
     }
@@ -159,7 +163,7 @@ class AssetsResourceTest extends TestCase
      */
     private function createMockResponse(array $data, int $status = 200): Response
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('json')->willReturnCallback(
             fn (?string $key = null) => $key !== null ? ($data[$key] ?? null) : $data
         );

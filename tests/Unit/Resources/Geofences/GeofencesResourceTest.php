@@ -15,16 +15,6 @@ use Illuminate\Http\Client\Response as HttpResponse;
  */
 class GeofencesResourceTest extends TestCase
 {
-    private MotiveClient $client;
-
-    private GeofencesResource $resource;
-
-    protected function setUp(): void
-    {
-        $this->client = $this->createMock(MotiveClient::class);
-        $this->resource = new GeofencesResource($this->client);
-    }
-
     #[Test]
     public function it_creates_geofence(): void
     {
@@ -37,12 +27,14 @@ class GeofencesResourceTest extends TestCase
 
         $response = $this->createMockResponse(['geofence' => $geofenceData], 201);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('post')
             ->with('/v1/geofences', ['geofence' => ['name' => 'New Zone', 'geofence_type' => 'circle']])
             ->willReturn($response);
 
-        $geofence = $this->resource->create(['name' => 'New Zone', 'geofence_type' => 'circle']);
+        $resource = new GeofencesResource($client);
+        $geofence = $resource->create(['name' => 'New Zone', 'geofence_type' => 'circle']);
 
         $this->assertInstanceOf(Geofence::class, $geofence);
         $this->assertSame('New Zone', $geofence->name);
@@ -53,12 +45,14 @@ class GeofencesResourceTest extends TestCase
     {
         $response = $this->createMockResponse([], 204);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('delete')
             ->with('/v1/geofences/123')
             ->willReturn($response);
 
-        $result = $this->resource->delete(123);
+        $resource = new GeofencesResource($client);
+        $result = $resource->delete(123);
 
         $this->assertTrue($result);
     }
@@ -76,12 +70,14 @@ class GeofencesResourceTest extends TestCase
 
         $response = $this->createMockResponse(['geofence' => $geofenceData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/geofences/123')
             ->willReturn($response);
 
-        $geofence = $this->resource->find(123);
+        $resource = new GeofencesResource($client);
+        $geofence = $resource->find(123);
 
         $this->assertInstanceOf(Geofence::class, $geofence);
         $this->assertSame(123, $geofence->id);
@@ -91,13 +87,17 @@ class GeofencesResourceTest extends TestCase
     #[Test]
     public function it_has_correct_base_path(): void
     {
-        $this->assertSame('geofences', $this->resource->getBasePath());
+        $resource = new GeofencesResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('geofences', $resource->getBasePath());
     }
 
     #[Test]
     public function it_has_correct_resource_key(): void
     {
-        $this->assertSame('geofence', $this->resource->getResourceKey());
+        $resource = new GeofencesResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('geofence', $resource->getResourceKey());
     }
 
     /**
@@ -107,7 +107,7 @@ class GeofencesResourceTest extends TestCase
      */
     private function createMockResponse(array $data, int $status = 200): Response
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('json')->willReturnCallback(
             fn (?string $key = null) => $key !== null ? ($data[$key] ?? null) : $data
         );

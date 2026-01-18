@@ -17,21 +17,13 @@ use Illuminate\Http\Client\Response as HttpResponse;
  */
 class WebhooksResourceTest extends TestCase
 {
-    private MotiveClient $client;
-
-    private WebhooksResource $resource;
-
-    protected function setUp(): void
-    {
-        $this->client = $this->createMock(MotiveClient::class);
-        $this->resource = new WebhooksResource($this->client);
-    }
-
     #[Test]
     public function it_builds_correct_full_path(): void
     {
-        $this->assertSame('/v2/webhooks', $this->resource->fullPath());
-        $this->assertSame('/v2/webhooks/123', $this->resource->fullPath('123'));
+        $resource = new WebhooksResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('/v2/webhooks', $resource->fullPath());
+        $this->assertSame('/v2/webhooks/123', $resource->fullPath('123'));
     }
 
     #[Test]
@@ -47,12 +39,14 @@ class WebhooksResourceTest extends TestCase
 
         $response = $this->createMockResponse(['webhook' => $webhookData], 201);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('post')
             ->with('/v2/webhooks', ['webhook' => ['url' => 'https://example.com/webhooks', 'events' => ['vehicle.updated']]])
             ->willReturn($response);
 
-        $webhook = $this->resource->create([
+        $resource = new WebhooksResource($client);
+        $webhook = $resource->create([
             'url'    => 'https://example.com/webhooks',
             'events' => ['vehicle.updated'],
         ]);
@@ -64,18 +58,20 @@ class WebhooksResourceTest extends TestCase
     #[Test]
     public function it_deletes_webhook(): void
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('status')->willReturn(204);
         $httpResponse->method('successful')->willReturn(true);
 
         $response = new Response($httpResponse);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('delete')
             ->with('/v2/webhooks/123')
             ->willReturn($response);
 
-        $result = $this->resource->delete(123);
+        $resource = new WebhooksResource($client);
+        $result = $resource->delete(123);
 
         $this->assertTrue($result);
     }
@@ -93,12 +89,14 @@ class WebhooksResourceTest extends TestCase
 
         $response = $this->createMockResponse(['webhook' => $webhookData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v2/webhooks/123')
             ->willReturn($response);
 
-        $webhook = $this->resource->find(123);
+        $resource = new WebhooksResource($client);
+        $webhook = $resource->find(123);
 
         $this->assertInstanceOf(Webhook::class, $webhook);
         $this->assertSame(123, $webhook->id);
@@ -126,12 +124,14 @@ class WebhooksResourceTest extends TestCase
 
         $response = $this->createMockResponse(['webhook_logs' => $logsData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v2/webhooks/123/logs')
             ->willReturn($response);
 
-        $logs = $this->resource->logs(123);
+        $resource = new WebhooksResource($client);
+        $logs = $resource->logs(123);
 
         $this->assertCount(2, $logs);
         $this->assertInstanceOf(WebhookLog::class, $logs->first());
@@ -141,30 +141,36 @@ class WebhooksResourceTest extends TestCase
     #[Test]
     public function it_has_correct_base_path(): void
     {
-        $this->assertSame('webhooks', $this->resource->getBasePath());
+        $resource = new WebhooksResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('webhooks', $resource->getBasePath());
     }
 
     #[Test]
     public function it_has_correct_resource_key(): void
     {
-        $this->assertSame('webhook', $this->resource->getResourceKey());
+        $resource = new WebhooksResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('webhook', $resource->getResourceKey());
     }
 
     #[Test]
     public function it_tests_webhook(): void
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('status')->willReturn(200);
         $httpResponse->method('successful')->willReturn(true);
 
         $response = new Response($httpResponse);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('post')
             ->with('/v2/webhooks/123/test')
             ->willReturn($response);
 
-        $result = $this->resource->test(123);
+        $resource = new WebhooksResource($client);
+        $result = $resource->test(123);
 
         $this->assertTrue($result);
     }
@@ -182,12 +188,14 @@ class WebhooksResourceTest extends TestCase
 
         $response = $this->createMockResponse(['webhook' => $webhookData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('patch')
             ->with('/v2/webhooks/123', ['webhook' => ['url' => 'https://example.com/new-url', 'status' => 'inactive']])
             ->willReturn($response);
 
-        $webhook = $this->resource->update(123, [
+        $resource = new WebhooksResource($client);
+        $webhook = $resource->update(123, [
             'url'    => 'https://example.com/new-url',
             'status' => 'inactive',
         ]);
@@ -203,7 +211,7 @@ class WebhooksResourceTest extends TestCase
      */
     private function createMockResponse(array $data, int $status = 200): Response
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('json')->willReturnCallback(
             fn (?string $key = null) => $key !== null ? ($data[$key] ?? null) : $data
         );

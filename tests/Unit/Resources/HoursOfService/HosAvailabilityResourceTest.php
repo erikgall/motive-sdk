@@ -15,16 +15,6 @@ use Motive\Resources\HoursOfService\HosAvailabilityResource;
  */
 class HosAvailabilityResourceTest extends TestCase
 {
-    private MotiveClient $client;
-
-    private HosAvailabilityResource $resource;
-
-    protected function setUp(): void
-    {
-        $this->client = $this->createMock(MotiveClient::class);
-        $this->resource = new HosAvailabilityResource($this->client);
-    }
-
     #[Test]
     public function it_gets_availability_for_driver(): void
     {
@@ -37,12 +27,14 @@ class HosAvailabilityResourceTest extends TestCase
 
         $response = $this->createMockResponse(['hos_availability' => $availabilityData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/hos_availability/driver/456')
             ->willReturn($response);
 
-        $availability = $this->resource->forDriver(456);
+        $resource = new HosAvailabilityResource($client);
+        $availability = $resource->forDriver(456);
 
         $this->assertInstanceOf(HosAvailability::class, $availability);
         $this->assertSame(456, $availability->driverId);
@@ -54,13 +46,17 @@ class HosAvailabilityResourceTest extends TestCase
     #[Test]
     public function it_has_correct_base_path(): void
     {
-        $this->assertSame('hos_availability', $this->resource->getBasePath());
+        $resource = new HosAvailabilityResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('hos_availability', $resource->getBasePath());
     }
 
     #[Test]
     public function it_has_correct_resource_key(): void
     {
-        $this->assertSame('hos_availability', $this->resource->getResourceKey());
+        $resource = new HosAvailabilityResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('hos_availability', $resource->getResourceKey());
     }
 
     /**
@@ -70,7 +66,7 @@ class HosAvailabilityResourceTest extends TestCase
      */
     private function createMockResponse(array $data, int $status = 200): Response
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('json')->willReturnCallback(
             fn (?string $key = null) => $key !== null ? ($data[$key] ?? null) : $data
         );

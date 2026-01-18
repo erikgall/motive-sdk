@@ -16,21 +16,13 @@ use Illuminate\Http\Client\Response as HttpResponse;
  */
 class TimecardsResourceTest extends TestCase
 {
-    private MotiveClient $client;
-
-    private TimecardsResource $resource;
-
-    protected function setUp(): void
-    {
-        $this->client = $this->createMock(MotiveClient::class);
-        $this->resource = new TimecardsResource($this->client);
-    }
-
     #[Test]
     public function it_builds_correct_full_path(): void
     {
-        $this->assertSame('/v1/timecards', $this->resource->fullPath());
-        $this->assertSame('/v1/timecards/123', $this->resource->fullPath('123'));
+        $resource = new TimecardsResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('/v1/timecards', $resource->fullPath());
+        $this->assertSame('/v1/timecards/123', $resource->fullPath('123'));
     }
 
     #[Test]
@@ -47,12 +39,14 @@ class TimecardsResourceTest extends TestCase
 
         $response = $this->createMockResponse(['timecard' => $timecardData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/timecards/123')
             ->willReturn($response);
 
-        $timecard = $this->resource->find(123);
+        $resource = new TimecardsResource($client);
+        $timecard = $resource->find(123);
 
         $this->assertInstanceOf(Timecard::class, $timecard);
         $this->assertSame(123, $timecard->id);
@@ -62,13 +56,17 @@ class TimecardsResourceTest extends TestCase
     #[Test]
     public function it_has_correct_base_path(): void
     {
-        $this->assertSame('timecards', $this->resource->getBasePath());
+        $resource = new TimecardsResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('timecards', $resource->getBasePath());
     }
 
     #[Test]
     public function it_has_correct_resource_key(): void
     {
-        $this->assertSame('timecard', $this->resource->getResourceKey());
+        $resource = new TimecardsResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('timecard', $resource->getResourceKey());
     }
 
     #[Test]
@@ -96,9 +94,11 @@ class TimecardsResourceTest extends TestCase
             'pagination' => ['per_page' => 25, 'page_no' => 1, 'total' => 2],
         ]);
 
-        $this->client->method('get')->willReturn($response);
+        $client = $this->createStub(MotiveClient::class);
+        $client->method('get')->willReturn($response);
 
-        $timecards = $this->resource->list();
+        $resource = new TimecardsResource($client);
+        $timecards = $resource->list();
 
         $this->assertInstanceOf(LazyCollection::class, $timecards);
 
@@ -126,12 +126,14 @@ class TimecardsResourceTest extends TestCase
             'pagination' => ['per_page' => 25, 'page_no' => 1, 'total' => 1],
         ]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/timecards', ['driver_id' => 789, 'page_no' => 1, 'per_page' => 25])
             ->willReturn($response);
 
-        $timecards = $this->resource->forDriver(789);
+        $resource = new TimecardsResource($client);
+        $timecards = $resource->forDriver(789);
 
         $this->assertInstanceOf(LazyCollection::class, $timecards);
         $timecardsArray = $timecards->all();
@@ -153,12 +155,14 @@ class TimecardsResourceTest extends TestCase
 
         $response = $this->createMockResponse(['timecard' => $timecardData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('patch')
             ->with('/v1/timecards/123', ['timecard' => ['total_hours' => 9.0]])
             ->willReturn($response);
 
-        $timecard = $this->resource->update(123, ['total_hours' => 9.0]);
+        $resource = new TimecardsResource($client);
+        $timecard = $resource->update(123, ['total_hours' => 9.0]);
 
         $this->assertInstanceOf(Timecard::class, $timecard);
         $this->assertSame(9.0, $timecard->totalHours);
@@ -171,7 +175,7 @@ class TimecardsResourceTest extends TestCase
      */
     private function createMockResponse(array $data, int $status = 200): Response
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('json')->willReturnCallback(
             fn (?string $key = null) => $key !== null ? ($data[$key] ?? null) : $data
         );

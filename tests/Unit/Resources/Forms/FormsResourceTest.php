@@ -16,21 +16,13 @@ use Illuminate\Http\Client\Response as HttpResponse;
  */
 class FormsResourceTest extends TestCase
 {
-    private MotiveClient $client;
-
-    private FormsResource $resource;
-
-    protected function setUp(): void
-    {
-        $this->client = $this->createMock(MotiveClient::class);
-        $this->resource = new FormsResource($this->client);
-    }
-
     #[Test]
     public function it_builds_correct_full_path(): void
     {
-        $this->assertSame('/v1/company_forms', $this->resource->fullPath());
-        $this->assertSame('/v1/company_forms/123', $this->resource->fullPath('123'));
+        $resource = new FormsResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('/v1/company_forms', $resource->fullPath());
+        $this->assertSame('/v1/company_forms/123', $resource->fullPath('123'));
     }
 
     #[Test]
@@ -52,12 +44,14 @@ class FormsResourceTest extends TestCase
 
         $response = $this->createMockResponse(['form' => $formData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('post')
             ->with('/v1/company_forms', ['form' => $data])
             ->willReturn($response);
 
-        $form = $this->resource->create($data);
+        $resource = new FormsResource($client);
+        $form = $resource->create($data);
 
         $this->assertInstanceOf(Form::class, $form);
         $this->assertSame(456, $form->id);
@@ -69,12 +63,14 @@ class FormsResourceTest extends TestCase
     {
         $response = $this->createMockResponse([], 204);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('delete')
             ->with('/v1/company_forms/123')
             ->willReturn($response);
 
-        $result = $this->resource->delete(123);
+        $resource = new FormsResource($client);
+        $result = $resource->delete(123);
 
         $this->assertTrue($result);
     }
@@ -92,12 +88,14 @@ class FormsResourceTest extends TestCase
 
         $response = $this->createMockResponse(['form' => $formData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/company_forms/123')
             ->willReturn($response);
 
-        $form = $this->resource->find(123);
+        $resource = new FormsResource($client);
+        $form = $resource->find(123);
 
         $this->assertInstanceOf(Form::class, $form);
         $this->assertSame(123, $form->id);
@@ -107,13 +105,17 @@ class FormsResourceTest extends TestCase
     #[Test]
     public function it_has_correct_base_path(): void
     {
-        $this->assertSame('company_forms', $this->resource->getBasePath());
+        $resource = new FormsResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('company_forms', $resource->getBasePath());
     }
 
     #[Test]
     public function it_has_correct_resource_key(): void
     {
-        $this->assertSame('form', $this->resource->getResourceKey());
+        $resource = new FormsResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('form', $resource->getResourceKey());
     }
 
     #[Test]
@@ -133,12 +135,14 @@ class FormsResourceTest extends TestCase
             'pagination' => ['per_page' => 25, 'page_no' => 1, 'total' => 1],
         ]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/company_forms', ['active' => true, 'page_no' => 1, 'per_page' => 25])
             ->willReturn($response);
 
-        $forms = $this->resource->active();
+        $resource = new FormsResource($client);
+        $forms = $resource->active();
 
         $this->assertInstanceOf(LazyCollection::class, $forms);
 
@@ -170,9 +174,11 @@ class FormsResourceTest extends TestCase
             'pagination' => ['per_page' => 25, 'page_no' => 1, 'total' => 2],
         ]);
 
-        $this->client->method('get')->willReturn($response);
+        $client = $this->createStub(MotiveClient::class);
+        $client->method('get')->willReturn($response);
 
-        $forms = $this->resource->list();
+        $resource = new FormsResource($client);
+        $forms = $resource->list();
 
         $this->assertInstanceOf(LazyCollection::class, $forms);
 
@@ -197,12 +203,14 @@ class FormsResourceTest extends TestCase
 
         $response = $this->createMockResponse(['form' => $formData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('patch')
             ->with('/v1/company_forms/123', ['form' => $data])
             ->willReturn($response);
 
-        $form = $this->resource->update(123, $data);
+        $resource = new FormsResource($client);
+        $form = $resource->update(123, $data);
 
         $this->assertInstanceOf(Form::class, $form);
         $this->assertSame('Updated Form Name', $form->name);
@@ -215,7 +223,7 @@ class FormsResourceTest extends TestCase
      */
     private function createMockResponse(array $data, int $status = 200): Response
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('json')->willReturnCallback(
             fn (?string $key = null) => $key !== null ? ($data[$key] ?? null) : $data
         );

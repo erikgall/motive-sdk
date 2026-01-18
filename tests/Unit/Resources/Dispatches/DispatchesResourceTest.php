@@ -15,16 +15,6 @@ use Illuminate\Http\Client\Response as HttpResponse;
  */
 class DispatchesResourceTest extends TestCase
 {
-    private MotiveClient $client;
-
-    private DispatchesResource $resource;
-
-    protected function setUp(): void
-    {
-        $this->client = $this->createMock(MotiveClient::class);
-        $this->resource = new DispatchesResource($this->client);
-    }
-
     #[Test]
     public function it_creates_dispatch(): void
     {
@@ -36,12 +26,14 @@ class DispatchesResourceTest extends TestCase
 
         $response = $this->createMockResponse(['dispatch' => $dispatchData], 201);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('post')
             ->with('/v1/dispatches', ['dispatch' => ['company_id' => 456]])
             ->willReturn($response);
 
-        $dispatch = $this->resource->create(['company_id' => 456]);
+        $resource = new DispatchesResource($client);
+        $dispatch = $resource->create(['company_id' => 456]);
 
         $this->assertInstanceOf(Dispatch::class, $dispatch);
         $this->assertSame(123, $dispatch->id);
@@ -52,12 +44,14 @@ class DispatchesResourceTest extends TestCase
     {
         $response = $this->createMockResponse([], 204);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('delete')
             ->with('/v1/dispatches/123')
             ->willReturn($response);
 
-        $result = $this->resource->delete(123);
+        $resource = new DispatchesResource($client);
+        $result = $resource->delete(123);
 
         $this->assertTrue($result);
     }
@@ -73,12 +67,14 @@ class DispatchesResourceTest extends TestCase
 
         $response = $this->createMockResponse(['dispatches' => [$dispatchData]]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/dispatches/status/pending', [])
             ->willReturn($response);
 
-        $dispatches = $this->resource->byStatus('pending');
+        $resource = new DispatchesResource($client);
+        $dispatches = $resource->byStatus('pending');
 
         $this->assertIsArray($dispatches);
         $this->assertCount(1, $dispatches);
@@ -97,12 +93,14 @@ class DispatchesResourceTest extends TestCase
 
         $response = $this->createMockResponse(['dispatch' => $dispatchData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/dispatches/123')
             ->willReturn($response);
 
-        $dispatch = $this->resource->find(123);
+        $resource = new DispatchesResource($client);
+        $dispatch = $resource->find(123);
 
         $this->assertInstanceOf(Dispatch::class, $dispatch);
         $this->assertSame(123, $dispatch->id);
@@ -113,13 +111,17 @@ class DispatchesResourceTest extends TestCase
     #[Test]
     public function it_has_correct_base_path(): void
     {
-        $this->assertSame('dispatches', $this->resource->getBasePath());
+        $resource = new DispatchesResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('dispatches', $resource->getBasePath());
     }
 
     #[Test]
     public function it_has_correct_resource_key(): void
     {
-        $this->assertSame('dispatch', $this->resource->getResourceKey());
+        $resource = new DispatchesResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('dispatch', $resource->getResourceKey());
     }
 
     #[Test]
@@ -133,12 +135,14 @@ class DispatchesResourceTest extends TestCase
 
         $response = $this->createMockResponse(['dispatch' => $dispatchData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('patch')
             ->with('/v1/dispatches/123', ['dispatch' => ['status' => 'completed']])
             ->willReturn($response);
 
-        $dispatch = $this->resource->update(123, ['status' => 'completed']);
+        $resource = new DispatchesResource($client);
+        $dispatch = $resource->update(123, ['status' => 'completed']);
 
         $this->assertInstanceOf(Dispatch::class, $dispatch);
     }
@@ -150,7 +154,7 @@ class DispatchesResourceTest extends TestCase
      */
     private function createMockResponse(array $data, int $status = 200): Response
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('json')->willReturnCallback(
             fn (?string $key = null) => $key !== null ? ($data[$key] ?? null) : $data
         );

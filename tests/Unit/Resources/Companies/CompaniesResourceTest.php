@@ -15,16 +15,6 @@ use Illuminate\Http\Client\Response as HttpResponse;
  */
 class CompaniesResourceTest extends TestCase
 {
-    private MotiveClient $client;
-
-    private CompaniesResource $resource;
-
-    protected function setUp(): void
-    {
-        $this->client = $this->createMock(MotiveClient::class);
-        $this->resource = new CompaniesResource($this->client);
-    }
-
     #[Test]
     public function it_finds_company_by_id(): void
     {
@@ -36,12 +26,14 @@ class CompaniesResourceTest extends TestCase
 
         $response = $this->createMockResponse(['company' => $companyData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/companies/456')
             ->willReturn($response);
 
-        $company = $this->resource->find(456);
+        $resource = new CompaniesResource($client);
+        $company = $resource->find(456);
 
         $this->assertInstanceOf(Company::class, $company);
         $this->assertSame(456, $company->id);
@@ -60,12 +52,14 @@ class CompaniesResourceTest extends TestCase
 
         $response = $this->createMockResponse(['company' => $companyData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/companies/current')
             ->willReturn($response);
 
-        $company = $this->resource->current();
+        $resource = new CompaniesResource($client);
+        $company = $resource->current();
 
         $this->assertInstanceOf(Company::class, $company);
         $this->assertSame(123, $company->id);
@@ -77,13 +71,17 @@ class CompaniesResourceTest extends TestCase
     #[Test]
     public function it_has_correct_base_path(): void
     {
-        $this->assertSame('companies', $this->resource->getBasePath());
+        $resource = new CompaniesResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('companies', $resource->getBasePath());
     }
 
     #[Test]
     public function it_has_correct_resource_key(): void
     {
-        $this->assertSame('company', $this->resource->getResourceKey());
+        $resource = new CompaniesResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('company', $resource->getResourceKey());
     }
 
     /**
@@ -93,7 +91,7 @@ class CompaniesResourceTest extends TestCase
      */
     private function createMockResponse(array $data, int $status = 200): Response
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('json')->willReturnCallback(
             fn (?string $key = null) => $key !== null ? ($data[$key] ?? null) : $data
         );

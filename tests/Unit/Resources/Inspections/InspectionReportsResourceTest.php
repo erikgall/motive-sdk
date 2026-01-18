@@ -15,16 +15,6 @@ use Motive\Resources\Inspections\InspectionReportsResource;
  */
 class InspectionReportsResourceTest extends TestCase
 {
-    private MotiveClient $client;
-
-    private InspectionReportsResource $resource;
-
-    protected function setUp(): void
-    {
-        $this->client = $this->createMock(MotiveClient::class);
-        $this->resource = new InspectionReportsResource($this->client);
-    }
-
     #[Test]
     public function it_finds_report_by_id(): void
     {
@@ -39,12 +29,14 @@ class InspectionReportsResourceTest extends TestCase
 
         $response = $this->createMockResponse(['inspection_report' => $reportData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/inspection_reports/123')
             ->willReturn($response);
 
-        $report = $this->resource->find(123);
+        $resource = new InspectionReportsResource($client);
+        $report = $resource->find(123);
 
         $this->assertInstanceOf(InspectionReport::class, $report);
         $this->assertSame(123, $report->id);
@@ -64,12 +56,14 @@ class InspectionReportsResourceTest extends TestCase
 
         $response = $this->createMockResponse(['inspection_reports' => [$reportData]]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/inspection_reports/driver/456', [])
             ->willReturn($response);
 
-        $reports = $this->resource->forDriver(456);
+        $resource = new InspectionReportsResource($client);
+        $reports = $resource->forDriver(456);
 
         $this->assertIsArray($reports);
         $this->assertCount(1, $reports);
@@ -89,12 +83,14 @@ class InspectionReportsResourceTest extends TestCase
 
         $response = $this->createMockResponse(['inspection_reports' => [$reportData]]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/inspection_reports/vehicle/789', [])
             ->willReturn($response);
 
-        $reports = $this->resource->forVehicle(789);
+        $resource = new InspectionReportsResource($client);
+        $reports = $resource->forVehicle(789);
 
         $this->assertIsArray($reports);
         $this->assertCount(1, $reports);
@@ -104,13 +100,17 @@ class InspectionReportsResourceTest extends TestCase
     #[Test]
     public function it_has_correct_base_path(): void
     {
-        $this->assertSame('inspection_reports', $this->resource->getBasePath());
+        $resource = new InspectionReportsResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('inspection_reports', $resource->getBasePath());
     }
 
     #[Test]
     public function it_has_correct_resource_key(): void
     {
-        $this->assertSame('inspection_report', $this->resource->getResourceKey());
+        $resource = new InspectionReportsResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('inspection_report', $resource->getResourceKey());
     }
 
     /**
@@ -120,7 +120,7 @@ class InspectionReportsResourceTest extends TestCase
      */
     private function createMockResponse(array $data, int $status = 200): Response
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('json')->willReturnCallback(
             fn (?string $key = null) => $key !== null ? ($data[$key] ?? null) : $data
         );

@@ -18,16 +18,6 @@ use Motive\Resources\FreightVisibility\FreightVisibilityResource;
  */
 class FreightVisibilityResourceTest extends TestCase
 {
-    private MotiveClient $client;
-
-    private FreightVisibilityResource $resource;
-
-    protected function setUp(): void
-    {
-        $this->client = $this->createMock(MotiveClient::class);
-        $this->resource = new FreightVisibilityResource($this->client);
-    }
-
     #[Test]
     public function it_gets_shipment_eta(): void
     {
@@ -40,12 +30,14 @@ class FreightVisibilityResourceTest extends TestCase
 
         $response = $this->createMockResponse(['shipment_eta' => $etaData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/shipments/123/eta')
             ->willReturn($response);
 
-        $eta = $this->resource->eta(123);
+        $resource = new FreightVisibilityResource($client);
+        $eta = $resource->eta(123);
 
         $this->assertInstanceOf(ShipmentEta::class, $eta);
         $this->assertSame(123, $eta->shipmentId);
@@ -64,12 +56,14 @@ class FreightVisibilityResourceTest extends TestCase
 
         $response = $this->createMockResponse(['shipment_tracking' => $trackingData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/shipments/123/tracking')
             ->willReturn($response);
 
-        $tracking = $this->resource->tracking(123);
+        $resource = new FreightVisibilityResource($client);
+        $tracking = $resource->tracking(123);
 
         $this->assertInstanceOf(ShipmentTracking::class, $tracking);
         $this->assertSame(123, $tracking->shipmentId);
@@ -79,13 +73,17 @@ class FreightVisibilityResourceTest extends TestCase
     #[Test]
     public function it_has_correct_base_path(): void
     {
-        $this->assertSame('shipments', $this->resource->getBasePath());
+        $resource = new FreightVisibilityResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('shipments', $resource->getBasePath());
     }
 
     #[Test]
     public function it_has_correct_resource_key(): void
     {
-        $this->assertSame('shipment', $this->resource->getResourceKey());
+        $resource = new FreightVisibilityResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('shipment', $resource->getResourceKey());
     }
 
     #[Test]
@@ -109,9 +107,11 @@ class FreightVisibilityResourceTest extends TestCase
             'pagination' => ['per_page' => 25, 'page_no' => 1, 'total' => 2],
         ]);
 
-        $this->client->method('get')->willReturn($response);
+        $client = $this->createStub(MotiveClient::class);
+        $client->method('get')->willReturn($response);
 
-        $shipments = $this->resource->shipments();
+        $resource = new FreightVisibilityResource($client);
+        $shipments = $resource->shipments();
 
         $this->assertInstanceOf(LazyCollection::class, $shipments);
 
@@ -127,7 +127,7 @@ class FreightVisibilityResourceTest extends TestCase
      */
     private function createMockResponse(array $data, int $status = 200): Response
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('json')->willReturnCallback(
             fn (?string $key = null) => $key !== null ? ($data[$key] ?? null) : $data
         );

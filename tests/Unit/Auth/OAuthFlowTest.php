@@ -109,24 +109,34 @@ class OAuthFlowTest extends TestCase
     }
 
     /**
-     * Create a mocked OAuthFlow for testing HTTP calls.
+     * Create a testable OAuthFlow subclass for testing HTTP calls.
      *
      * @param  array<string, mixed>  $responseData
      */
     private function getMockedOAuthFlow(array $responseData): OAuthFlow
     {
-        $oauthFlow = $this->getMockBuilder(OAuthFlow::class)
-            ->setConstructorArgs([
-                'clientId'     => 'test-client-id',
-                'clientSecret' => 'test-client-secret',
-                'redirectUri'  => 'https://example.com/callback',
-            ])
-            ->onlyMethods(['sendTokenRequest'])
-            ->getMock();
+        return new class('test-client-id', 'test-client-secret', 'https://example.com/callback', $responseData) extends OAuthFlow
+        {
+            /**
+             * @param  array<string, mixed>  $testResponse
+             */
+            public function __construct(
+                string $clientId,
+                string $clientSecret,
+                string $redirectUri,
+                private array $testResponse
+            ) {
+                parent::__construct($clientId, $clientSecret, $redirectUri);
+            }
 
-        $oauthFlow->method('sendTokenRequest')
-            ->willReturn($responseData);
-
-        return $oauthFlow;
+            /**
+             * @param  array<string, mixed>  $data
+             * @return array<string, mixed>
+             */
+            protected function sendTokenRequest(array $data): array
+            {
+                return $this->testResponse;
+            }
+        };
     }
 }

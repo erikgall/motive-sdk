@@ -15,16 +15,6 @@ use Illuminate\Http\Client\Response as HttpResponse;
  */
 class LocationsResourceTest extends TestCase
 {
-    private MotiveClient $client;
-
-    private LocationsResource $resource;
-
-    protected function setUp(): void
-    {
-        $this->client = $this->createMock(MotiveClient::class);
-        $this->resource = new LocationsResource($this->client);
-    }
-
     #[Test]
     public function it_finds_location_by_id(): void
     {
@@ -38,12 +28,14 @@ class LocationsResourceTest extends TestCase
 
         $response = $this->createMockResponse(['location' => $locationData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/locations/123')
             ->willReturn($response);
 
-        $location = $this->resource->find(123);
+        $resource = new LocationsResource($client);
+        $location = $resource->find(123);
 
         $this->assertInstanceOf(Location::class, $location);
         $this->assertSame(123, $location->id);
@@ -63,7 +55,8 @@ class LocationsResourceTest extends TestCase
 
         $response = $this->createMockResponse(['locations' => [$locationData]]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/locations/nearest', [
                 'latitude'  => 37.7749,
@@ -72,7 +65,8 @@ class LocationsResourceTest extends TestCase
             ])
             ->willReturn($response);
 
-        $locations = $this->resource->findNearest(37.7749, -122.4194, 1000);
+        $resource = new LocationsResource($client);
+        $locations = $resource->findNearest(37.7749, -122.4194, 1000);
 
         $this->assertCount(1, $locations);
         $this->assertInstanceOf(Location::class, $locations->first());
@@ -81,13 +75,17 @@ class LocationsResourceTest extends TestCase
     #[Test]
     public function it_has_correct_base_path(): void
     {
-        $this->assertSame('locations', $this->resource->getBasePath());
+        $resource = new LocationsResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('locations', $resource->getBasePath());
     }
 
     #[Test]
     public function it_has_correct_resource_key(): void
     {
-        $this->assertSame('location', $this->resource->getResourceKey());
+        $resource = new LocationsResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('location', $resource->getResourceKey());
     }
 
     /**
@@ -97,7 +95,7 @@ class LocationsResourceTest extends TestCase
      */
     private function createMockResponse(array $data, int $status = 200): Response
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('json')->willReturnCallback(
             fn (?string $key = null) => $key !== null ? ($data[$key] ?? null) : $data
         );

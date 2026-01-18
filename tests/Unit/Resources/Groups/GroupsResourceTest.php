@@ -16,27 +16,19 @@ use Illuminate\Http\Client\Response as HttpResponse;
  */
 class GroupsResourceTest extends TestCase
 {
-    private MotiveClient $client;
-
-    private GroupsResource $resource;
-
-    protected function setUp(): void
-    {
-        $this->client = $this->createMock(MotiveClient::class);
-        $this->resource = new GroupsResource($this->client);
-    }
-
     #[Test]
     public function it_adds_member_to_group(): void
     {
         $response = $this->createMockResponse(['success' => true]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('post')
             ->with('/v1/groups/123/members', ['member_id' => 456, 'member_type' => 'driver'])
             ->willReturn($response);
 
-        $result = $this->resource->addMember(123, 456, 'driver');
+        $resource = new GroupsResource($client);
+        $result = $resource->addMember(123, 456, 'driver');
 
         $this->assertTrue($result);
     }
@@ -52,12 +44,14 @@ class GroupsResourceTest extends TestCase
 
         $response = $this->createMockResponse(['group' => $groupData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/groups/123')
             ->willReturn($response);
 
-        $group = $this->resource->find(123);
+        $resource = new GroupsResource($client);
+        $group = $resource->find(123);
 
         $this->assertInstanceOf(Group::class, $group);
         $this->assertSame(123, $group->id);
@@ -76,12 +70,14 @@ class GroupsResourceTest extends TestCase
 
         $response = $this->createMockResponse(['group_members' => [$memberData]]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/groups/123/members')
             ->willReturn($response);
 
-        $members = $this->resource->members(123);
+        $resource = new GroupsResource($client);
+        $members = $resource->members(123);
 
         $this->assertCount(1, $members);
         $this->assertInstanceOf(GroupMember::class, $members->first());
@@ -90,13 +86,17 @@ class GroupsResourceTest extends TestCase
     #[Test]
     public function it_has_correct_base_path(): void
     {
-        $this->assertSame('groups', $this->resource->getBasePath());
+        $resource = new GroupsResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('groups', $resource->getBasePath());
     }
 
     #[Test]
     public function it_has_correct_resource_key(): void
     {
-        $this->assertSame('group', $this->resource->getResourceKey());
+        $resource = new GroupsResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('group', $resource->getResourceKey());
     }
 
     #[Test]
@@ -104,12 +104,14 @@ class GroupsResourceTest extends TestCase
     {
         $response = $this->createMockResponse([], 204);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('delete')
             ->with('/v1/groups/123/members/456')
             ->willReturn($response);
 
-        $result = $this->resource->removeMember(123, 456);
+        $resource = new GroupsResource($client);
+        $result = $resource->removeMember(123, 456);
 
         $this->assertTrue($result);
     }
@@ -121,7 +123,7 @@ class GroupsResourceTest extends TestCase
      */
     private function createMockResponse(array $data, int $status = 200): Response
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('json')->willReturnCallback(
             fn (?string $key = null) => $key !== null ? ($data[$key] ?? null) : $data
         );

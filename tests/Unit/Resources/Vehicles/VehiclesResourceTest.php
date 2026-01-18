@@ -17,21 +17,13 @@ use Illuminate\Http\Client\Response as HttpResponse;
  */
 class VehiclesResourceTest extends TestCase
 {
-    private MotiveClient $client;
-
-    private VehiclesResource $resource;
-
-    protected function setUp(): void
-    {
-        $this->client = $this->createMock(MotiveClient::class);
-        $this->resource = new VehiclesResource($this->client);
-    }
-
     #[Test]
     public function it_builds_correct_full_path(): void
     {
-        $this->assertSame('/v1/vehicles', $this->resource->fullPath());
-        $this->assertSame('/v1/vehicles/123', $this->resource->fullPath('123'));
+        $resource = new VehiclesResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('/v1/vehicles', $resource->fullPath());
+        $this->assertSame('/v1/vehicles/123', $resource->fullPath('123'));
     }
 
     #[Test]
@@ -47,12 +39,14 @@ class VehiclesResourceTest extends TestCase
 
         $response = $this->createMockResponse(['vehicle' => $vehicleData], 201);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('post')
             ->with('/v1/vehicles', ['vehicle' => ['number' => 'V-002', 'make' => 'Volvo', 'model' => 'VNL']])
             ->willReturn($response);
 
-        $vehicle = $this->resource->create([
+        $resource = new VehiclesResource($client);
+        $vehicle = $resource->create([
             'number' => 'V-002',
             'make'   => 'Volvo',
             'model'  => 'VNL',
@@ -65,18 +59,20 @@ class VehiclesResourceTest extends TestCase
     #[Test]
     public function it_deletes_vehicle(): void
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('status')->willReturn(204);
         $httpResponse->method('successful')->willReturn(true);
 
         $response = new Response($httpResponse);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('delete')
             ->with('/v1/vehicles/123')
             ->willReturn($response);
 
-        $result = $this->resource->delete(123);
+        $resource = new VehiclesResource($client);
+        $result = $resource->delete(123);
 
         $this->assertTrue($result);
     }
@@ -94,12 +90,14 @@ class VehiclesResourceTest extends TestCase
 
         $response = $this->createMockResponse(['vehicle' => $vehicleData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/vehicles/123')
             ->willReturn($response);
 
-        $vehicle = $this->resource->find(123);
+        $resource = new VehiclesResource($client);
+        $vehicle = $resource->find(123);
 
         $this->assertInstanceOf(Vehicle::class, $vehicle);
         $this->assertSame(123, $vehicle->id);
@@ -118,12 +116,14 @@ class VehiclesResourceTest extends TestCase
 
         $response = $this->createMockResponse(['vehicle' => $vehicleData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/vehicles/by_number/V-001')
             ->willReturn($response);
 
-        $vehicle = $this->resource->findByNumber('V-001');
+        $resource = new VehiclesResource($client);
+        $vehicle = $resource->findByNumber('V-001');
 
         $this->assertInstanceOf(Vehicle::class, $vehicle);
         $this->assertSame('V-001', $vehicle->number);
@@ -143,12 +143,14 @@ class VehiclesResourceTest extends TestCase
 
         $response = $this->createMockResponse(['vehicle_location' => $locationData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/vehicles/123/current_location')
             ->willReturn($response);
 
-        $location = $this->resource->currentLocation(123);
+        $resource = new VehiclesResource($client);
+        $location = $resource->currentLocation(123);
 
         $this->assertInstanceOf(VehicleLocation::class, $location);
         $this->assertSame(37.7749, $location->latitude);
@@ -159,13 +161,17 @@ class VehiclesResourceTest extends TestCase
     #[Test]
     public function it_has_correct_base_path(): void
     {
-        $this->assertSame('vehicles', $this->resource->getBasePath());
+        $resource = new VehiclesResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('vehicles', $resource->getBasePath());
     }
 
     #[Test]
     public function it_has_correct_resource_key(): void
     {
-        $this->assertSame('vehicle', $this->resource->getResourceKey());
+        $resource = new VehiclesResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('vehicle', $resource->getResourceKey());
     }
 
     #[Test]
@@ -181,12 +187,14 @@ class VehiclesResourceTest extends TestCase
 
         $response = $this->createMockResponse(['vehicle' => $vehicleData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('patch')
             ->with('/v1/vehicles/123', ['vehicle' => ['status' => 'inactive']])
             ->willReturn($response);
 
-        $vehicle = $this->resource->update(123, ['status' => 'inactive']);
+        $resource = new VehiclesResource($client);
+        $vehicle = $resource->update(123, ['status' => 'inactive']);
 
         $this->assertInstanceOf(Vehicle::class, $vehicle);
         $this->assertSame(VehicleStatus::Inactive, $vehicle->status);
@@ -199,7 +207,7 @@ class VehiclesResourceTest extends TestCase
      */
     private function createMockResponse(array $data, int $status = 200): Response
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('json')->willReturnCallback(
             fn (?string $key = null) => $key !== null ? ($data[$key] ?? null) : $data
         );

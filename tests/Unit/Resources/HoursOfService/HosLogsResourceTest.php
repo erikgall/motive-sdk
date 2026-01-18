@@ -16,26 +16,17 @@ use Motive\Resources\HoursOfService\HosLogsResource;
  */
 class HosLogsResourceTest extends TestCase
 {
-    private MotiveClient $client;
-
-    private HosLogsResource $resource;
-
-    protected function setUp(): void
-    {
-        $this->client = $this->createMock(MotiveClient::class);
-        $this->resource = new HosLogsResource($this->client);
-    }
-
     #[Test]
     public function it_certifies_driver_logs(): void
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('status')->willReturn(200);
         $httpResponse->method('successful')->willReturn(true);
 
         $response = new Response($httpResponse);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('post')
             ->with('/v1/hos_logs/certify', [
                 'driver_id' => 456,
@@ -43,7 +34,8 @@ class HosLogsResourceTest extends TestCase
             ])
             ->willReturn($response);
 
-        $result = $this->resource->certify(456, '2024-01-15');
+        $resource = new HosLogsResource($client);
+        $result = $resource->certify(456, '2024-01-15');
 
         $this->assertTrue($result);
     }
@@ -60,7 +52,8 @@ class HosLogsResourceTest extends TestCase
 
         $response = $this->createMockResponse(['hos_log' => $hosLogData], 201);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('post')
             ->with('/v1/hos_logs', ['hos_log' => [
                 'driver_id'   => 456,
@@ -69,7 +62,8 @@ class HosLogsResourceTest extends TestCase
             ]])
             ->willReturn($response);
 
-        $hosLog = $this->resource->create([
+        $resource = new HosLogsResource($client);
+        $hosLog = $resource->create([
             'driver_id'   => 456,
             'duty_status' => 'on_duty',
             'start_time'  => '2024-01-15T08:00:00Z',
@@ -82,18 +76,20 @@ class HosLogsResourceTest extends TestCase
     #[Test]
     public function it_deletes_hos_log(): void
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('status')->willReturn(204);
         $httpResponse->method('successful')->willReturn(true);
 
         $response = new Response($httpResponse);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('delete')
             ->with('/v1/hos_logs/123')
             ->willReturn($response);
 
-        $result = $this->resource->delete(123);
+        $resource = new HosLogsResource($client);
+        $result = $resource->delete(123);
 
         $this->assertTrue($result);
     }
@@ -111,12 +107,14 @@ class HosLogsResourceTest extends TestCase
 
         $response = $this->createMockResponse(['hos_log' => $hosLogData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/hos_logs/123')
             ->willReturn($response);
 
-        $hosLog = $this->resource->find(123);
+        $resource = new HosLogsResource($client);
+        $hosLog = $resource->find(123);
 
         $this->assertInstanceOf(HosLog::class, $hosLog);
         $this->assertSame(123, $hosLog->id);
@@ -127,13 +125,17 @@ class HosLogsResourceTest extends TestCase
     #[Test]
     public function it_has_correct_base_path(): void
     {
-        $this->assertSame('hos_logs', $this->resource->getBasePath());
+        $resource = new HosLogsResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('hos_logs', $resource->getBasePath());
     }
 
     #[Test]
     public function it_has_correct_resource_key(): void
     {
-        $this->assertSame('hos_log', $this->resource->getResourceKey());
+        $resource = new HosLogsResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('hos_log', $resource->getResourceKey());
     }
 
     #[Test]
@@ -149,12 +151,14 @@ class HosLogsResourceTest extends TestCase
 
         $response = $this->createMockResponse(['hos_log' => $hosLogData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('patch')
             ->with('/v1/hos_logs/123', ['hos_log' => ['annotation' => 'End of shift']])
             ->willReturn($response);
 
-        $hosLog = $this->resource->update(123, ['annotation' => 'End of shift']);
+        $resource = new HosLogsResource($client);
+        $hosLog = $resource->update(123, ['annotation' => 'End of shift']);
 
         $this->assertInstanceOf(HosLog::class, $hosLog);
         $this->assertSame('End of shift', $hosLog->annotation);
@@ -167,7 +171,7 @@ class HosLogsResourceTest extends TestCase
      */
     private function createMockResponse(array $data, int $status = 200): Response
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('json')->willReturnCallback(
             fn (?string $key = null) => $key !== null ? ($data[$key] ?? null) : $data
         );

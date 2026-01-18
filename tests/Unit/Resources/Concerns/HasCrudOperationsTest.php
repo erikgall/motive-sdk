@@ -21,16 +21,11 @@ class HasCrudOperationsTest extends TestCase
     #[Test]
     public function it_creates_resource(): void
     {
+        $response = $this->createMockResponse([
+            'item' => ['id' => 1, 'name' => 'New Item', 'created_at' => '2024-01-17T10:00:00Z'],
+        ]);
+
         $client = $this->createMock(MotiveClient::class);
-        $response = $this->createMock(Response::class);
-        $response->method('json')->willReturnCallback(function (?string $key = null) {
-            $data = [
-                'item' => ['id' => 1, 'name' => 'New Item', 'created_at' => '2024-01-17T10:00:00Z'],
-            ];
-
-            return $key === null ? $data : ($data[$key] ?? null);
-        });
-
         $client->expects($this->once())
             ->method('post')
             ->with('/v1/items', ['item' => ['name' => 'New Item']])
@@ -46,10 +41,9 @@ class HasCrudOperationsTest extends TestCase
     #[Test]
     public function it_deletes_resource(): void
     {
-        $client = $this->createMock(MotiveClient::class);
-        $response = $this->createMock(Response::class);
-        $response->method('successful')->willReturn(true);
+        $response = $this->createMockResponse([], 204);
 
+        $client = $this->createMock(MotiveClient::class);
         $client->expects($this->once())
             ->method('delete')
             ->with('/v1/items/1')
@@ -64,16 +58,11 @@ class HasCrudOperationsTest extends TestCase
     #[Test]
     public function it_finds_resource_by_id(): void
     {
+        $response = $this->createMockResponse([
+            'item' => ['id' => 1, 'name' => 'Test 1', 'created_at' => '2024-01-17T10:00:00Z'],
+        ]);
+
         $client = $this->createMock(MotiveClient::class);
-        $response = $this->createMock(Response::class);
-        $response->method('json')->willReturnCallback(function (?string $key = null) {
-            $data = [
-                'item' => ['id' => 1, 'name' => 'Test 1', 'created_at' => '2024-01-17T10:00:00Z'],
-            ];
-
-            return $key === null ? $data : ($data[$key] ?? null);
-        });
-
         $client->expects($this->once())
             ->method('get')
             ->with('/v1/items/1')
@@ -89,24 +78,19 @@ class HasCrudOperationsTest extends TestCase
     #[Test]
     public function it_lists_resources_with_lazy_collection(): void
     {
-        $client = $this->createMock(MotiveClient::class);
-        $response = $this->createMock(Response::class);
-        $response->method('json')->willReturnCallback(function (?string $key = null) {
-            $data = [
-                'items' => [
-                    ['id' => 1, 'name' => 'Test 1', 'created_at' => '2024-01-17T10:00:00Z'],
-                    ['id' => 2, 'name' => 'Test 2', 'created_at' => '2024-01-17T11:00:00Z'],
-                ],
-                'pagination' => [
-                    'total'        => 2,
-                    'per_page'     => 25,
-                    'current_page' => 1,
-                ],
-            ];
+        $response = $this->createMockResponse([
+            'items' => [
+                ['id' => 1, 'name' => 'Test 1', 'created_at' => '2024-01-17T10:00:00Z'],
+                ['id' => 2, 'name' => 'Test 2', 'created_at' => '2024-01-17T11:00:00Z'],
+            ],
+            'pagination' => [
+                'total'        => 2,
+                'per_page'     => 25,
+                'current_page' => 1,
+            ],
+        ]);
 
-            return $key === null ? $data : ($data[$key] ?? null);
-        });
-
+        $client = $this->createStub(MotiveClient::class);
         $client->method('get')->willReturn($response);
 
         $resource = new CrudTestResource($client);
@@ -121,23 +105,18 @@ class HasCrudOperationsTest extends TestCase
     #[Test]
     public function it_paginates_resources(): void
     {
-        $client = $this->createMock(MotiveClient::class);
-        $response = $this->createMock(Response::class);
-        $response->method('json')->willReturnCallback(function (?string $key = null) {
-            $data = [
-                'items' => [
-                    ['id' => 1, 'name' => 'Test 1', 'created_at' => '2024-01-17T10:00:00Z'],
-                ],
-                'pagination' => [
-                    'total'        => 50,
-                    'per_page'     => 25,
-                    'current_page' => 1,
-                ],
-            ];
+        $response = $this->createMockResponse([
+            'items' => [
+                ['id' => 1, 'name' => 'Test 1', 'created_at' => '2024-01-17T10:00:00Z'],
+            ],
+            'pagination' => [
+                'total'        => 50,
+                'per_page'     => 25,
+                'current_page' => 1,
+            ],
+        ]);
 
-            return $key === null ? $data : ($data[$key] ?? null);
-        });
-
+        $client = $this->createStub(MotiveClient::class);
         $client->method('get')->willReturn($response);
 
         $resource = new CrudTestResource($client);
@@ -150,16 +129,11 @@ class HasCrudOperationsTest extends TestCase
     #[Test]
     public function it_updates_resource(): void
     {
+        $response = $this->createMockResponse([
+            'item' => ['id' => 1, 'name' => 'Updated Item', 'created_at' => '2024-01-17T10:00:00Z'],
+        ]);
+
         $client = $this->createMock(MotiveClient::class);
-        $response = $this->createMock(Response::class);
-        $response->method('json')->willReturnCallback(function (?string $key = null) {
-            $data = [
-                'item' => ['id' => 1, 'name' => 'Updated Item', 'created_at' => '2024-01-17T10:00:00Z'],
-            ];
-
-            return $key === null ? $data : ($data[$key] ?? null);
-        });
-
         $client->expects($this->once())
             ->method('patch')
             ->with('/v1/items/1', ['item' => ['name' => 'Updated Item']])
@@ -170,6 +144,23 @@ class HasCrudOperationsTest extends TestCase
 
         $this->assertInstanceOf(TestItemDto::class, $result);
         $this->assertEquals('Updated Item', $result->name);
+    }
+
+    /**
+     * Create a mock Response with JSON data.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    private function createMockResponse(array $data, int $status = 200): Response
+    {
+        $httpResponse = $this->createStub(\Illuminate\Http\Client\Response::class);
+        $httpResponse->method('json')->willReturnCallback(
+            fn (?string $key = null) => $key !== null ? ($data[$key] ?? null) : $data
+        );
+        $httpResponse->method('status')->willReturn($status);
+        $httpResponse->method('successful')->willReturn($status >= 200 && $status < 300);
+
+        return new Response($httpResponse);
     }
 }
 

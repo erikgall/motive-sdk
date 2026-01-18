@@ -16,21 +16,13 @@ use Motive\Resources\IftaReports\IftaReportsResource;
  */
 class IftaReportsResourceTest extends TestCase
 {
-    private MotiveClient $client;
-
-    private IftaReportsResource $resource;
-
-    protected function setUp(): void
-    {
-        $this->client = $this->createMock(MotiveClient::class);
-        $this->resource = new IftaReportsResource($this->client);
-    }
-
     #[Test]
     public function it_builds_correct_full_path(): void
     {
-        $this->assertSame('/v1/ifta_reports', $this->resource->fullPath());
-        $this->assertSame('/v1/ifta_reports/123', $this->resource->fullPath('123'));
+        $resource = new IftaReportsResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('/v1/ifta_reports', $resource->fullPath());
+        $this->assertSame('/v1/ifta_reports/123', $resource->fullPath('123'));
     }
 
     #[Test]
@@ -47,12 +39,14 @@ class IftaReportsResourceTest extends TestCase
 
         $response = $this->createMockResponse(['ifta_report' => $reportData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/ifta_reports/123')
             ->willReturn($response);
 
-        $report = $this->resource->find(123);
+        $resource = new IftaReportsResource($client);
+        $report = $resource->find(123);
 
         $this->assertInstanceOf(IftaReport::class, $report);
         $this->assertSame(123, $report->id);
@@ -72,12 +66,14 @@ class IftaReportsResourceTest extends TestCase
 
         $response = $this->createMockResponse(['ifta_report' => $reportData], 201);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('post')
             ->with('/v1/ifta_reports', ['ifta_report' => ['quarter' => 1, 'year' => 2024]])
             ->willReturn($response);
 
-        $report = $this->resource->generate([
+        $resource = new IftaReportsResource($client);
+        $report = $resource->generate([
             'quarter' => 1,
             'year'    => 2024,
         ]);
@@ -90,13 +86,17 @@ class IftaReportsResourceTest extends TestCase
     #[Test]
     public function it_has_correct_base_path(): void
     {
-        $this->assertSame('ifta_reports', $this->resource->getBasePath());
+        $resource = new IftaReportsResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('ifta_reports', $resource->getBasePath());
     }
 
     #[Test]
     public function it_has_correct_resource_key(): void
     {
-        $this->assertSame('ifta_report', $this->resource->getResourceKey());
+        $resource = new IftaReportsResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('ifta_report', $resource->getResourceKey());
     }
 
     #[Test]
@@ -122,9 +122,11 @@ class IftaReportsResourceTest extends TestCase
             'pagination'   => ['per_page' => 25, 'page_no' => 1, 'total' => 2],
         ]);
 
-        $this->client->method('get')->willReturn($response);
+        $client = $this->createStub(MotiveClient::class);
+        $client->method('get')->willReturn($response);
 
-        $reports = $this->resource->list();
+        $resource = new IftaReportsResource($client);
+        $reports = $resource->list();
 
         $this->assertInstanceOf(LazyCollection::class, $reports);
 
@@ -151,12 +153,14 @@ class IftaReportsResourceTest extends TestCase
             'pagination'   => ['per_page' => 25, 'page_no' => 1, 'total' => 1],
         ]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/ifta_reports', ['year' => 2024, 'page_no' => 1, 'per_page' => 25])
             ->willReturn($response);
 
-        $reports = $this->resource->forYear(2024);
+        $resource = new IftaReportsResource($client);
+        $reports = $resource->forYear(2024);
 
         $this->assertInstanceOf(LazyCollection::class, $reports);
         $reportsArray = $reports->all();
@@ -171,7 +175,7 @@ class IftaReportsResourceTest extends TestCase
      */
     private function createMockResponse(array $data, int $status = 200): Response
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('json')->willReturnCallback(
             fn (?string $key = null) => $key !== null ? ($data[$key] ?? null) : $data
         );

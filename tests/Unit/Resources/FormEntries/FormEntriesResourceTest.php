@@ -16,21 +16,13 @@ use Motive\Resources\FormEntries\FormEntriesResource;
  */
 class FormEntriesResourceTest extends TestCase
 {
-    private MotiveClient $client;
-
-    private FormEntriesResource $resource;
-
-    protected function setUp(): void
-    {
-        $this->client = $this->createMock(MotiveClient::class);
-        $this->resource = new FormEntriesResource($this->client);
-    }
-
     #[Test]
     public function it_builds_correct_full_path(): void
     {
-        $this->assertSame('/v1/form_entries', $this->resource->fullPath());
-        $this->assertSame('/v1/form_entries/123', $this->resource->fullPath('123'));
+        $resource = new FormEntriesResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('/v1/form_entries', $resource->fullPath());
+        $this->assertSame('/v1/form_entries/123', $resource->fullPath('123'));
     }
 
     #[Test]
@@ -55,12 +47,14 @@ class FormEntriesResourceTest extends TestCase
 
         $response = $this->createMockResponse(['form_entry' => $entryData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('post')
             ->with('/v1/form_entries', ['form_entry' => $data])
             ->willReturn($response);
 
-        $entry = $this->resource->create($data);
+        $resource = new FormEntriesResource($client);
+        $entry = $resource->create($data);
 
         $this->assertInstanceOf(FormEntry::class, $entry);
         $this->assertSame(456, $entry->id);
@@ -77,12 +71,14 @@ class FormEntriesResourceTest extends TestCase
 
         $response = $this->createMockResponse(['form_entry' => $entryData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/form_entries/123')
             ->willReturn($response);
 
-        $entry = $this->resource->find(123);
+        $resource = new FormEntriesResource($client);
+        $entry = $resource->find(123);
 
         $this->assertInstanceOf(FormEntry::class, $entry);
         $this->assertSame(123, $entry->id);
@@ -91,13 +87,17 @@ class FormEntriesResourceTest extends TestCase
     #[Test]
     public function it_has_correct_base_path(): void
     {
-        $this->assertSame('form_entries', $this->resource->getBasePath());
+        $resource = new FormEntriesResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('form_entries', $resource->getBasePath());
     }
 
     #[Test]
     public function it_has_correct_resource_key(): void
     {
-        $this->assertSame('form_entry', $this->resource->getResourceKey());
+        $resource = new FormEntriesResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('form_entry', $resource->getResourceKey());
     }
 
     #[Test]
@@ -116,12 +116,14 @@ class FormEntriesResourceTest extends TestCase
             'pagination'   => ['per_page' => 25, 'page_no' => 1, 'total' => 1],
         ]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/form_entries', ['driver_id' => 200, 'page_no' => 1, 'per_page' => 25])
             ->willReturn($response);
 
-        $entries = $this->resource->forDriver(200);
+        $resource = new FormEntriesResource($client);
+        $entries = $resource->forDriver(200);
 
         $this->assertInstanceOf(LazyCollection::class, $entries);
         $entriesArray = $entries->all();
@@ -145,12 +147,14 @@ class FormEntriesResourceTest extends TestCase
             'pagination'   => ['per_page' => 25, 'page_no' => 1, 'total' => 1],
         ]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/form_entries', ['form_id' => 100, 'page_no' => 1, 'per_page' => 25])
             ->willReturn($response);
 
-        $entries = $this->resource->forForm(100);
+        $resource = new FormEntriesResource($client);
+        $entries = $resource->forForm(100);
 
         $this->assertInstanceOf(LazyCollection::class, $entries);
         $entriesArray = $entries->all();
@@ -179,9 +183,11 @@ class FormEntriesResourceTest extends TestCase
             'pagination'   => ['per_page' => 25, 'page_no' => 1, 'total' => 2],
         ]);
 
-        $this->client->method('get')->willReturn($response);
+        $client = $this->createStub(MotiveClient::class);
+        $client->method('get')->willReturn($response);
 
-        $entries = $this->resource->list();
+        $resource = new FormEntriesResource($client);
+        $entries = $resource->list();
 
         $this->assertInstanceOf(LazyCollection::class, $entries);
 
@@ -197,7 +203,7 @@ class FormEntriesResourceTest extends TestCase
      */
     private function createMockResponse(array $data, int $status = 200): Response
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('json')->willReturnCallback(
             fn (?string $key = null) => $key !== null ? ($data[$key] ?? null) : $data
         );

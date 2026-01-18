@@ -17,35 +17,29 @@ use Illuminate\Http\Client\Response as HttpResponse;
  */
 class DocumentsResourceTest extends TestCase
 {
-    private MotiveClient $client;
-
-    private DocumentsResource $resource;
-
-    protected function setUp(): void
-    {
-        $this->client = $this->createMock(MotiveClient::class);
-        $this->resource = new DocumentsResource($this->client);
-    }
-
     #[Test]
     public function it_builds_correct_full_path(): void
     {
-        $this->assertSame('/v1/documents', $this->resource->fullPath());
-        $this->assertSame('/v1/documents/123', $this->resource->fullPath('123'));
+        $resource = new DocumentsResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('/v1/documents', $resource->fullPath());
+        $this->assertSame('/v1/documents/123', $resource->fullPath('123'));
     }
 
     #[Test]
     public function it_deletes_document(): void
     {
-        $response = $this->createMock(Response::class);
+        $response = $this->createStub(Response::class);
         $response->method('successful')->willReturn(true);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('delete')
             ->with('/v1/documents/123')
             ->willReturn($response);
 
-        $result = $this->resource->delete(123);
+        $resource = new DocumentsResource($client);
+        $result = $resource->delete(123);
 
         $this->assertTrue($result);
     }
@@ -55,19 +49,21 @@ class DocumentsResourceTest extends TestCase
     {
         $pdfContent = '%PDF-1.4 mock content';
 
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('body')->willReturn($pdfContent);
         $httpResponse->method('successful')->willReturn(true);
         $httpResponse->method('status')->willReturn(200);
 
         $response = new Response($httpResponse);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/documents/123/download')
             ->willReturn($response);
 
-        $content = $this->resource->download(123);
+        $resource = new DocumentsResource($client);
+        $content = $resource->download(123);
 
         $this->assertSame($pdfContent, $content);
     }
@@ -86,12 +82,14 @@ class DocumentsResourceTest extends TestCase
 
         $response = $this->createMockResponse(['document' => $documentData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/documents/123')
             ->willReturn($response);
 
-        $document = $this->resource->find(123);
+        $resource = new DocumentsResource($client);
+        $document = $resource->find(123);
 
         $this->assertInstanceOf(Document::class, $document);
         $this->assertSame(123, $document->id);
@@ -103,13 +101,17 @@ class DocumentsResourceTest extends TestCase
     #[Test]
     public function it_has_correct_base_path(): void
     {
-        $this->assertSame('documents', $this->resource->getBasePath());
+        $resource = new DocumentsResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('documents', $resource->getBasePath());
     }
 
     #[Test]
     public function it_has_correct_resource_key(): void
     {
-        $this->assertSame('document', $this->resource->getResourceKey());
+        $resource = new DocumentsResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('document', $resource->getResourceKey());
     }
 
     #[Test]
@@ -135,9 +137,11 @@ class DocumentsResourceTest extends TestCase
             'pagination' => ['per_page' => 25, 'page_no' => 1, 'total' => 2],
         ]);
 
-        $this->client->method('get')->willReturn($response);
+        $client = $this->createStub(MotiveClient::class);
+        $client->method('get')->willReturn($response);
 
-        $documents = $this->resource->list();
+        $resource = new DocumentsResource($client);
+        $documents = $resource->list();
 
         $this->assertInstanceOf(LazyCollection::class, $documents);
 
@@ -165,12 +169,14 @@ class DocumentsResourceTest extends TestCase
             'pagination' => ['per_page' => 25, 'page_no' => 1, 'total' => 1],
         ]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/documents', ['driver_id' => 789, 'page_no' => 1, 'per_page' => 25])
             ->willReturn($response);
 
-        $documents = $this->resource->forDriver(789);
+        $resource = new DocumentsResource($client);
+        $documents = $resource->forDriver(789);
 
         $this->assertInstanceOf(LazyCollection::class, $documents);
         $documentsArray = $documents->all();
@@ -190,12 +196,14 @@ class DocumentsResourceTest extends TestCase
 
         $response = $this->createMockResponse(['document' => $documentData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('patch')
             ->with('/v1/documents/123', ['document' => ['status' => 'approved']])
             ->willReturn($response);
 
-        $document = $this->resource->updateStatus(123, DocumentStatus::Approved);
+        $resource = new DocumentsResource($client);
+        $document = $resource->updateStatus(123, DocumentStatus::Approved);
 
         $this->assertInstanceOf(Document::class, $document);
         $this->assertSame(DocumentStatus::Approved, $document->status);
@@ -215,12 +223,14 @@ class DocumentsResourceTest extends TestCase
 
         $response = $this->createMockResponse(['document' => $documentData], 201);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('post')
             ->with('/v1/documents', ['document' => ['driver_id' => 789, 'document_type' => 'bill_of_lading', 'external_id' => 'BOL-2024-001']])
             ->willReturn($response);
 
-        $document = $this->resource->upload([
+        $resource = new DocumentsResource($client);
+        $document = $resource->upload([
             'driver_id'     => 789,
             'document_type' => 'bill_of_lading',
             'external_id'   => 'BOL-2024-001',
@@ -238,7 +248,7 @@ class DocumentsResourceTest extends TestCase
      */
     private function createMockResponse(array $data, int $status = 200): Response
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('json')->willReturnCallback(
             fn (?string $key = null) => $key !== null ? ($data[$key] ?? null) : $data
         );

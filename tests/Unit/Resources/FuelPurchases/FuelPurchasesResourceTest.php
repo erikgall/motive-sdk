@@ -16,21 +16,13 @@ use Motive\Resources\FuelPurchases\FuelPurchasesResource;
  */
 class FuelPurchasesResourceTest extends TestCase
 {
-    private MotiveClient $client;
-
-    private FuelPurchasesResource $resource;
-
-    protected function setUp(): void
-    {
-        $this->client = $this->createMock(MotiveClient::class);
-        $this->resource = new FuelPurchasesResource($this->client);
-    }
-
     #[Test]
     public function it_builds_correct_full_path(): void
     {
-        $this->assertSame('/v1/fuel_purchases', $this->resource->fullPath());
-        $this->assertSame('/v1/fuel_purchases/123', $this->resource->fullPath('123'));
+        $resource = new FuelPurchasesResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('/v1/fuel_purchases', $resource->fullPath());
+        $this->assertSame('/v1/fuel_purchases/123', $resource->fullPath('123'));
     }
 
     #[Test]
@@ -47,12 +39,14 @@ class FuelPurchasesResourceTest extends TestCase
 
         $response = $this->createMockResponse(['fuel_purchase' => $fuelPurchaseData], 201);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('post')
             ->with('/v1/fuel_purchases', ['fuel_purchase' => ['vehicle_id' => 789, 'fuel_type' => 'diesel', 'quantity' => 150.5, 'total_cost' => 585.45]])
             ->willReturn($response);
 
-        $fuelPurchase = $this->resource->create([
+        $resource = new FuelPurchasesResource($client);
+        $fuelPurchase = $resource->create([
             'vehicle_id' => 789,
             'fuel_type'  => 'diesel',
             'quantity'   => 150.5,
@@ -66,15 +60,17 @@ class FuelPurchasesResourceTest extends TestCase
     #[Test]
     public function it_deletes_fuel_purchase(): void
     {
-        $response = $this->createMock(Response::class);
+        $response = $this->createStub(Response::class);
         $response->method('successful')->willReturn(true);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('delete')
             ->with('/v1/fuel_purchases/123')
             ->willReturn($response);
 
-        $result = $this->resource->delete(123);
+        $resource = new FuelPurchasesResource($client);
+        $result = $resource->delete(123);
 
         $this->assertTrue($result);
     }
@@ -94,12 +90,14 @@ class FuelPurchasesResourceTest extends TestCase
 
         $response = $this->createMockResponse(['fuel_purchase' => $fuelPurchaseData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/fuel_purchases/123')
             ->willReturn($response);
 
-        $fuelPurchase = $this->resource->find(123);
+        $resource = new FuelPurchasesResource($client);
+        $fuelPurchase = $resource->find(123);
 
         $this->assertInstanceOf(FuelPurchase::class, $fuelPurchase);
         $this->assertSame(123, $fuelPurchase->id);
@@ -109,13 +107,17 @@ class FuelPurchasesResourceTest extends TestCase
     #[Test]
     public function it_has_correct_base_path(): void
     {
-        $this->assertSame('fuel_purchases', $this->resource->getBasePath());
+        $resource = new FuelPurchasesResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('fuel_purchases', $resource->getBasePath());
     }
 
     #[Test]
     public function it_has_correct_resource_key(): void
     {
-        $this->assertSame('fuel_purchase', $this->resource->getResourceKey());
+        $resource = new FuelPurchasesResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('fuel_purchase', $resource->getResourceKey());
     }
 
     #[Test]
@@ -143,9 +145,11 @@ class FuelPurchasesResourceTest extends TestCase
             'pagination'     => ['per_page' => 25, 'page_no' => 1, 'total' => 2],
         ]);
 
-        $this->client->method('get')->willReturn($response);
+        $client = $this->createStub(MotiveClient::class);
+        $client->method('get')->willReturn($response);
 
-        $fuelPurchases = $this->resource->list();
+        $resource = new FuelPurchasesResource($client);
+        $fuelPurchases = $resource->list();
 
         $this->assertInstanceOf(LazyCollection::class, $fuelPurchases);
 
@@ -173,12 +177,14 @@ class FuelPurchasesResourceTest extends TestCase
             'pagination'     => ['per_page' => 25, 'page_no' => 1, 'total' => 1],
         ]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/fuel_purchases', ['start_date' => '2024-01-01', 'end_date' => '2024-01-31', 'page_no' => 1, 'per_page' => 25])
             ->willReturn($response);
 
-        $fuelPurchases = $this->resource->forDateRange('2024-01-01', '2024-01-31');
+        $resource = new FuelPurchasesResource($client);
+        $fuelPurchases = $resource->forDateRange('2024-01-01', '2024-01-31');
 
         $this->assertInstanceOf(LazyCollection::class, $fuelPurchases);
         $fuelPurchasesArray = $fuelPurchases->all();
@@ -204,12 +210,14 @@ class FuelPurchasesResourceTest extends TestCase
             'pagination'     => ['per_page' => 25, 'page_no' => 1, 'total' => 1],
         ]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/fuel_purchases', ['vehicle_id' => 789, 'page_no' => 1, 'per_page' => 25])
             ->willReturn($response);
 
-        $fuelPurchases = $this->resource->forVehicle(789);
+        $resource = new FuelPurchasesResource($client);
+        $fuelPurchases = $resource->forVehicle(789);
 
         $this->assertInstanceOf(LazyCollection::class, $fuelPurchases);
         $fuelPurchasesArray = $fuelPurchases->all();
@@ -230,12 +238,14 @@ class FuelPurchasesResourceTest extends TestCase
 
         $response = $this->createMockResponse(['fuel_purchase' => $fuelPurchaseData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('patch')
             ->with('/v1/fuel_purchases/123', ['fuel_purchase' => ['quantity' => 175.0, 'total_cost' => 680.75]])
             ->willReturn($response);
 
-        $fuelPurchase = $this->resource->update(123, [
+        $resource = new FuelPurchasesResource($client);
+        $fuelPurchase = $resource->update(123, [
             'quantity'   => 175.0,
             'total_cost' => 680.75,
         ]);
@@ -251,7 +261,7 @@ class FuelPurchasesResourceTest extends TestCase
      */
     private function createMockResponse(array $data, int $status = 200): Response
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('json')->willReturnCallback(
             fn (?string $key = null) => $key !== null ? ($data[$key] ?? null) : $data
         );

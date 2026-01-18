@@ -17,21 +17,13 @@ use Illuminate\Http\Client\Response as HttpResponse;
  */
 class UsersResourceTest extends TestCase
 {
-    private MotiveClient $client;
-
-    private UsersResource $resource;
-
-    protected function setUp(): void
-    {
-        $this->client = $this->createMock(MotiveClient::class);
-        $this->resource = new UsersResource($this->client);
-    }
-
     #[Test]
     public function it_builds_correct_full_path(): void
     {
-        $this->assertSame('/v1/users', $this->resource->fullPath());
-        $this->assertSame('/v1/users/123', $this->resource->fullPath('123'));
+        $resource = new UsersResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('/v1/users', $resource->fullPath());
+        $this->assertSame('/v1/users/123', $resource->fullPath('123'));
     }
 
     #[Test]
@@ -47,7 +39,8 @@ class UsersResourceTest extends TestCase
 
         $response = $this->createMockResponse(['user' => $userData], 201);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('post')
             ->with('/v1/users', ['user' => [
                 'email'      => 'new@example.com',
@@ -56,7 +49,8 @@ class UsersResourceTest extends TestCase
             ]])
             ->willReturn($response);
 
-        $user = $this->resource->create([
+        $resource = new UsersResource($client);
+        $user = $resource->create([
             'email'      => 'new@example.com',
             'first_name' => 'Jane',
             'last_name'  => 'Smith',
@@ -77,12 +71,14 @@ class UsersResourceTest extends TestCase
 
         $response = $this->createMockResponse(['user' => $userData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('post')
             ->with('/v1/users/123/deactivate')
             ->willReturn($response);
 
-        $result = $this->resource->deactivate(123);
+        $resource = new UsersResource($client);
+        $result = $resource->deactivate(123);
 
         $this->assertTrue($result);
     }
@@ -90,18 +86,20 @@ class UsersResourceTest extends TestCase
     #[Test]
     public function it_deletes_user(): void
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('status')->willReturn(204);
         $httpResponse->method('successful')->willReturn(true);
 
         $response = new Response($httpResponse);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('delete')
             ->with('/v1/users/123')
             ->willReturn($response);
 
-        $result = $this->resource->delete(123);
+        $resource = new UsersResource($client);
+        $result = $resource->delete(123);
 
         $this->assertTrue($result);
     }
@@ -121,12 +119,14 @@ class UsersResourceTest extends TestCase
 
         $response = $this->createMockResponse(['user' => $userData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/users/123')
             ->willReturn($response);
 
-        $user = $this->resource->find(123);
+        $resource = new UsersResource($client);
+        $user = $resource->find(123);
 
         $this->assertInstanceOf(User::class, $user);
         $this->assertSame(123, $user->id);
@@ -138,13 +138,17 @@ class UsersResourceTest extends TestCase
     #[Test]
     public function it_has_correct_base_path(): void
     {
-        $this->assertSame('users', $this->resource->getBasePath());
+        $resource = new UsersResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('users', $resource->getBasePath());
     }
 
     #[Test]
     public function it_has_correct_resource_key(): void
     {
-        $this->assertSame('user', $this->resource->getResourceKey());
+        $resource = new UsersResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('user', $resource->getResourceKey());
     }
 
     #[Test]
@@ -158,12 +162,14 @@ class UsersResourceTest extends TestCase
 
         $response = $this->createMockResponse(['user' => $userData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('post')
             ->with('/v1/users/123/reactivate')
             ->willReturn($response);
 
-        $result = $this->resource->reactivate(123);
+        $resource = new UsersResource($client);
+        $result = $resource->reactivate(123);
 
         $this->assertTrue($result);
     }
@@ -175,7 +181,7 @@ class UsersResourceTest extends TestCase
      */
     private function createMockResponse(array $data, int $status = 200): Response
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('json')->willReturnCallback(
             fn (?string $key = null) => $key !== null ? ($data[$key] ?? null) : $data
         );

@@ -15,20 +15,12 @@ use Illuminate\Http\Client\Response as HttpResponse;
  */
 class ScorecardResourceTest extends TestCase
 {
-    private MotiveClient $client;
-
-    private ScorecardResource $resource;
-
-    protected function setUp(): void
-    {
-        $this->client = $this->createMock(MotiveClient::class);
-        $this->resource = new ScorecardResource($this->client);
-    }
-
     #[Test]
     public function it_builds_correct_full_path(): void
     {
-        $this->assertSame('/v1/scorecards', $this->resource->fullPath());
+        $resource = new ScorecardResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('/v1/scorecards', $resource->fullPath());
     }
 
     #[Test]
@@ -44,12 +36,14 @@ class ScorecardResourceTest extends TestCase
 
         $response = $this->createMockResponse(['scorecard' => $scorecardData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/scorecards/drivers/789', ['start_date' => '2024-01-01', 'end_date' => '2024-01-31'])
             ->willReturn($response);
 
-        $scorecard = $this->resource->forDriver(789, [
+        $resource = new ScorecardResource($client);
+        $scorecard = $resource->forDriver(789, [
             'start_date' => '2024-01-01',
             'end_date'   => '2024-01-31',
         ]);
@@ -72,12 +66,14 @@ class ScorecardResourceTest extends TestCase
 
         $response = $this->createMockResponse(['scorecard' => $scorecardData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/scorecards/fleet', ['start_date' => '2024-01-01', 'end_date' => '2024-01-31'])
             ->willReturn($response);
 
-        $scorecard = $this->resource->forFleet([
+        $resource = new ScorecardResource($client);
+        $scorecard = $resource->forFleet([
             'start_date' => '2024-01-01',
             'end_date'   => '2024-01-31',
         ]);
@@ -90,13 +86,17 @@ class ScorecardResourceTest extends TestCase
     #[Test]
     public function it_has_correct_base_path(): void
     {
-        $this->assertSame('scorecards', $this->resource->getBasePath());
+        $resource = new ScorecardResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('scorecards', $resource->getBasePath());
     }
 
     #[Test]
     public function it_has_correct_resource_key(): void
     {
-        $this->assertSame('scorecard', $this->resource->getResourceKey());
+        $resource = new ScorecardResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('scorecard', $resource->getResourceKey());
     }
 
     /**
@@ -106,7 +106,7 @@ class ScorecardResourceTest extends TestCase
      */
     private function createMockResponse(array $data, int $status = 200): Response
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('json')->willReturnCallback(
             fn (?string $key = null) => $key !== null ? ($data[$key] ?? null) : $data
         );

@@ -16,21 +16,13 @@ use Motive\Resources\DriverPerformance\DriverPerformanceEventsResource;
  */
 class DriverPerformanceEventsResourceTest extends TestCase
 {
-    private MotiveClient $client;
-
-    private DriverPerformanceEventsResource $resource;
-
-    protected function setUp(): void
-    {
-        $this->client = $this->createMock(MotiveClient::class);
-        $this->resource = new DriverPerformanceEventsResource($this->client);
-    }
-
     #[Test]
     public function it_builds_correct_full_path(): void
     {
-        $this->assertSame('/v1/driver_performance_events', $this->resource->fullPath());
-        $this->assertSame('/v1/driver_performance_events/123', $this->resource->fullPath('123'));
+        $resource = new DriverPerformanceEventsResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('/v1/driver_performance_events', $resource->fullPath());
+        $this->assertSame('/v1/driver_performance_events/123', $resource->fullPath('123'));
     }
 
     #[Test]
@@ -48,12 +40,14 @@ class DriverPerformanceEventsResourceTest extends TestCase
 
         $response = $this->createMockResponse(['driver_performance_event' => $eventData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/driver_performance_events/123')
             ->willReturn($response);
 
-        $event = $this->resource->find(123);
+        $resource = new DriverPerformanceEventsResource($client);
+        $event = $resource->find(123);
 
         $this->assertInstanceOf(DriverPerformanceEvent::class, $event);
         $this->assertSame(123, $event->id);
@@ -63,13 +57,17 @@ class DriverPerformanceEventsResourceTest extends TestCase
     #[Test]
     public function it_has_correct_base_path(): void
     {
-        $this->assertSame('driver_performance_events', $this->resource->getBasePath());
+        $resource = new DriverPerformanceEventsResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('driver_performance_events', $resource->getBasePath());
     }
 
     #[Test]
     public function it_has_correct_resource_key(): void
     {
-        $this->assertSame('driver_performance_event', $this->resource->getResourceKey());
+        $resource = new DriverPerformanceEventsResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('driver_performance_event', $resource->getResourceKey());
     }
 
     #[Test]
@@ -97,9 +95,11 @@ class DriverPerformanceEventsResourceTest extends TestCase
             'pagination'                => ['per_page' => 25, 'page_no' => 1, 'total' => 2],
         ]);
 
-        $this->client->method('get')->willReturn($response);
+        $client = $this->createStub(MotiveClient::class);
+        $client->method('get')->willReturn($response);
 
-        $events = $this->resource->list();
+        $resource = new DriverPerformanceEventsResource($client);
+        $events = $resource->list();
 
         $this->assertInstanceOf(LazyCollection::class, $events);
 
@@ -127,12 +127,14 @@ class DriverPerformanceEventsResourceTest extends TestCase
             'pagination'                => ['per_page' => 25, 'page_no' => 1, 'total' => 1],
         ]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/driver_performance_events', ['start_date' => '2024-01-01', 'end_date' => '2024-01-31', 'page_no' => 1, 'per_page' => 25])
             ->willReturn($response);
 
-        $events = $this->resource->forDateRange('2024-01-01', '2024-01-31');
+        $resource = new DriverPerformanceEventsResource($client);
+        $events = $resource->forDateRange('2024-01-01', '2024-01-31');
 
         $this->assertInstanceOf(LazyCollection::class, $events);
         $eventsArray = $events->all();
@@ -157,12 +159,14 @@ class DriverPerformanceEventsResourceTest extends TestCase
             'pagination'                => ['per_page' => 25, 'page_no' => 1, 'total' => 1],
         ]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/driver_performance_events', ['driver_id' => 789, 'page_no' => 1, 'per_page' => 25])
             ->willReturn($response);
 
-        $events = $this->resource->forDriver(789);
+        $resource = new DriverPerformanceEventsResource($client);
+        $events = $resource->forDriver(789);
 
         $this->assertInstanceOf(LazyCollection::class, $events);
         $eventsArray = $events->all();
@@ -177,7 +181,7 @@ class DriverPerformanceEventsResourceTest extends TestCase
      */
     private function createMockResponse(array $data, int $status = 200): Response
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('json')->willReturnCallback(
             fn (?string $key = null) => $key !== null ? ($data[$key] ?? null) : $data
         );

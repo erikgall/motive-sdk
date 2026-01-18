@@ -16,16 +16,6 @@ use Illuminate\Http\Client\Response as HttpResponse;
  */
 class MessagesResourceTest extends TestCase
 {
-    private MotiveClient $client;
-
-    private MessagesResource $resource;
-
-    protected function setUp(): void
-    {
-        $this->client = $this->createMock(MotiveClient::class);
-        $this->resource = new MessagesResource($this->client);
-    }
-
     #[Test]
     public function it_broadcasts_message(): void
     {
@@ -48,12 +38,14 @@ class MessagesResourceTest extends TestCase
 
         $response = $this->createMockResponse(['messages' => $messagesData], 201);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('post')
             ->with('/v1/messages/broadcast', ['message' => ['driver_ids' => [101, 102], 'body' => 'Broadcast message']])
             ->willReturn($response);
 
-        $messages = $this->resource->broadcast([
+        $resource = new MessagesResource($client);
+        $messages = $resource->broadcast([
             'driver_ids' => [101, 102],
             'body'       => 'Broadcast message',
         ]);
@@ -65,8 +57,10 @@ class MessagesResourceTest extends TestCase
     #[Test]
     public function it_builds_correct_full_path(): void
     {
-        $this->assertSame('/v1/messages', $this->resource->fullPath());
-        $this->assertSame('/v1/messages/123', $this->resource->fullPath('123'));
+        $resource = new MessagesResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('/v1/messages', $resource->fullPath());
+        $this->assertSame('/v1/messages/123', $resource->fullPath('123'));
     }
 
     #[Test]
@@ -82,12 +76,14 @@ class MessagesResourceTest extends TestCase
 
         $response = $this->createMockResponse(['message' => $messageData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/messages/123')
             ->willReturn($response);
 
-        $message = $this->resource->find(123);
+        $resource = new MessagesResource($client);
+        $message = $resource->find(123);
 
         $this->assertInstanceOf(Message::class, $message);
         $this->assertSame(123, $message->id);
@@ -117,12 +113,14 @@ class MessagesResourceTest extends TestCase
 
         $response = $this->createMockResponse(['messages' => $messagesData]);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('get')
             ->with('/v1/messages/for_driver/789')
             ->willReturn($response);
 
-        $messages = $this->resource->forDriver(789);
+        $resource = new MessagesResource($client);
+        $messages = $resource->forDriver(789);
 
         $this->assertCount(2, $messages);
         $this->assertInstanceOf(Message::class, $messages->first());
@@ -131,13 +129,17 @@ class MessagesResourceTest extends TestCase
     #[Test]
     public function it_has_correct_base_path(): void
     {
-        $this->assertSame('messages', $this->resource->getBasePath());
+        $resource = new MessagesResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('messages', $resource->getBasePath());
     }
 
     #[Test]
     public function it_has_correct_resource_key(): void
     {
-        $this->assertSame('message', $this->resource->getResourceKey());
+        $resource = new MessagesResource($this->createStub(MotiveClient::class));
+
+        $this->assertSame('message', $resource->getResourceKey());
     }
 
     #[Test]
@@ -153,12 +155,14 @@ class MessagesResourceTest extends TestCase
 
         $response = $this->createMockResponse(['message' => $messageData], 201);
 
-        $this->client->expects($this->once())
+        $client = $this->createMock(MotiveClient::class);
+        $client->expects($this->once())
             ->method('post')
             ->with('/v1/messages', ['message' => ['driver_id' => 123, 'body' => 'Hello driver!']])
             ->willReturn($response);
 
-        $message = $this->resource->send([
+        $resource = new MessagesResource($client);
+        $message = $resource->send([
             'driver_id' => 123,
             'body'      => 'Hello driver!',
         ]);
@@ -174,7 +178,7 @@ class MessagesResourceTest extends TestCase
      */
     private function createMockResponse(array $data, int $status = 200): Response
     {
-        $httpResponse = $this->createMock(HttpResponse::class);
+        $httpResponse = $this->createStub(HttpResponse::class);
         $httpResponse->method('json')->willReturnCallback(
             fn (?string $key = null) => $key !== null ? ($data[$key] ?? null) : $data
         );
