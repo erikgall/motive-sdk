@@ -530,40 +530,40 @@ This document tracks all implementation tasks organized by phase. Mark items wit
 
 ### 10.1 Testing Core
 
-- [ ] **10.1.1** Create `src/Testing/MotiveFake.php`
-  - [ ] Replace real client with fake
-  - [ ] Configure fake responses
-  - [ ] Track request history
-  - [ ] Assertion methods
-- [ ] **10.1.2** Create `src/Testing/FakeResponse.php`
-  - [ ] `static json(array $data): static`
-  - [ ] `static paginated(array $items, int $total, int $perPage): static`
-  - [ ] `static error(int $status, array $body): static`
-  - [ ] `static empty(): static`
-- [ ] **10.1.3** Create `src/Testing/RequestHistory.php`
-  - [ ] Store and query recorded requests
-  - [ ] Assertion helpers
+- [x] **10.1.1** Create `src/Testing/MotiveFake.php`
+  - [x] Replace real client with fake
+  - [x] Configure fake responses
+  - [x] Track request history
+  - [x] Assertion methods
+- [x] **10.1.2** Create `src/Testing/FakeResponse.php`
+  - [x] `static json(array $data): static`
+  - [x] `static paginated(array $items, int $total, int $perPage): static`
+  - [x] `static error(int $status, array $body): static`
+  - [x] `static empty(): static`
+- [x] **10.1.3** Create `src/Testing/RequestHistory.php`
+  - [x] Store and query recorded requests
+  - [x] Assertion helpers
 
 ### 10.2 Factories
 
-- [ ] **10.2.1** Create `src/Testing/Factories/Factory.php` (base class)
-  - [ ] `make(array $attributes = []): DataTransferObject`
-  - [ ] `count(int $count): static`
-  - [ ] State methods
-- [ ] **10.2.2** Create `src/Testing/Factories/VehicleFactory.php`
-- [ ] **10.2.3** Create `src/Testing/Factories/UserFactory.php`
-- [ ] **10.2.4** Create `src/Testing/Factories/DriverFactory.php`
-- [ ] **10.2.5** Create `src/Testing/Factories/AssetFactory.php`
-- [ ] **10.2.6** Create `src/Testing/Factories/HosLogFactory.php`
-- [ ] **10.2.7** Create `src/Testing/Factories/HosAvailabilityFactory.php`
-- [ ] **10.2.8** Create `src/Testing/Factories/DispatchFactory.php`
-- [ ] **10.2.9** Create `src/Testing/Factories/LocationFactory.php`
-- [ ] **10.2.10** Create `src/Testing/Factories/GeofenceFactory.php`
-- [ ] **10.2.11** Create `src/Testing/Factories/DocumentFactory.php`
-- [ ] **10.2.12** Create `src/Testing/Factories/MessageFactory.php`
-- [ ] **10.2.13** Create `src/Testing/Factories/WebhookFactory.php`
-- [ ] **10.2.14** Create `src/Testing/Factories/InspectionReportFactory.php`
-- [ ] **10.2.15** Create `src/Testing/Factories/FuelPurchaseFactory.php`
+- [x] **10.2.1** Create `src/Testing/Factories/Factory.php` (base class)
+  - [x] `make(array $attributes = []): DataTransferObject`
+  - [x] `count(int $count): static`
+  - [x] State methods
+- [x] **10.2.2** Create `src/Testing/Factories/VehicleFactory.php`
+- [x] **10.2.3** Create `src/Testing/Factories/UserFactory.php`
+- [x] **10.2.4** Create `src/Testing/Factories/DriverFactory.php`
+- [x] **10.2.5** Create `src/Testing/Factories/AssetFactory.php`
+- [x] **10.2.6** Create `src/Testing/Factories/HosLogFactory.php`
+- [x] **10.2.7** Create `src/Testing/Factories/HosAvailabilityFactory.php`
+- [x] **10.2.8** Create `src/Testing/Factories/DispatchFactory.php`
+- [x] **10.2.9** Create `src/Testing/Factories/LocationFactory.php`
+- [x] **10.2.10** Create `src/Testing/Factories/GeofenceFactory.php`
+- [x] **10.2.11** Create `src/Testing/Factories/DocumentFactory.php`
+- [x] **10.2.12** Create `src/Testing/Factories/MessageFactory.php`
+- [x] **10.2.13** Create `src/Testing/Factories/WebhookFactory.php`
+- [x] **10.2.14** Create `src/Testing/Factories/InspectionReportFactory.php`
+- [x] **10.2.15** Create `src/Testing/Factories/FuelPurchaseFactory.php`
 
 ### 10.3 Test Suite Setup
 
@@ -613,42 +613,42 @@ This document tracks all implementation tasks organized by phase. Mark items wit
 
 ### 11.1 Laravel Fluent DTO Upgrade
 
-- [ ] Install Laravel Fluent as a composer dependency
-- [ ] Upgrade all DTOs to use Laravel Fluent to manage data and casts
-- [ ] Update any usages of DTO in the application to work with new DTO structure
-- [ ] Add missing tests for each DTO
-- [ ] Run and fix any failing tests
+- [ ] **11.1.1** Install Laravel Fluent as a composer dependency
+- [ ] **11.1.2** Upgrade all DTOs to use Laravel Fluent to manage data and casts
+- [ ] **11.1.3** Update any usages of DTO in the application to work with new DTO structure
+- [ ] **11.1.4** Add missing tests for each DTO
+- [ ] **11.1.5** Run and fix any failing tests
 
 ### 11.2 Documentation
 
-- [ ] **11.1.1** Update `README.md` with complete API examples
-- [ ] **11.1.2** Create `CHANGELOG.md`
-- [ ] **11.1.3** Create `CONTRIBUTING.md`
-- [ ] **11.1.4** Create `LICENSE.md` (MIT)
+- [ ] **11.2.1** Update `README.md` with complete API examples
+- [ ] **11.2.2** Create `CHANGELOG.md`
+- [ ] **11.2.3** Create `CONTRIBUTING.md`
+- [ ] **11.2.4** Create `LICENSE.md` (MIT)
 
 ### 11.3 PHPDoc
 
-- [ ] **11.2.1** Add PHPDoc to all public methods in MotiveManager
-- [ ] **11.2.2** Add PHPDoc to all public methods in Resources
-- [ ] **11.2.3** Add PHPDoc to all DTOs
-- [ ] **11.2.4** Add PHPDoc to all Enums
-- [ ] **11.2.5** Add PHPDoc to Testing classes
+- [ ] **11.3.1** Add PHPDoc to all public methods in MotiveManager
+- [ ] **11.3.2** Add PHPDoc to all public methods in Resources
+- [ ] **11.3.3** Add PHPDoc to all DTOs
+- [ ] **11.3.4** Add PHPDoc to all Enums
+- [ ] **11.3.5** Add PHPDoc to Testing classes
 
 ### 11.4 Code Quality
 
-- [ ] **11.3.1** Run PHPStan at level 8 and fix all errors
-- [ ] **11.3.2** Run Laravel Pint and fix all style issues
-- [ ] **11.3.3** Ensure 100% test coverage on critical paths
-- [ ] **11.3.4** Review all exception messages for clarity
+- [ ] **11.4.1** Run PHPStan at level 8 and fix all errors
+- [ ] **11.4.2** Run Laravel Pint and fix all style issues
+- [ ] **11.4.3** Ensure 100% test coverage on critical paths
+- [ ] **11.4.4** Review all exception messages for clarity
 
 ### 11.5 Final Review
 
-- [ ] **11.4.1** Review all resource method signatures for consistency
-- [ ] **11.4.2** Review all DTO properties for completeness
-- [ ] **11.4.3** Review all enum cases against API documentation
-- [ ] **11.4.4** Test full integration with real Motive API
-- [ ] **11.4.5** Performance testing with large datasets
-- [ ] **11.4.6** Prepare v1.0.0 release
+- [ ] **11.5.1** Review all resource method signatures for consistency
+- [ ] **11.5.2** Review all DTO properties for completeness
+- [ ] **11.5.3** Review all enum cases against API documentation
+- [ ] **11.5.4** Test full integration with real Motive API
+- [ ] **11.5.5** Performance testing with large datasets
+- [ ] **11.5.6** Prepare v1.0.0 release
 
 ---
 
@@ -665,9 +665,9 @@ This document tracks all implementation tasks organized by phase. Mark items wit
 | Phase 7: Fuel & Reporting | 12 | 12 | 100% |
 | Phase 8: Time & Forms | 10 | 10 | 100% |
 | Phase 9: Advanced Resources | 18 | 18 | 100% |
-| Phase 10: Testing Infrastructure | 25 | 0 | 0% |
+| Phase 10: Testing Infrastructure | 25 | 18 | 72% |
 | Phase 11: Documentation & Polish | 15 | 0 | 0% |
-| **Total** | **173** | **133** | **77%** |
+| **Total** | **173** | **151** | **87%** |
 
 ---
 
