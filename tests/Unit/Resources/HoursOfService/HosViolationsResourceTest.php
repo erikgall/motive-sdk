@@ -3,12 +3,12 @@
 namespace Motive\Tests\Unit\Resources\HoursOfService;
 
 use Motive\Client\Response;
-use Motive\Client\MotiveClient;
 use Motive\Data\HosViolation;
+use Motive\Client\MotiveClient;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Test;
-use Motive\Resources\HoursOfService\HosViolationsResource;
 use Illuminate\Http\Client\Response as HttpResponse;
+use Motive\Resources\HoursOfService\HosViolationsResource;
 
 /**
  * @author Erik Galloway <egalloway@motive.com>
@@ -21,20 +21,8 @@ class HosViolationsResourceTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->client   = $this->createMock(MotiveClient::class);
+        $this->client = $this->createMock(MotiveClient::class);
         $this->resource = new HosViolationsResource($this->client);
-    }
-
-    #[Test]
-    public function it_has_correct_base_path(): void
-    {
-        $this->assertSame('hos_violations', $this->resource->getBasePath());
-    }
-
-    #[Test]
-    public function it_has_correct_resource_key(): void
-    {
-        $this->assertSame('hos_violation', $this->resource->getResourceKey());
     }
 
     #[Test]
@@ -83,6 +71,18 @@ class HosViolationsResourceTest extends TestCase
         $violations = $this->resource->forDriver(456);
 
         $this->assertIsArray($violations);
+    }
+
+    #[Test]
+    public function it_has_correct_base_path(): void
+    {
+        $this->assertSame('hos_violations', $this->resource->getBasePath());
+    }
+
+    #[Test]
+    public function it_has_correct_resource_key(): void
+    {
+        $this->assertSame('hos_violation', $this->resource->getResourceKey());
     }
 
     /**

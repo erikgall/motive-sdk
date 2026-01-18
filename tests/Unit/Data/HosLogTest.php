@@ -14,6 +14,26 @@ use PHPUnit\Framework\Attributes\Test;
 class HosLogTest extends TestCase
 {
     #[Test]
+    public function it_converts_to_array(): void
+    {
+        $hosLog = HosLog::from([
+            'id'          => 123,
+            'driver_id'   => 456,
+            'duty_status' => 'driving',
+            'start_time'  => '2024-01-15T08:00:00Z',
+            'duration'    => 14400,
+        ]);
+
+        $array = $hosLog->toArray();
+
+        $this->assertSame(123, $array['id']);
+        $this->assertSame(456, $array['driver_id']);
+        $this->assertSame('driving', $array['duty_status']);
+        $this->assertSame(14400, $array['duration']);
+        $this->assertArrayHasKey('start_time', $array);
+    }
+
+    #[Test]
     public function it_creates_from_array(): void
     {
         $hosLog = HosLog::from([
@@ -72,25 +92,5 @@ class HosLogTest extends TestCase
         $this->assertNull($hosLog->location);
         $this->assertNull($hosLog->annotation);
         $this->assertNull($hosLog->certified);
-    }
-
-    #[Test]
-    public function it_converts_to_array(): void
-    {
-        $hosLog = HosLog::from([
-            'id'          => 123,
-            'driver_id'   => 456,
-            'duty_status' => 'driving',
-            'start_time'  => '2024-01-15T08:00:00Z',
-            'duration'    => 14400,
-        ]);
-
-        $array = $hosLog->toArray();
-
-        $this->assertSame(123, $array['id']);
-        $this->assertSame(456, $array['driver_id']);
-        $this->assertSame('driving', $array['duty_status']);
-        $this->assertSame(14400, $array['duration']);
-        $this->assertArrayHasKey('start_time', $array);
     }
 }

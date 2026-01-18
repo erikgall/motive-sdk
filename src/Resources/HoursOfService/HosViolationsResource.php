@@ -4,9 +4,9 @@ namespace Motive\Resources\HoursOfService;
 
 use Motive\Data\HosViolation;
 use Motive\Resources\Resource;
-use Motive\Resources\Concerns\HasCrudOperations;
-use Illuminate\Support\LazyCollection;
 use Motive\Pagination\LazyPaginator;
+use Illuminate\Support\LazyCollection;
+use Motive\Resources\Concerns\HasCrudOperations;
 
 /**
  * Resource for managing Hours of Service violations.
@@ -26,7 +26,7 @@ class HosViolationsResource extends Resource
     public function forDriver(int|string $driverId, array $params = []): array
     {
         $response = $this->client->get($this->fullPath("driver/{$driverId}"), $params);
-        $data     = $response->json($this->getPluralResourceKey()) ?? [];
+        $data = $response->json($this->getPluralResourceKey()) ?? [];
 
         return array_map(fn (array $item) => HosViolation::from($item), $data);
     }

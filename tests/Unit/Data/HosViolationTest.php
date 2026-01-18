@@ -14,6 +14,26 @@ use PHPUnit\Framework\Attributes\Test;
 class HosViolationTest extends TestCase
 {
     #[Test]
+    public function it_converts_to_array(): void
+    {
+        $violation = HosViolation::from([
+            'id'             => 123,
+            'driver_id'      => 456,
+            'violation_type' => 'cycle_time',
+            'start_time'     => '2024-01-15T08:00:00Z',
+            'duration'       => 3600,
+        ]);
+
+        $array = $violation->toArray();
+
+        $this->assertSame(123, $array['id']);
+        $this->assertSame(456, $array['driver_id']);
+        $this->assertSame('cycle_time', $array['violation_type']);
+        $this->assertSame(3600, $array['duration']);
+        $this->assertArrayHasKey('start_time', $array);
+    }
+
+    #[Test]
     public function it_creates_from_array(): void
     {
         $violation = HosViolation::from([
@@ -59,25 +79,5 @@ class HosViolationTest extends TestCase
         $this->assertNull($violation->duration);
         $this->assertNull($violation->severity);
         $this->assertNull($violation->location);
-    }
-
-    #[Test]
-    public function it_converts_to_array(): void
-    {
-        $violation = HosViolation::from([
-            'id'             => 123,
-            'driver_id'      => 456,
-            'violation_type' => 'cycle_time',
-            'start_time'     => '2024-01-15T08:00:00Z',
-            'duration'       => 3600,
-        ]);
-
-        $array = $violation->toArray();
-
-        $this->assertSame(123, $array['id']);
-        $this->assertSame(456, $array['driver_id']);
-        $this->assertSame('cycle_time', $array['violation_type']);
-        $this->assertSame(3600, $array['duration']);
-        $this->assertArrayHasKey('start_time', $array);
     }
 }

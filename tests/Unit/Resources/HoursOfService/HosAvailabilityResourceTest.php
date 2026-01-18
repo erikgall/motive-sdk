@@ -4,11 +4,11 @@ namespace Motive\Tests\Unit\Resources\HoursOfService;
 
 use Motive\Client\Response;
 use Motive\Client\MotiveClient;
-use Motive\Data\HosAvailability;
 use PHPUnit\Framework\TestCase;
+use Motive\Data\HosAvailability;
 use PHPUnit\Framework\Attributes\Test;
-use Motive\Resources\HoursOfService\HosAvailabilityResource;
 use Illuminate\Http\Client\Response as HttpResponse;
+use Motive\Resources\HoursOfService\HosAvailabilityResource;
 
 /**
  * @author Erik Galloway <egalloway@motive.com>
@@ -21,20 +21,8 @@ class HosAvailabilityResourceTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->client   = $this->createMock(MotiveClient::class);
+        $this->client = $this->createMock(MotiveClient::class);
         $this->resource = new HosAvailabilityResource($this->client);
-    }
-
-    #[Test]
-    public function it_has_correct_base_path(): void
-    {
-        $this->assertSame('hos_availability', $this->resource->getBasePath());
-    }
-
-    #[Test]
-    public function it_has_correct_resource_key(): void
-    {
-        $this->assertSame('hos_availability', $this->resource->getResourceKey());
     }
 
     #[Test]
@@ -61,6 +49,18 @@ class HosAvailabilityResourceTest extends TestCase
         $this->assertSame(28800, $availability->driveTimeRemaining);
         $this->assertSame(50400, $availability->shiftTimeRemaining);
         $this->assertSame(252000, $availability->cycleTimeRemaining);
+    }
+
+    #[Test]
+    public function it_has_correct_base_path(): void
+    {
+        $this->assertSame('hos_availability', $this->resource->getBasePath());
+    }
+
+    #[Test]
+    public function it_has_correct_resource_key(): void
+    {
+        $this->assertSame('hos_availability', $this->resource->getResourceKey());
     }
 
     /**

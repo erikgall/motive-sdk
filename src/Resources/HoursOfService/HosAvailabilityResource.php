@@ -2,10 +2,10 @@
 
 namespace Motive\Resources\HoursOfService;
 
-use Motive\Data\HosAvailability;
 use Motive\Resources\Resource;
-use Illuminate\Support\LazyCollection;
+use Motive\Data\HosAvailability;
 use Motive\Pagination\LazyPaginator;
+use Illuminate\Support\LazyCollection;
 
 /**
  * Resource for managing Hours of Service availability.
@@ -20,7 +20,7 @@ class HosAvailabilityResource extends Resource
     public function forDriver(int|string $driverId): HosAvailability
     {
         $response = $this->client->get($this->fullPath("driver/{$driverId}"));
-        $data     = $response->json($this->resourceKey());
+        $data = $response->json($this->resourceKey());
 
         return HosAvailability::from($data);
     }

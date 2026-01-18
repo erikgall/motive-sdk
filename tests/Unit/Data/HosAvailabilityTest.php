@@ -13,10 +13,26 @@ use PHPUnit\Framework\Attributes\Test;
 class HosAvailabilityTest extends TestCase
 {
     #[Test]
+    public function it_converts_to_array(): void
+    {
+        $availability = HosAvailability::from([
+            'driver_id'            => 456,
+            'drive_time_remaining' => 28800,
+            'shift_time_remaining' => 50400,
+        ]);
+
+        $array = $availability->toArray();
+
+        $this->assertSame(456, $array['driver_id']);
+        $this->assertSame(28800, $array['drive_time_remaining']);
+        $this->assertSame(50400, $array['shift_time_remaining']);
+    }
+
+    #[Test]
     public function it_creates_from_array(): void
     {
         $availability = HosAvailability::from([
-            'driver_id'           => 456,
+            'driver_id'            => 456,
             'drive_time_remaining' => 28800,
             'shift_time_remaining' => 50400,
             'cycle_time_remaining' => 252000,
@@ -51,21 +67,5 @@ class HosAvailabilityTest extends TestCase
         $this->assertNull($availability->cycleTomorrow);
         $this->assertNull($availability->recap);
         $this->assertNull($availability->lastCalculatedAt);
-    }
-
-    #[Test]
-    public function it_converts_to_array(): void
-    {
-        $availability = HosAvailability::from([
-            'driver_id'           => 456,
-            'drive_time_remaining' => 28800,
-            'shift_time_remaining' => 50400,
-        ]);
-
-        $array = $availability->toArray();
-
-        $this->assertSame(456, $array['driver_id']);
-        $this->assertSame(28800, $array['drive_time_remaining']);
-        $this->assertSame(50400, $array['shift_time_remaining']);
     }
 }
