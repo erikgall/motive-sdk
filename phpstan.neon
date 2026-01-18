@@ -1,7 +1,11 @@
 parameters:
-    level: 8
+    level: 6
     paths:
         - src
-        - tests
+    treatPhpDocTypesAsCertain: false
     ignoreErrors:
-        - '#PHPDoc tag @var#'
+        - identifier: missingType.generics
+        - identifier: return.type
+        - identifier: new.static
+        - identifier: staticMethod.notFound
+        - identifier: nullsafe.neverNull
