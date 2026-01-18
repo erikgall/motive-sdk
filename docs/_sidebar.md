@@ -1,5 +1,3 @@
-- [Home](/)
-
 - Getting Started
   - [Installation](/getting-started/installation.md)
   - [Configuration](/getting-started/configuration.md)
@@ -65,8 +63,8 @@
     - [Reefer Activity](/api-reference/integration/reefer-activity.md)
 
 - Reference
-  - [DTOs Overview](/dto-reference/README.md)
-  - [Enums Overview](/enums/README.md)
+  - [DTOs](/dto-reference/README.md)
+  - [Enums](/enums/README.md)
 
 - Webhooks
   - [Overview](/webhooks/README.md)

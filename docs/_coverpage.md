@@ -7,6 +7,6 @@
 - Lazy pagination for large datasets
 - OAuth and API key authentication
 
-[Get Started](#/getting-started/installation)
-[API Reference](#/api-reference/README)
+[Get Started](/getting-started/installation.md)
+[API Reference](/api-reference/README.md)
 [GitHub](https://github.com/erikgall/motive-sdk)

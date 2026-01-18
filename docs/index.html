@@ -10,13 +10,12 @@
   <style>
     :root {
       --theme-color: #0f172a;
-      --theme-color-secondary: #475569;
-      --accent-color: #0284c7;
+      --accent-color: #0369a1;
       --border-color: #e2e8f0;
       --bg-subtle: #f8fafc;
       --text-primary: #0f172a;
       --text-secondary: #475569;
-      --text-muted: #94a3b8;
+      --text-muted: #64748b;
       --sidebar-width: 260px;
       --code-font: 'SF Mono', 'Fira Code', 'Consolas', monospace;
     }
@@ -33,10 +32,10 @@
     }
 
     .sidebar > h1 {
-      font-size: 1rem;
+      font-size: 0.9375rem;
       font-weight: 600;
       color: var(--text-primary);
-      padding: 1.25rem 1.5rem;
+      padding: 1rem 1.25rem;
       margin: 0;
       border-bottom: 1px solid var(--border-color);
     }
@@ -47,7 +46,7 @@
     }
 
     .sidebar-nav {
-      padding: 0.75rem 0;
+      padding: 0.5rem 0;
     }
 
     .sidebar-nav ul {
@@ -60,31 +59,21 @@
       margin: 0;
     }
 
-    /* Section headers (non-link items) */
-    .sidebar-nav > ul > li > p,
-    .sidebar-nav > ul > li:not(:has(a)):not(:has(ul)) {
-      font-size: 0.6875rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-muted);
-      padding: 1.25rem 1.5rem 0.5rem;
-      margin: 0;
-      cursor: pointer;
-    }
-
-    /* Links */
-    .sidebar-nav li a {
+    /* All links base style */
+    .sidebar-nav li > a,
+    .sidebar-nav li > p {
       display: block;
       font-size: 0.8125rem;
       color: var(--text-secondary);
-      padding: 0.375rem 1.5rem;
+      padding: 0.375rem 1.25rem;
       text-decoration: none;
       transition: color 0.15s, background 0.15s;
-      border: none;
+      cursor: pointer;
+      margin: 0;
     }
 
-    .sidebar-nav li a:hover {
+    .sidebar-nav li > a:hover,
+    .sidebar-nav li > p:hover {
       color: var(--text-primary);
       background: var(--bg-subtle);
     }
@@ -92,57 +81,106 @@
     .sidebar-nav li.active > a {
       color: var(--accent-color);
       font-weight: 500;
-      background: transparent;
     }
 
-    /* Nested lists */
+    /* Section headers - items with children but text only (no link) */
+    .sidebar-nav > ul > li.folder > p {
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-top: 0.75rem;
+      position: relative;
+      padding-right: 2rem;
+    }
+
+    .sidebar-nav > ul > li:first-child.folder > p {
+      margin-top: 0.25rem;
+    }
+
+    /* Collapse arrow for folders */
+    .sidebar-nav li.folder > p::after,
+    .sidebar-nav li.folder > a::after,
+    .sidebar-nav li.folder > span::after,
+    .sidebar-nav li.folder > .folder-label::after {
+      content: '';
+      position: absolute;
+      right: 1.25rem;
+      top: 50%;
+      width: 5px;
+      height: 5px;
+      border-right: 1.5px solid var(--text-muted);
+      border-bottom: 1.5px solid var(--text-muted);
+      transform: translateY(-50%) rotate(-45deg);
+      transition: transform 0.15s;
+    }
+
+    .sidebar-nav li.folder.open > p::after,
+    .sidebar-nav li.folder.open > a::after,
+    .sidebar-nav li.folder.open > span::after,
+    .sidebar-nav li.folder.open > .folder-label::after {
+      transform: translateY(-50%) rotate(45deg);
+    }
+
+    /* Nested lists - hidden by default */
     .sidebar-nav ul ul {
       display: none;
     }
 
-    .sidebar-nav ul ul li a {
-      padding-left: 2.25rem;
-      font-size: 0.8125rem;
-    }
-
-    .sidebar-nav ul ul ul li a {
-      padding-left: 3rem;
-    }
-
-    /* Expanded state */
-    .sidebar-nav li.open > ul,
-    .sidebar-nav li.active > ul,
-    .sidebar-nav li:has(.active) > ul {
+    .sidebar-nav li.folder.open > ul {
       display: block;
     }
 
-    /* Folder indicators */
-    .sidebar-nav li.folder > a {
+    /* Nested link indentation */
+    .sidebar-nav ul ul li > a,
+    .sidebar-nav ul ul li > p,
+    .sidebar-nav ul ul li > span,
+    .sidebar-nav ul ul li > .folder-label {
+      padding-left: 2rem;
+      font-size: 0.8125rem;
+    }
+
+    .sidebar-nav ul ul ul li > a,
+    .sidebar-nav ul ul ul li > p,
+    .sidebar-nav ul ul ul li > span,
+    .sidebar-nav ul ul ul li > .folder-label {
+      padding-left: 2.75rem;
+    }
+
+    .sidebar-nav ul ul ul ul li > a,
+    .sidebar-nav ul ul ul ul li > span,
+    .sidebar-nav ul ul ul ul li > .folder-label {
+      padding-left: 3.5rem;
+    }
+
+    /* Nested folders - need position relative for arrows */
+    .sidebar-nav ul ul li.folder > p,
+    .sidebar-nav ul ul li.folder > a {
+      font-weight: 500;
+      color: var(--text-secondary);
       position: relative;
+      padding-right: 2rem;
     }
 
-    .sidebar-nav li.folder > a::before {
-      content: '';
-      position: absolute;
-      right: 1.5rem;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 0;
-      height: 0;
-      border-left: 4px solid var(--text-muted);
-      border-top: 3px solid transparent;
-      border-bottom: 3px solid transparent;
-      transition: transform 0.15s;
+    /* Third level nested folders (e.g., Fleet under API Reference) */
+    .sidebar-nav ul ul ul li.folder > p,
+    .sidebar-nav ul ul ul li.folder > a {
+      font-weight: 500;
+      color: var(--text-secondary);
+      position: relative;
+      padding-right: 2rem;
     }
 
-    .sidebar-nav li.folder.open > a::before,
-    .sidebar-nav li.folder:has(.active) > a::before {
-      transform: translateY(-50%) rotate(90deg);
+    /* Hide dashes before TOC sub-items */
+    .sidebar-nav ul ul ul li {
+      list-style: none;
     }
 
-    /* Hide default collapse plugin arrows */
-    .sidebar-nav .folder > a::after {
-      display: none !important;
+    .sidebar-nav ul ul ul li::before {
+      display: none;
+    }
+
+    /* Hide text node dashes in TOC items */
+    .app-sub-sidebar li {
+      list-style: none;
     }
 
     /* App nav */
@@ -174,13 +212,13 @@
     }
 
     .markdown-section h1 {
-      font-size: 1.875rem;
+      font-size: 1.75rem;
       font-weight: 600;
       color: var(--text-primary);
       margin: 0 0 1.5rem;
       padding-bottom: 0.75rem;
       border-bottom: 1px solid var(--border-color);
-      letter-spacing: -0.025em;
+      letter-spacing: -0.02em;
     }
 
     .markdown-section h2 {
@@ -188,7 +226,7 @@
       font-weight: 600;
       color: var(--text-primary);
       margin: 2.5rem 0 1rem;
-      letter-spacing: -0.025em;
+      letter-spacing: -0.01em;
     }
 
     .markdown-section h3 {
@@ -219,7 +257,7 @@
       font-size: 0.8125em;
       background: var(--bg-subtle);
       border: 1px solid var(--border-color);
-      border-radius: 4px;
+      border-radius: 3px;
       padding: 0.125rem 0.375rem;
       color: var(--text-primary);
     }
@@ -243,6 +281,62 @@
       color: #e2e8f0;
     }
 
+    /* Prism.js syntax highlighting for dark theme */
+    .markdown-section pre code .token.comment,
+    .markdown-section pre code .token.prolog,
+    .markdown-section pre code .token.doctype,
+    .markdown-section pre code .token.cdata {
+      color: #6b7280;
+    }
+
+    .markdown-section pre code .token.punctuation {
+      color: #9ca3af;
+    }
+
+    .markdown-section pre code .token.property,
+    .markdown-section pre code .token.tag,
+    .markdown-section pre code .token.boolean,
+    .markdown-section pre code .token.number,
+    .markdown-section pre code .token.constant,
+    .markdown-section pre code .token.symbol,
+    .markdown-section pre code .token.deleted {
+      color: #f472b6;
+    }
+
+    .markdown-section pre code .token.selector,
+    .markdown-section pre code .token.attr-name,
+    .markdown-section pre code .token.string,
+    .markdown-section pre code .token.char,
+    .markdown-section pre code .token.builtin,
+    .markdown-section pre code .token.inserted {
+      color: #a5f3a6;
+    }
+
+    .markdown-section pre code .token.operator,
+    .markdown-section pre code .token.entity,
+    .markdown-section pre code .token.url,
+    .markdown-section pre code .language-css .token.string,
+    .markdown-section pre code .style .token.string {
+      color: #fcd34d;
+    }
+
+    .markdown-section pre code .token.atrule,
+    .markdown-section pre code .token.attr-value,
+    .markdown-section pre code .token.keyword {
+      color: #93c5fd;
+    }
+
+    .markdown-section pre code .token.function,
+    .markdown-section pre code .token.class-name {
+      color: #c4b5fd;
+    }
+
+    .markdown-section pre code .token.regex,
+    .markdown-section pre code .token.important,
+    .markdown-section pre code .token.variable {
+      color: #fdba74;
+    }
+
     /* Tables */
     .markdown-section table {
       width: 100%;
@@ -257,12 +351,12 @@
       color: var(--text-primary);
       background: var(--bg-subtle);
       border: 1px solid var(--border-color);
-      padding: 0.625rem 0.875rem;
+      padding: 0.5rem 0.75rem;
     }
 
     .markdown-section table td {
       border: 1px solid var(--border-color);
-      padding: 0.625rem 0.875rem;
+      padding: 0.5rem 0.75rem;
       color: var(--text-secondary);
     }
 
@@ -281,7 +375,7 @@
       margin: 0.25rem 0;
     }
 
-    /* Blockquotes / Notes */
+    /* Blockquotes */
     .markdown-section blockquote {
       margin: 1.5rem 0;
       padding: 0.75rem 1rem;
@@ -296,7 +390,7 @@
 
     /* Alerts */
     .markdown-section .tip {
-      padding: 0.875rem 1rem;
+      padding: 0.75rem 1rem;
       margin: 1.5rem 0;
       background: #f0fdf4;
       border: 1px solid #bbf7d0;
@@ -305,7 +399,7 @@
     }
 
     .markdown-section .warn {
-      padding: 0.875rem 1rem;
+      padding: 0.75rem 1rem;
       margin: 1.5rem 0;
       background: #fefce8;
       border: 1px solid #fde047;
@@ -314,7 +408,7 @@
     }
 
     .markdown-section .note {
-      padding: 0.875rem 1rem;
+      padding: 0.75rem 1rem;
       margin: 1.5rem 0;
       background: #f0f9ff;
       border: 1px solid #bae6fd;
@@ -332,37 +426,34 @@
       min-height: 100vh;
     }
 
-    .cover-main {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 4rem 2rem;
+    /* Hide coverpage when not active */
+    section.cover:not(.show) {
+      display: none !important;
     }
 
     section.cover h1 {
-      font-size: 2.5rem;
+      font-size: 2.25rem;
       font-weight: 700;
       color: var(--text-primary);
       margin: 0 0 1rem;
-      letter-spacing: -0.025em;
     }
 
     section.cover blockquote {
-      font-size: 1.125rem;
+      font-size: 1.0625rem;
       color: var(--text-secondary);
       border: none;
       background: none;
       padding: 0;
-      max-width: 32rem;
+      max-width: 28rem;
+      margin: 0 auto 1rem;
+      text-align: center;
     }
 
     section.cover ul {
       list-style: none;
       padding: 0;
-      margin: 2rem 0;
-      text-align: left;
+      margin: 1.5rem auto;
+      text-align: center;
       display: inline-block;
     }
 
@@ -370,22 +461,18 @@
       color: var(--text-secondary);
       padding: 0.25rem 0;
       font-size: 0.9375rem;
+      text-align: left;
     }
 
     section.cover ul li::before {
-      content: '✓';
-      margin-right: 0.625rem;
-      color: #22c55e;
-      font-weight: 600;
-    }
-
-    section.cover .cover-main > p:last-of-type {
-      margin-top: 1.5rem;
+      content: '•';
+      margin-right: 0.5rem;
+      color: var(--text-muted);
     }
 
     section.cover .cover-main > p:last-of-type a {
       display: inline-block;
-      padding: 0.625rem 1.25rem;
+      padding: 0.5rem 1rem;
       font-size: 0.875rem;
       font-weight: 500;
       text-decoration: none;
@@ -412,7 +499,6 @@
 
     section.cover .cover-main > p:last-of-type a:not(:first-child):hover {
       background: var(--bg-subtle);
-      border-color: var(--text-muted);
     }
 
     /* Search */
@@ -453,7 +539,6 @@
     /* Copy button */
     .docsify-copy-code-button {
       font-size: 0.75rem !important;
-      padding: 0.25rem 0.5rem !important;
     }
 
     /* Pagination */
@@ -462,30 +547,10 @@
     }
 
     .pagination-item-label {
-      font-size: 0.75rem;
+      font-size: 0.6875rem;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.05em;
-    }
-
-    /* Custom classes for homepage */
-    .intro-text {
-      font-size: 1.125rem;
-      color: var(--text-secondary);
-      max-width: 40rem;
-    }
-
-    .install-block {
-      margin: 2rem 0;
-    }
-
-    .doc-table {
-      margin: 1.5rem 0;
-    }
-
-    .doc-table td:first-child {
-      width: 180px;
-      font-weight: 500;
     }
   </style>
 </head>
@@ -540,55 +605,93 @@
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-json.min.js"></script>
 
   <script>
-    // Custom sidebar collapse behavior
-    document.addEventListener('DOMContentLoaded', function() {
-      function initSidebar() {
-        const sidebar = document.querySelector('.sidebar-nav');
-        if (!sidebar) return;
+    // Sidebar collapse plugin using Docsify hooks
+    function sidebarCollapsePlugin(hook) {
+      hook.doneEach(function() {
+        const nav = document.querySelector('.sidebar-nav');
+        if (!nav) return;
 
-        const items = sidebar.querySelectorAll('li');
-        items.forEach(item => {
-          const sublist = item.querySelector('ul');
-          if (sublist) {
-            item.classList.add('folder');
-
-            const link = item.querySelector('a');
-            if (link) {
-              link.addEventListener('click', function(e) {
-                if (sublist && !link.getAttribute('href')?.includes('.md')) {
-                  e.preventDefault();
-                  item.classList.toggle('open');
-                }
-              });
+        // Remove dash text nodes from TOC items
+        const tocItems = nav.querySelectorAll('ul ul ul li');
+        tocItems.forEach(function(item) {
+          item.childNodes.forEach(function(node) {
+            if (node.nodeType === Node.TEXT_NODE && node.textContent.trim() === '-') {
+              node.textContent = '';
             }
-          }
+          });
         });
 
-        // Expand active section
-        const activeLink = sidebar.querySelector('li.active');
-        if (activeLink) {
-          let parent = activeLink.parentElement;
-          while (parent && parent !== sidebar) {
-            if (parent.tagName === 'LI') {
+        // Find all list items
+        const items = nav.querySelectorAll('li');
+
+        items.forEach(function(item) {
+          // Check if this item has a nested ul
+          const sublist = item.querySelector(':scope > ul');
+          if (!sublist) return;
+
+          item.classList.add('folder');
+
+          // Get the clickable element (either a or p)
+          let clickTarget = item.querySelector(':scope > a') || item.querySelector(':scope > p');
+
+          // If no a or p, check for text node and wrap it
+          if (!clickTarget) {
+            const firstChild = item.firstChild;
+            if (firstChild && firstChild.nodeType === Node.TEXT_NODE && firstChild.textContent.trim()) {
+              // Create a span to wrap the text
+              const span = document.createElement('span');
+              span.textContent = firstChild.textContent.trim();
+              span.className = 'folder-label';
+              span.style.cssText = 'display: block; cursor: pointer; position: relative; padding-top: 0.375rem; padding-bottom: 0.375rem; padding-right: 2rem; font-size: 0.8125rem; color: var(--text-secondary); font-weight: 500;';
+              item.replaceChild(span, firstChild);
+              clickTarget = span;
+            }
+          }
+
+          if (!clickTarget) return;
+
+          // Make p elements have relative positioning for the arrow
+          if (clickTarget.tagName === 'P') {
+            clickTarget.style.position = 'relative';
+          }
+
+          // Remove existing listeners by cloning
+          const newTarget = clickTarget.cloneNode(true);
+          clickTarget.parentNode.replaceChild(newTarget, clickTarget);
+
+          newTarget.addEventListener('click', function(e) {
+            // If it's a link with href to a .md file, let it navigate but also toggle
+            const isLink = newTarget.tagName === 'A' && newTarget.getAttribute('href');
+            const isMdLink = isLink && newTarget.getAttribute('href').includes('.md');
+
+            if (!isMdLink) {
+              e.preventDefault();
+            }
+
+            item.classList.toggle('open');
+          });
+        });
+
+        // Expand sections containing active link
+        const activeItem = nav.querySelector('li.active');
+        if (activeItem) {
+          let parent = activeItem.parentElement;
+          while (parent && parent !== nav) {
+            if (parent.tagName === 'LI' && parent.classList.contains('folder')) {
               parent.classList.add('open');
             }
             parent = parent.parentElement;
           }
+          // Also open the active item itself if it's a folder
+          if (activeItem.classList.contains('folder')) {
+            activeItem.classList.add('open');
+          }
         }
-      }
-
-      // Run on initial load and route changes
-      initSidebar();
-
-      const observer = new MutationObserver(function() {
-        setTimeout(initSidebar, 100);
       });
+    }
 
-      const target = document.querySelector('.sidebar-nav');
-      if (target) {
-        observer.observe(target, { childList: true, subtree: true });
-      }
-    });
+    // Register the plugin
+    window.$docsify.plugins = [].concat(sidebarCollapsePlugin, window.$docsify.plugins || []);
   </script>
 </body>
 </html>
