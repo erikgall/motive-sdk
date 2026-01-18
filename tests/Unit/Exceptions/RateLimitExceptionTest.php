@@ -24,7 +24,7 @@ class RateLimitExceptionTest extends TestCase
     #[Test]
     public function it_extracts_retry_after_from_header(): void
     {
-        $response = $this->createMock(Response::class);
+        $response = $this->createStub(Response::class);
         $response->method('header')->with('Retry-After')->willReturn('60');
 
         $exception = new RateLimitException('Rate limit exceeded', $response);
@@ -43,7 +43,7 @@ class RateLimitExceptionTest extends TestCase
     #[Test]
     public function it_returns_null_when_no_retry_after_header(): void
     {
-        $response = $this->createMock(Response::class);
+        $response = $this->createStub(Response::class);
         $response->method('header')->with('Retry-After')->willReturn(null);
 
         $exception = new RateLimitException('Rate limit exceeded', $response);

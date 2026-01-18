@@ -59,7 +59,7 @@ class MotiveClientTest extends TestCase
     #[Test]
     public function it_creates_pending_request(): void
     {
-        $authenticator = $this->createMock(Authenticator::class);
+        $authenticator = $this->createStub(Authenticator::class);
         $client = new MotiveClient(
             baseUrl: 'https://api.gomotive.com',
             authenticator: $authenticator,
@@ -81,7 +81,7 @@ class MotiveClientTest extends TestCase
             'api.gomotive.com/v1/vehicles/1' => Http::response([], 204),
         ]);
 
-        $authenticator = $this->createMock(Authenticator::class);
+        $authenticator = $this->createStub(Authenticator::class);
         $authenticator->method('authenticate')->willReturnArgument(0);
 
         $client = new MotiveClient(
@@ -104,7 +104,7 @@ class MotiveClientTest extends TestCase
             'api.gomotive.com/v1/vehicles' => Http::response(['vehicles' => []], 200),
         ]);
 
-        $authenticator = $this->createMock(Authenticator::class);
+        $authenticator = $this->createStub(Authenticator::class);
         $authenticator->method('authenticate')->willReturnArgument(0);
 
         $client = new MotiveClient(
@@ -129,7 +129,7 @@ class MotiveClientTest extends TestCase
             'api.gomotive.com/v1/vehicles*' => Http::response(['vehicles' => []], 200),
         ]);
 
-        $authenticator = $this->createMock(Authenticator::class);
+        $authenticator = $this->createStub(Authenticator::class);
         $authenticator->method('authenticate')->willReturnArgument(0);
 
         $client = new MotiveClient(
@@ -152,7 +152,7 @@ class MotiveClientTest extends TestCase
             'api.gomotive.com/v1/vehicles/1' => Http::response(['vehicle' => ['id' => 1]], 200),
         ]);
 
-        $authenticator = $this->createMock(Authenticator::class);
+        $authenticator = $this->createStub(Authenticator::class);
         $authenticator->method('authenticate')->willReturnArgument(0);
 
         $client = new MotiveClient(
@@ -175,7 +175,7 @@ class MotiveClientTest extends TestCase
             'api.gomotive.com/v1/vehicles' => Http::response(['vehicle' => ['id' => 1]], 201),
         ]);
 
-        $authenticator = $this->createMock(Authenticator::class);
+        $authenticator = $this->createStub(Authenticator::class);
         $authenticator->method('authenticate')->willReturnArgument(0);
 
         $client = new MotiveClient(
@@ -199,7 +199,7 @@ class MotiveClientTest extends TestCase
             'api.gomotive.com/v1/vehicles/1' => Http::response(['vehicle' => ['id' => 1]], 200),
         ]);
 
-        $authenticator = $this->createMock(Authenticator::class);
+        $authenticator = $this->createStub(Authenticator::class);
         $authenticator->method('authenticate')->willReturnArgument(0);
 
         $client = new MotiveClient(
@@ -222,7 +222,7 @@ class MotiveClientTest extends TestCase
             'api.gomotive.com/v1/vehicles' => Http::response(['error' => 'Unauthorized'], 401),
         ]);
 
-        $authenticator = $this->createMock(Authenticator::class);
+        $authenticator = $this->createStub(Authenticator::class);
         $authenticator->method('authenticate')->willReturnArgument(0);
 
         $client = new MotiveClient(
@@ -245,7 +245,7 @@ class MotiveClientTest extends TestCase
             'api.gomotive.com/v1/vehicles' => Http::response(['error' => 'Forbidden'], 403),
         ]);
 
-        $authenticator = $this->createMock(Authenticator::class);
+        $authenticator = $this->createStub(Authenticator::class);
         $authenticator->method('authenticate')->willReturnArgument(0);
 
         $client = new MotiveClient(
@@ -268,7 +268,7 @@ class MotiveClientTest extends TestCase
             'api.gomotive.com/v1/vehicles/999' => Http::response(['error' => 'Not found'], 404),
         ]);
 
-        $authenticator = $this->createMock(Authenticator::class);
+        $authenticator = $this->createStub(Authenticator::class);
         $authenticator->method('authenticate')->willReturnArgument(0);
 
         $client = new MotiveClient(
@@ -293,7 +293,7 @@ class MotiveClientTest extends TestCase
             ]),
         ]);
 
-        $authenticator = $this->createMock(Authenticator::class);
+        $authenticator = $this->createStub(Authenticator::class);
         $authenticator->method('authenticate')->willReturnArgument(0);
 
         $client = new MotiveClient(
@@ -316,7 +316,7 @@ class MotiveClientTest extends TestCase
             'api.gomotive.com/v1/vehicles' => Http::response(['error' => 'Internal server error'], 500),
         ]);
 
-        $authenticator = $this->createMock(Authenticator::class);
+        $authenticator = $this->createStub(Authenticator::class);
         $authenticator->method('authenticate')->willReturnArgument(0);
 
         $client = new MotiveClient(
@@ -341,7 +341,7 @@ class MotiveClientTest extends TestCase
             ], 422),
         ]);
 
-        $authenticator = $this->createMock(Authenticator::class);
+        $authenticator = $this->createStub(Authenticator::class);
         $authenticator->method('authenticate')->willReturnArgument(0);
 
         $client = new MotiveClient(
@@ -364,7 +364,7 @@ class MotiveClientTest extends TestCase
             'api.gomotive.com/v1/vehicles' => Http::response(['vehicles' => []], 200),
         ]);
 
-        $authenticator = $this->createMock(Authenticator::class);
+        $authenticator = $this->createStub(Authenticator::class);
         $authenticator->method('authenticate')->willReturnArgument(0);
 
         $client = new MotiveClient(

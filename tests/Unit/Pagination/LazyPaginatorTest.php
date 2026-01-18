@@ -17,8 +17,8 @@ class LazyPaginatorTest extends TestCase
     #[Test]
     public function it_handles_empty_results(): void
     {
-        $client = $this->createMock(MotiveClient::class);
-        $response = $this->createMock(Response::class);
+        $client = $this->createStub(MotiveClient::class);
+        $response = $this->createStub(Response::class);
         $response->method('json')->willReturnCallback(function (?string $key = null) {
             $data = [
                 'vehicles'   => [],
@@ -45,7 +45,7 @@ class LazyPaginatorTest extends TestCase
     {
         $client = $this->createMock(MotiveClient::class);
 
-        $page1Response = $this->createMock(Response::class);
+        $page1Response = $this->createStub(Response::class);
         $page1Response->method('json')->willReturnCallback(function (?string $key = null) {
             $data = [
                 'vehicles' => [
@@ -62,7 +62,7 @@ class LazyPaginatorTest extends TestCase
             return $key === null ? $data : ($data[$key] ?? null);
         });
 
-        $page2Response = $this->createMock(Response::class);
+        $page2Response = $this->createStub(Response::class);
         $page2Response->method('json')->willReturnCallback(function (?string $key = null) {
             $data = [
                 'vehicles' => [
@@ -94,8 +94,8 @@ class LazyPaginatorTest extends TestCase
     #[Test]
     public function it_returns_lazy_collection(): void
     {
-        $client = $this->createMock(MotiveClient::class);
-        $response = $this->createMock(Response::class);
+        $client = $this->createStub(MotiveClient::class);
+        $response = $this->createStub(Response::class);
         $response->method('json')->willReturnCallback(function (?string $key = null) {
             $data = [
                 'vehicles' => [
@@ -124,7 +124,7 @@ class LazyPaginatorTest extends TestCase
     public function it_stops_when_no_more_pages(): void
     {
         $client = $this->createMock(MotiveClient::class);
-        $response = $this->createMock(Response::class);
+        $response = $this->createStub(Response::class);
         $response->method('json')->willReturnCallback(function (?string $key = null) {
             $data = [
                 'vehicles' => [

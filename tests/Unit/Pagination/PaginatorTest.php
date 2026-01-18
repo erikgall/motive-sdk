@@ -18,7 +18,7 @@ class PaginatorTest extends TestCase
     public function it_fetches_a_single_page(): void
     {
         $client = $this->createMock(MotiveClient::class);
-        $response = $this->createMock(Response::class);
+        $response = $this->createStub(Response::class);
         $response->method('json')->willReturnCallback(function (?string $key = null) {
             $data = [
                 'vehicles' => [
@@ -52,8 +52,8 @@ class PaginatorTest extends TestCase
     #[Test]
     public function it_handles_empty_response(): void
     {
-        $client = $this->createMock(MotiveClient::class);
-        $response = $this->createMock(Response::class);
+        $client = $this->createStub(MotiveClient::class);
+        $response = $this->createStub(Response::class);
         $response->method('json')->willReturnCallback(function (?string $key = null) {
             $data = [
                 'vehicles'   => [],
@@ -80,7 +80,7 @@ class PaginatorTest extends TestCase
     public function it_passes_additional_parameters(): void
     {
         $client = $this->createMock(MotiveClient::class);
-        $response = $this->createMock(Response::class);
+        $response = $this->createStub(Response::class);
         $response->method('json')->willReturnCallback(function (?string $key = null) {
             $data = [
                 'vehicles'   => [],

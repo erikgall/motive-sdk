@@ -24,7 +24,7 @@ class ValidationExceptionTest extends TestCase
     #[Test]
     public function it_extracts_validation_errors_from_response(): void
     {
-        $response = $this->createMock(Response::class);
+        $response = $this->createStub(Response::class);
         $response->method('json')->with('errors')->willReturn([
             'number' => ['The number field is required.'],
             'make'   => ['The make field must be a string.'],

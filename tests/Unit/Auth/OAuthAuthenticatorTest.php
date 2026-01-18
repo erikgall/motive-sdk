@@ -20,14 +20,14 @@ class OAuthAuthenticatorTest extends TestCase
     #[Test]
     public function it_adds_bearer_token_to_request(): void
     {
-        $tokenStore = $this->createMock(TokenStore::class);
+        $tokenStore = $this->createStub(TokenStore::class);
         $tokenStore->method('getAccessToken')->willReturn('test-access-token');
         $tokenStore->method('getExpiresAt')->willReturn(CarbonImmutable::now()->addHour());
 
         $authenticator = $this->createAuthenticator($tokenStore);
 
         // Create a mock authenticator for PendingRequest
-        $mockAuth = $this->createMock(Authenticator::class);
+        $mockAuth = $this->createStub(Authenticator::class);
         $request = new PendingRequest('https://api.gomotive.com', $mockAuth);
 
         $authenticatedRequest = $authenticator->authenticate($request);
@@ -41,13 +41,13 @@ class OAuthAuthenticatorTest extends TestCase
     #[Test]
     public function it_considers_expiration_buffer(): void
     {
-        $tokenStore = $this->createMock(TokenStore::class);
+        $tokenStore = $this->createStub(TokenStore::class);
         // Token expires in 2 minutes, buffer is 5 minutes
         $tokenStore->method('getExpiresAt')->willReturn(CarbonImmutable::now()->addMinutes(2));
 
         $authenticator = new OAuthAuthenticator(
             tokenStore: $tokenStore,
-            oauthFlow: $this->createMock(OAuthFlow::class),
+            oauthFlow: $this->createStub(OAuthFlow::class),
             expirationBuffer: 300
         );
 
@@ -57,7 +57,7 @@ class OAuthAuthenticatorTest extends TestCase
     #[Test]
     public function it_detects_expired_token(): void
     {
-        $tokenStore = $this->createMock(TokenStore::class);
+        $tokenStore = $this->createStub(TokenStore::class);
         $tokenStore->method('getExpiresAt')->willReturn(CarbonImmutable::now()->subMinute());
 
         $authenticator = $this->createAuthenticator($tokenStore);
@@ -68,7 +68,7 @@ class OAuthAuthenticatorTest extends TestCase
     #[Test]
     public function it_detects_missing_token_as_expired(): void
     {
-        $tokenStore = $this->createMock(TokenStore::class);
+        $tokenStore = $this->createStub(TokenStore::class);
         $tokenStore->method('getExpiresAt')->willReturn(null);
 
         $authenticator = $this->createAuthenticator($tokenStore);
@@ -79,7 +79,7 @@ class OAuthAuthenticatorTest extends TestCase
     #[Test]
     public function it_detects_valid_token(): void
     {
-        $tokenStore = $this->createMock(TokenStore::class);
+        $tokenStore = $this->createStub(TokenStore::class);
         $tokenStore->method('getExpiresAt')->willReturn(CarbonImmutable::now()->addHour());
 
         $authenticator = $this->createAuthenticator($tokenStore);
@@ -131,8 +131,8 @@ class OAuthAuthenticatorTest extends TestCase
     private function createAuthenticator(?TokenStore $tokenStore = null): OAuthAuthenticator
     {
         return new OAuthAuthenticator(
-            tokenStore: $tokenStore ?? $this->createMock(TokenStore::class),
-            oauthFlow: $this->createMock(OAuthFlow::class)
+            tokenStore: $tokenStore ?? $this->createStub(TokenStore::class),
+            oauthFlow: $this->createStub(OAuthFlow::class)
         );
     }
 }

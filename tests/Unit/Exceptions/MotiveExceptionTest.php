@@ -31,7 +31,7 @@ class MotiveExceptionTest extends TestCase
     #[Test]
     public function it_returns_response_body_as_array(): void
     {
-        $response = $this->createMock(Response::class);
+        $response = $this->createStub(Response::class);
         $response->method('json')->willReturn(['error' => 'Not found']);
 
         $exception = new MotiveException('Test error', $response);
@@ -42,7 +42,7 @@ class MotiveExceptionTest extends TestCase
     #[Test]
     public function it_stores_response_object(): void
     {
-        $response = $this->createMock(Response::class);
+        $response = $this->createStub(Response::class);
         $exception = new MotiveException('Test error', $response);
 
         $this->assertSame($response, $exception->getResponse());

@@ -31,7 +31,7 @@ class MotiveManagerTest extends TestCase
             'headers' => [],
         ];
 
-        $customAuth = $this->createMock(Authenticator::class);
+        $customAuth = $this->createStub(Authenticator::class);
 
         $manager = new MotiveManager($config);
         $newManager = $manager->withAuthenticator($customAuth);

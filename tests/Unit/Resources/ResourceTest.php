@@ -16,7 +16,7 @@ class ResourceTest extends TestCase
     #[Test]
     public function it_constructs_full_path_with_api_version(): void
     {
-        $client = $this->createMock(MotiveClient::class);
+        $client = $this->createStub(MotiveClient::class);
 
         $resource = new TestResource($client);
 
@@ -26,7 +26,7 @@ class ResourceTest extends TestCase
     #[Test]
     public function it_constructs_full_path_with_suffix(): void
     {
-        $client = $this->createMock(MotiveClient::class);
+        $client = $this->createStub(MotiveClient::class);
 
         $resource = new TestResource($client);
 
@@ -36,7 +36,7 @@ class ResourceTest extends TestCase
     #[Test]
     public function it_returns_base_path(): void
     {
-        $client = $this->createMock(MotiveClient::class);
+        $client = $this->createStub(MotiveClient::class);
 
         $resource = new TestResource($client);
 
@@ -46,7 +46,7 @@ class ResourceTest extends TestCase
     #[Test]
     public function it_returns_plural_resource_key(): void
     {
-        $client = $this->createMock(MotiveClient::class);
+        $client = $this->createStub(MotiveClient::class);
 
         $resource = new TestResource($client);
 
@@ -56,7 +56,7 @@ class ResourceTest extends TestCase
     #[Test]
     public function it_returns_resource_key(): void
     {
-        $client = $this->createMock(MotiveClient::class);
+        $client = $this->createStub(MotiveClient::class);
 
         $resource = new TestResource($client);
 
