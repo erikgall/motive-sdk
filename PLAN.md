@@ -487,6 +487,60 @@ return [
 - Static analysis configuration (PHPStan level 8)
 - Code style configuration (Laravel Pint)
 
+### AI-Friendly Documentation (Laravel Boost)
+
+Following [Laravel's AI Package Guidelines](https://laravel.com/docs/12.x/ai#package-guidelines) for Boost compatibility:
+
+**Directory Structure:**
+```
+resources/
+└── boost/
+    └── guidelines/
+        ├── core.blade.php          # Main SDK overview & quick start
+        ├── resources.blade.php     # All resources with methods
+        ├── query-builder.blade.php # Query builder reference
+        ├── entities.blade.php      # DTOs and data structures
+        └── testing.blade.php       # Testing with SamsaraFake
+```
+
+**Format (Blade templates with code snippets):**
+```blade
+## Samsara SDK
+
+This package provides a fluent Laravel SDK for the Samsara Fleet Management API.
+
+### Features
+
+- Fluent Query Builder: Filter, paginate, and stream API results. Example:
+
+@verbatim
+<code-snippet name="Query drivers by tag" lang="php">
+$drivers = Samsara::drivers()
+    ->query()
+    ->whereTag(['fleet-a', 'fleet-b'])
+    ->limit(50)
+    ->get();
+</code-snippet>
+@endverbatim
+
+- Resource Access: 40+ resources covering 197 API endpoints. Example:
+
+@verbatim
+<code-snippet name="Get vehicle stats" lang="php">
+$stats = Samsara::vehicleStats()
+    ->current()
+    ->withGps()
+    ->withEngineStates()
+    ->get();
+</code-snippet>
+@endverbatim
+```
+
+**Benefits:**
+- Automatic discovery when users run `boost:install`
+- AI agents understand SDK patterns and best practices
+- Proper code generation for Samsara API integration
+
 ---
 
 ## Verification Plan

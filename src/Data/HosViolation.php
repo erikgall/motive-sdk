@@ -9,58 +9,33 @@ use Motive\Enums\HosViolationType;
  * Hours of Service violation data transfer object.
  *
  * @author Erik Galloway <egalloway@motive.com>
+ *
+ * @property int $id
+ * @property int $driverId
+ * @property HosViolationType $violationType
+ * @property CarbonImmutable $startTime
+ * @property int|null $vehicleId
+ * @property CarbonImmutable|null $endTime
+ * @property int|null $duration
+ * @property string|null $severity
+ * @property string|null $location
+ * @property CarbonImmutable|null $createdAt
  */
 class HosViolation extends DataTransferObject
 {
-    public function __construct(
-        public int $id,
-        public int $driverId,
-        public HosViolationType $violationType,
-        public CarbonImmutable $startTime,
-        public ?int $vehicleId = null,
-        public ?CarbonImmutable $endTime = null,
-        public ?int $duration = null,
-        public ?string $severity = null,
-        public ?string $location = null,
-        public ?CarbonImmutable $createdAt = null
-    ) {}
-
     /**
-     * Property mappings from API response keys to class properties.
+     * The attributes that should be cast.
      *
-     * @return array<string, string>
+     * @var array<string, class-string|string>
      */
-    protected static function propertyMappings(): array
-    {
-        return [
-            'driver_id'      => 'driverId',
-            'vehicle_id'     => 'vehicleId',
-            'violation_type' => 'violationType',
-            'start_time'     => 'startTime',
-            'end_time'       => 'endTime',
-            'created_at'     => 'createdAt',
-        ];
-    }
-
-    /**
-     * Properties that should be cast to CarbonImmutable.
-     *
-     * @return array<int, string>
-     */
-    protected static function dates(): array
-    {
-        return ['startTime', 'endTime', 'createdAt'];
-    }
-
-    /**
-     * Properties that should be cast to enums.
-     *
-     * @return array<string, class-string>
-     */
-    protected static function enums(): array
-    {
-        return [
-            'violationType' => HosViolationType::class,
-        ];
-    }
+    protected array $casts = [
+        'id'            => 'int',
+        'driverId'      => 'int',
+        'vehicleId'     => 'int',
+        'duration'      => 'int',
+        'violationType' => HosViolationType::class,
+        'startTime'     => CarbonImmutable::class,
+        'endTime'       => CarbonImmutable::class,
+        'createdAt'     => CarbonImmutable::class,
+    ];
 }

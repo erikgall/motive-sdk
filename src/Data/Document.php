@@ -10,74 +10,41 @@ use Motive\Enums\DocumentStatus;
  * Document data transfer object.
  *
  * @author Erik Galloway <egalloway@motive.com>
+ *
+ * @property int $id
+ * @property int $companyId
+ * @property DocumentType $documentType
+ * @property DocumentStatus $status
+ * @property int|null $driverId
+ * @property string|null $description
+ * @property string|null $externalId
+ * @property array<int, DocumentImage> $images
+ * @property CarbonImmutable|null $createdAt
+ * @property CarbonImmutable|null $updatedAt
  */
 class Document extends DataTransferObject
 {
     /**
-     * @param  array<int, DocumentImage>  $images
-     */
-    public function __construct(
-        public int $id,
-        public int $companyId,
-        public DocumentType $documentType,
-        public DocumentStatus $status,
-        public ?int $driverId = null,
-        public ?string $description = null,
-        public ?string $externalId = null,
-        public array $images = [],
-        public ?CarbonImmutable $createdAt = null,
-        public ?CarbonImmutable $updatedAt = null
-    ) {}
-
-    /**
-     * Properties that should be cast to CarbonImmutable.
+     * The attributes that should be cast.
      *
-     * @return array<int, string>
+     * @var array<string, class-string|string>
      */
-    protected static function dates(): array
-    {
-        return ['createdAt', 'updatedAt'];
-    }
-
-    /**
-     * Properties that should be cast to enums.
-     *
-     * @return array<string, class-string>
-     */
-    protected static function enums(): array
-    {
-        return [
-            'documentType' => DocumentType::class,
-            'status'       => DocumentStatus::class,
-        ];
-    }
+    protected array $casts = [
+        'id'           => 'int',
+        'companyId'    => 'int',
+        'driverId'     => 'int',
+        'documentType' => DocumentType::class,
+        'status'       => DocumentStatus::class,
+        'createdAt'    => CarbonImmutable::class,
+        'updatedAt'    => CarbonImmutable::class,
+    ];
 
     /**
      * Properties that should be cast to arrays of DTOs.
      *
-     * @return array<string, class-string<DataTransferObject>>
+     * @var array<string, class-string<DataTransferObject>>
      */
-    protected static function nestedArrays(): array
-    {
-        return [
-            'images' => DocumentImage::class,
-        ];
-    }
-
-    /**
-     * Property mappings from API response keys to class properties.
-     *
-     * @return array<string, string>
-     */
-    protected static function propertyMappings(): array
-    {
-        return [
-            'company_id'    => 'companyId',
-            'driver_id'     => 'driverId',
-            'document_type' => 'documentType',
-            'external_id'   => 'externalId',
-            'created_at'    => 'createdAt',
-            'updated_at'    => 'updatedAt',
-        ];
-    }
+    protected array $nestedArrays = [
+        'images' => DocumentImage::class,
+    ];
 }

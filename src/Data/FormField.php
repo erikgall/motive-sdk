@@ -8,44 +8,37 @@ use Motive\Enums\FormFieldType;
  * Form field data transfer object.
  *
  * @author Erik Galloway <egalloway@motive.com>
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $label
+ * @property FormFieldType $fieldType
+ * @property bool $required
+ * @property string|null $placeholder
+ * @property int|null $position
+ * @property array<int, string> $options
  */
 class FormField extends DataTransferObject
 {
     /**
-     * @param  array<int, string>  $options
+     * The attributes that should be cast.
+     *
+     * @var array<string, class-string|string>
      */
-    public function __construct(
-        public int $id,
-        public string $name,
-        public string $label,
-        public FormFieldType $fieldType,
-        public bool $required = false,
-        public ?string $placeholder = null,
-        public ?int $position = null,
-        public array $options = []
-    ) {}
+    protected array $casts = [
+        'id'        => 'int',
+        'position'  => 'int',
+        'required'  => 'bool',
+        'fieldType' => FormFieldType::class,
+    ];
 
     /**
-     * Properties that should be cast to enums.
+     * Default values for properties.
      *
-     * @return array<string, class-string>
+     * @var array<string, mixed>
      */
-    protected static function enums(): array
-    {
-        return [
-            'fieldType' => FormFieldType::class,
-        ];
-    }
-
-    /**
-     * Property mappings from API response keys to class properties.
-     *
-     * @return array<string, string>
-     */
-    protected static function propertyMappings(): array
-    {
-        return [
-            'field_type' => 'fieldType',
-        ];
-    }
+    protected array $defaults = [
+        'required' => false,
+        'options'  => [],
+    ];
 }

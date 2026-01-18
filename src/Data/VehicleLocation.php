@@ -8,15 +8,26 @@ use Carbon\CarbonImmutable;
  * Vehicle location data transfer object.
  *
  * @author Erik Galloway <egalloway@motive.com>
+ *
+ * @property float $latitude
+ * @property float $longitude
+ * @property float|null $speed
+ * @property int|null $bearing
+ * @property string|null $address
+ * @property CarbonImmutable|null $locatedAt
  */
 class VehicleLocation extends DataTransferObject
 {
-    public function __construct(
-        public float $latitude,
-        public float $longitude,
-        public ?float $speed = null,
-        public ?int $bearing = null,
-        public ?string $address = null,
-        public ?CarbonImmutable $locatedAt = null
-    ) {}
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, class-string|string>
+     */
+    protected array $casts = [
+        'latitude'  => 'float',
+        'longitude' => 'float',
+        'speed'     => 'float',
+        'bearing'   => 'int',
+        'locatedAt' => CarbonImmutable::class,
+    ];
 }

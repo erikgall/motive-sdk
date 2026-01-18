@@ -2,50 +2,99 @@
 
 namespace Motive\Data;
 
-use ReflectionClass;
-use JsonSerializable;
-use ReflectionProperty;
-use ReflectionNamedType;
+use BackedEnum;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Str;
-use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Fluent;
 
 /**
  * Base class for all data transfer objects.
  *
- * @author Erik Galloway <egalloway@motive.com>
+ * Extends Laravel's Fluent class to provide a fluent interface for
+ * working with API response data while supporting type casting for
+ * enums, dates, and nested DTOs.
  *
- * @implements Arrayable<string, mixed>
+ * @author Erik Galloway <egalloway@motive.com>
  */
-abstract class DataTransferObject implements Arrayable, JsonSerializable
+abstract class DataTransferObject extends Fluent
 {
     /**
-     * Serialize to JSON.
+     * The attributes that should be cast.
      *
-     * @return array<string, mixed>
+     * @var array<string, class-string|string>
      */
-    public function jsonSerialize(): array
+    protected array $casts = [];
+
+    /**
+     * Default values for properties.
+     *
+     * @var array<string, mixed>
+     */
+    protected array $defaults = [];
+
+    /**
+     * Property mappings from API response keys to class properties.
+     *
+     * @var array<string, string>
+     */
+    protected array $mappings = [];
+
+    /**
+     * Properties that should be cast to arrays of DTOs.
+     *
+     * @var array<string, class-string<DataTransferObject>>
+     */
+    protected array $nestedArrays = [];
+
+    /**
+     * Create a new data transfer object instance.
+     *
+     * @param  array<string, mixed>|object  $attributes
+     */
+    public function __construct($attributes = [])
     {
-        return $this->toArray();
+        $attributes = $this->prepareAttributes($attributes);
+        parent::__construct($attributes);
     }
 
     /**
-     * Convert the DTO to an array.
+     * Get an attribute from the fluent instance.
+     *
+     * @param  string  $key
+     * @param  mixed  $default
+     * @return mixed
+     */
+    public function get($key, $default = null)
+    {
+        // Use default from property if available
+        $effectiveDefault = $this->defaults[$key] ?? $default;
+        $value = parent::get($key, $effectiveDefault);
+
+        return $this->castAttribute($key, $value);
+    }
+
+    /**
+     * Get the underlying attributes.
      *
      * @return array<string, mixed>
      */
-    public function toArray(): array
+    public function getAttributes(): array
     {
-        $reflection = new ReflectionClass($this);
-        $properties = $reflection->getProperties(ReflectionProperty::IS_PUBLIC);
+        return $this->attributes;
+    }
 
+    /**
+     * Convert the fluent instance to an array.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray()
+    {
         $array = [];
-        foreach ($properties as $property) {
-            $name = $property->getName();
-            $value = $this->{$name};
 
-            $snakeName = Str::snake($name);
-            $array[$snakeName] = $this->transformValue($value);
+        foreach ($this->getAttributes() as $key => $value) {
+            $snakeKey = Str::snake($key);
+            $array[$snakeKey] = $this->transformValue($this->castAttribute($key, $value));
         }
 
         return $array;
@@ -58,39 +107,119 @@ abstract class DataTransferObject implements Arrayable, JsonSerializable
      */
     public static function from(array $data): static
     {
-        // Apply property mappings first
-        $data = static::applyPropertyMappings($data);
+        return new static($data);
+    }
 
-        // Allow subclasses to preprocess data
-        $data = static::preprocessData($data);
+    /**
+     * Dynamically retrieve the value of an attribute.
+     *
+     * @param  string  $key
+     * @return mixed
+     */
+    public function __get($key)
+    {
+        return $this->get($key);
+    }
 
-        $reflection = new ReflectionClass(static::class);
-        $constructor = $reflection->getConstructor();
-
-        if (! $constructor) {
-            return new static;
+    /**
+     * Cast an attribute to its proper type.
+     */
+    protected function castAttribute(string $key, mixed $value): mixed
+    {
+        if ($value === null) {
+            return null;
         }
 
-        $args = [];
-        foreach ($constructor->getParameters() as $parameter) {
-            $name = $parameter->getName();
-            $snakeName = Str::snake($name);
+        // Check if it's a nested array of DTOs
+        if (isset($this->nestedArrays[$key]) && is_array($value)) {
+            $dtoClass = $this->nestedArrays[$key];
 
-            $value = $data[$name] ?? $data[$snakeName] ?? null;
-
-            if ($value === null && $parameter->isDefaultValueAvailable()) {
-                $value = $parameter->getDefaultValue();
-            }
-
-            $type = $parameter->getType();
-            if ($type instanceof ReflectionNamedType) {
-                $value = static::castValue($value, $type, $name);
-            }
-
-            $args[$name] = $value;
+            return array_map(fn (array $item) => $dtoClass::from($item), $value);
         }
 
-        return new static(...$args);
+        // Check for casts
+        if (! isset($this->casts[$key])) {
+            return $value;
+        }
+
+        $castType = $this->casts[$key];
+
+        // Handle Carbon dates
+        if ($castType === CarbonImmutable::class || $castType === 'datetime' || $castType === 'date') {
+            if ($value instanceof CarbonImmutable) {
+                return $value;
+            }
+
+            return CarbonImmutable::parse($value);
+        }
+
+        // Handle enums
+        if (enum_exists($castType)) {
+            if ($value instanceof $castType) {
+                return $value;
+            }
+
+            return $castType::from($value);
+        }
+
+        // Handle nested DTOs
+        if (is_subclass_of($castType, self::class) && is_array($value)) {
+            return $castType::from($value);
+        }
+
+        // Handle primitive casts
+        return match ($castType) {
+            'int', 'integer' => (int) $value,
+            'float', 'double' => (float) $value,
+            'string' => (string) $value,
+            'bool', 'boolean' => (bool) $value,
+            'array' => (array) $value,
+            default => $value,
+        };
+    }
+
+    /**
+     * Prepare attributes before storing.
+     *
+     * @param  array<string, mixed>|object  $attributes
+     * @return array<string, mixed>
+     */
+    protected function prepareAttributes($attributes): array
+    {
+        if (is_object($attributes)) {
+            $attributes = get_object_vars($attributes);
+        }
+
+        // Apply property mappings
+        foreach ($this->mappings as $from => $to) {
+            if (array_key_exists($from, $attributes)) {
+                $attributes[$to] = $attributes[$from];
+                unset($attributes[$from]);
+            }
+        }
+
+        // Convert snake_case keys to camelCase
+        $normalized = [];
+        foreach ($attributes as $key => $value) {
+            $camelKey = Str::camel($key);
+            $normalized[$camelKey] = $value;
+        }
+
+        // Allow subclasses to process the data
+        return $this->processAttributes($normalized);
+    }
+
+    /**
+     * Process attributes after normalization.
+     *
+     * Override this method to customize attribute processing.
+     *
+     * @param  array<string, mixed>  $attributes
+     * @return array<string, mixed>
+     */
+    protected function processAttributes(array $attributes): array
+    {
+        return $attributes;
     }
 
     /**
@@ -106,7 +235,7 @@ abstract class DataTransferObject implements Arrayable, JsonSerializable
             return $value->toArray();
         }
 
-        if ($value instanceof \BackedEnum) {
+        if ($value instanceof BackedEnum) {
             return $value->value;
         }
 
@@ -115,109 +244,5 @@ abstract class DataTransferObject implements Arrayable, JsonSerializable
         }
 
         return $value;
-    }
-
-    /**
-     * Apply property mappings to data.
-     *
-     * @param  array<string, mixed>  $data
-     * @return array<string, mixed>
-     */
-    protected static function applyPropertyMappings(array $data): array
-    {
-        $mappings = static::propertyMappings();
-
-        foreach ($mappings as $from => $to) {
-            if (array_key_exists($from, $data)) {
-                $data[$to] = $data[$from];
-                unset($data[$from]);
-            }
-        }
-
-        return $data;
-    }
-
-    /**
-     * Cast a value to its appropriate type.
-     */
-    protected static function castValue(mixed $value, ReflectionNamedType $type, string $propertyName = ''): mixed
-    {
-        if ($value === null) {
-            return null;
-        }
-
-        $typeName = $type->getName();
-
-        // Handle Carbon types
-        if ($typeName === CarbonImmutable::class || $typeName === 'Carbon\CarbonImmutable') {
-            if ($value instanceof CarbonImmutable) {
-                return $value;
-            }
-
-            return CarbonImmutable::parse($value);
-        }
-
-        // Handle enums
-        if (enum_exists($typeName)) {
-            if ($value instanceof $typeName) {
-                return $value;
-            }
-
-            return $typeName::from($value);
-        }
-
-        // Handle nested DTOs
-        if (is_subclass_of($typeName, self::class) && is_array($value)) {
-            return $typeName::from($value);
-        }
-
-        // Handle arrays of nested DTOs
-        if ($typeName === 'array' && is_array($value) && $propertyName !== '') {
-            $nestedArrays = static::nestedArrays();
-            if (isset($nestedArrays[$propertyName])) {
-                $dtoClass = $nestedArrays[$propertyName];
-
-                return array_map(fn (array $item) => $dtoClass::from($item), $value);
-            }
-        }
-
-        return $value;
-    }
-
-    /**
-     * Properties that should be cast to arrays of DTOs.
-     *
-     * Override this method to define nested array mappings.
-     *
-     * @return array<string, class-string<DataTransferObject>>
-     */
-    protected static function nestedArrays(): array
-    {
-        return [];
-    }
-
-    /**
-     * Preprocess data before hydration.
-     *
-     * Override this method to transform data before it's hydrated into the DTO.
-     *
-     * @param  array<string, mixed>  $data
-     * @return array<string, mixed>
-     */
-    protected static function preprocessData(array $data): array
-    {
-        return $data;
-    }
-
-    /**
-     * Property mappings from API response keys to class properties.
-     *
-     * Override this method to define custom key mappings.
-     *
-     * @return array<string, string>
-     */
-    protected static function propertyMappings(): array
-    {
-        return [];
     }
 }

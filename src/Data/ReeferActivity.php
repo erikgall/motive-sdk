@@ -8,42 +8,39 @@ use Carbon\CarbonImmutable;
  * Reefer activity data transfer object.
  *
  * @author Erik Galloway <egalloway@motive.com>
+ *
+ * @property int $id
+ * @property int $vehicleId
+ * @property float|null $temperature
+ * @property float|null $setpoint
+ * @property string|null $mode
+ * @property float|null $fuelLevel
+ * @property bool $engineRunning
+ * @property CarbonImmutable|null $recordedAt
  */
 class ReeferActivity extends DataTransferObject
 {
-    public function __construct(
-        public int $id,
-        public int $vehicleId,
-        public ?float $temperature = null,
-        public ?float $setpoint = null,
-        public ?string $mode = null,
-        public ?float $fuelLevel = null,
-        public bool $engineRunning = false,
-        public ?CarbonImmutable $recordedAt = null
-    ) {}
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, class-string|string>
+     */
+    protected array $casts = [
+        'id'            => 'int',
+        'vehicleId'     => 'int',
+        'temperature'   => 'float',
+        'setpoint'      => 'float',
+        'fuelLevel'     => 'float',
+        'engineRunning' => 'bool',
+        'recordedAt'    => CarbonImmutable::class,
+    ];
 
     /**
-     * Properties that should be cast to CarbonImmutable.
+     * Default values for properties.
      *
-     * @return array<int, string>
+     * @var array<string, mixed>
      */
-    protected static function dates(): array
-    {
-        return ['recordedAt'];
-    }
-
-    /**
-     * Property mappings from API response keys to class properties.
-     *
-     * @return array<string, string>
-     */
-    protected static function propertyMappings(): array
-    {
-        return [
-            'vehicle_id'     => 'vehicleId',
-            'fuel_level'     => 'fuelLevel',
-            'engine_running' => 'engineRunning',
-            'recorded_at'    => 'recordedAt',
-        ];
-    }
+    protected array $defaults = [
+        'engineRunning' => false,
+    ];
 }

@@ -9,54 +9,37 @@ use Motive\Enums\CameraType;
  * Camera connection data transfer object.
  *
  * @author Erik Galloway <egalloway@motive.com>
+ *
+ * @property int $id
+ * @property int $vehicleId
+ * @property CameraType $cameraType
+ * @property string|null $serialNumber
+ * @property bool $connected
+ * @property CarbonImmutable|null $lastSeenAt
+ * @property CarbonImmutable|null $createdAt
  */
 class CameraConnection extends DataTransferObject
 {
-    public function __construct(
-        public int $id,
-        public int $vehicleId,
-        public CameraType $cameraType,
-        public ?string $serialNumber = null,
-        public bool $connected = false,
-        public ?CarbonImmutable $lastSeenAt = null,
-        public ?CarbonImmutable $createdAt = null
-    ) {}
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, class-string|string>
+     */
+    protected array $casts = [
+        'id'         => 'int',
+        'vehicleId'  => 'int',
+        'cameraType' => CameraType::class,
+        'connected'  => 'bool',
+        'lastSeenAt' => CarbonImmutable::class,
+        'createdAt'  => CarbonImmutable::class,
+    ];
 
     /**
-     * Properties that should be cast to CarbonImmutable.
+     * Default values for properties.
      *
-     * @return array<int, string>
+     * @var array<string, mixed>
      */
-    protected static function dates(): array
-    {
-        return ['lastSeenAt', 'createdAt'];
-    }
-
-    /**
-     * Properties that should be cast to enums.
-     *
-     * @return array<string, class-string>
-     */
-    protected static function enums(): array
-    {
-        return [
-            'cameraType' => CameraType::class,
-        ];
-    }
-
-    /**
-     * Property mappings from API response keys to class properties.
-     *
-     * @return array<string, string>
-     */
-    protected static function propertyMappings(): array
-    {
-        return [
-            'vehicle_id'    => 'vehicleId',
-            'camera_type'   => 'cameraType',
-            'serial_number' => 'serialNumber',
-            'last_seen_at'  => 'lastSeenAt',
-            'created_at'    => 'createdAt',
-        ];
-    }
+    protected array $defaults = [
+        'connected' => false,
+    ];
 }

@@ -10,64 +10,41 @@ use Motive\Enums\PerformanceEventType;
  * Driver performance event data transfer object.
  *
  * @author Erik Galloway <egalloway@motive.com>
+ *
+ * @property int $id
+ * @property int $companyId
+ * @property int $driverId
+ * @property PerformanceEventType $eventType
+ * @property EventSeverity $severity
+ * @property int|null $vehicleId
+ * @property int|null $duration
+ * @property float|null $speed
+ * @property float|null $latitude
+ * @property float|null $longitude
+ * @property string|null $address
+ * @property string|null $videoUrl
+ * @property CarbonImmutable|null $occurredAt
+ * @property CarbonImmutable|null $createdAt
  */
 class DriverPerformanceEvent extends DataTransferObject
 {
-    public function __construct(
-        public int $id,
-        public int $companyId,
-        public int $driverId,
-        public PerformanceEventType $eventType,
-        public EventSeverity $severity,
-        public ?int $vehicleId = null,
-        public ?int $duration = null,
-        public ?float $speed = null,
-        public ?float $latitude = null,
-        public ?float $longitude = null,
-        public ?string $address = null,
-        public ?string $videoUrl = null,
-        public ?CarbonImmutable $occurredAt = null,
-        public ?CarbonImmutable $createdAt = null
-    ) {}
-
     /**
-     * Properties that should be cast to CarbonImmutable.
+     * The attributes that should be cast.
      *
-     * @return array<int, string>
+     * @var array<string, class-string|string>
      */
-    protected static function dates(): array
-    {
-        return ['occurredAt', 'createdAt'];
-    }
-
-    /**
-     * Properties that should be cast to enums.
-     *
-     * @return array<string, class-string>
-     */
-    protected static function enums(): array
-    {
-        return [
-            'eventType' => PerformanceEventType::class,
-            'severity'  => EventSeverity::class,
-        ];
-    }
-
-    /**
-     * Property mappings from API response keys to class properties.
-     *
-     * @return array<string, string>
-     */
-    protected static function propertyMappings(): array
-    {
-        return [
-            'company_id'  => 'companyId',
-            'driver_id'   => 'driverId',
-            'vehicle_id'  => 'vehicleId',
-            'event_type'  => 'eventType',
-            'video_url'   => 'videoUrl',
-            'occurred_at' => 'occurredAt',
-            'created_at'  => 'createdAt',
-        ];
-    }
+    protected array $casts = [
+        'id'         => 'int',
+        'companyId'  => 'int',
+        'driverId'   => 'int',
+        'vehicleId'  => 'int',
+        'duration'   => 'int',
+        'speed'      => 'float',
+        'latitude'   => 'float',
+        'longitude'  => 'float',
+        'eventType'  => PerformanceEventType::class,
+        'severity'   => EventSeverity::class,
+        'occurredAt' => CarbonImmutable::class,
+        'createdAt'  => CarbonImmutable::class,
+    ];
 }

@@ -17,11 +17,11 @@ class DataTransferObjectTest extends TestCase
     #[Test]
     public function it_converts_to_array(): void
     {
-        $dto = new TestDto(
-            id: 123,
-            name: 'Test',
-            createdAt: CarbonImmutable::parse('2024-01-17T10:00:00Z')
-        );
+        $dto = TestDto::from([
+            'id'         => 123,
+            'name'       => 'Test',
+            'created_at' => '2024-01-17T10:00:00Z',
+        ]);
 
         $array = $dto->toArray();
 
@@ -79,16 +79,18 @@ class DataTransferObjectTest extends TestCase
         ]);
 
         $this->assertEquals(123, $dto->id);
+        // Unknown properties are still stored due to Fluent behavior
+        $this->assertEquals('should be ignored', $dto->unknownField);
     }
 
     #[Test]
     public function it_implements_arrayable(): void
     {
-        $dto = new TestDto(
-            id: 123,
-            name: 'Test',
-            createdAt: null
-        );
+        $dto = TestDto::from([
+            'id'         => 123,
+            'name'       => 'Test',
+            'created_at' => null,
+        ]);
 
         $this->assertInstanceOf(Arrayable::class, $dto);
     }
@@ -96,11 +98,11 @@ class DataTransferObjectTest extends TestCase
     #[Test]
     public function it_is_json_serializable(): void
     {
-        $dto = new TestDto(
-            id: 123,
-            name: 'Test',
-            createdAt: CarbonImmutable::parse('2024-01-17T10:00:00Z')
-        );
+        $dto = TestDto::from([
+            'id'         => 123,
+            'name'       => 'Test',
+            'created_at' => '2024-01-17T10:00:00Z',
+        ]);
 
         $this->assertInstanceOf(JsonSerializable::class, $dto);
 
@@ -112,11 +114,22 @@ class DataTransferObjectTest extends TestCase
     }
 }
 
+/**
+ * Test DTO for DataTransferObject tests.
+ *
+ * @property int $id
+ * @property string $name
+ * @property CarbonImmutable|null $createdAt
+ */
 class TestDto extends DataTransferObject
 {
-    public function __construct(
-        public int $id,
-        public string $name,
-        public ?CarbonImmutable $createdAt
-    ) {}
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, class-string|string>
+     */
+    protected array $casts = [
+        'id'        => 'int',
+        'createdAt' => CarbonImmutable::class,
+    ];
 }

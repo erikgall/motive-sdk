@@ -10,21 +10,34 @@ use Motive\Enums\UserStatus;
  * User data transfer object.
  *
  * @author Erik Galloway <egalloway@motive.com>
+ *
+ * @property int $id
+ * @property string $email
+ * @property int|null $companyId
+ * @property string|null $firstName
+ * @property string|null $lastName
+ * @property string|null $phone
+ * @property UserRole|null $role
+ * @property UserStatus|null $status
+ * @property Driver|null $driver
+ * @property string|null $externalId
+ * @property CarbonImmutable|null $createdAt
+ * @property CarbonImmutable|null $updatedAt
  */
 class User extends DataTransferObject
 {
-    public function __construct(
-        public int $id,
-        public string $email,
-        public ?int $companyId = null,
-        public ?string $firstName = null,
-        public ?string $lastName = null,
-        public ?string $phone = null,
-        public ?UserRole $role = null,
-        public ?UserStatus $status = null,
-        public ?Driver $driver = null,
-        public ?string $externalId = null,
-        public ?CarbonImmutable $createdAt = null,
-        public ?CarbonImmutable $updatedAt = null
-    ) {}
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, class-string|string>
+     */
+    protected array $casts = [
+        'id'        => 'int',
+        'companyId' => 'int',
+        'role'      => UserRole::class,
+        'status'    => UserStatus::class,
+        'driver'    => Driver::class,
+        'createdAt' => CarbonImmutable::class,
+        'updatedAt' => CarbonImmutable::class,
+    ];
 }

@@ -8,49 +8,38 @@ use Carbon\CarbonImmutable;
  * Vehicle fault code data transfer object.
  *
  * @author Erik Galloway <egalloway@motive.com>
+ *
+ * @property int $id
+ * @property int $vehicleId
+ * @property string $code
+ * @property string|null $description
+ * @property string|null $source
+ * @property int|null $spn
+ * @property int|null $fmi
+ * @property int|null $occurrenceCount
+ * @property CarbonImmutable|null $firstOccurrenceAt
+ * @property CarbonImmutable|null $lastOccurrenceAt
+ * @property bool|null $resolved
+ * @property CarbonImmutable|null $resolvedAt
+ * @property CarbonImmutable|null $createdAt
  */
 class FaultCode extends DataTransferObject
 {
-    public function __construct(
-        public int $id,
-        public int $vehicleId,
-        public string $code,
-        public ?string $description = null,
-        public ?string $source = null,
-        public ?int $spn = null,
-        public ?int $fmi = null,
-        public ?int $occurrenceCount = null,
-        public ?CarbonImmutable $firstOccurrenceAt = null,
-        public ?CarbonImmutable $lastOccurrenceAt = null,
-        public ?bool $resolved = null,
-        public ?CarbonImmutable $resolvedAt = null,
-        public ?CarbonImmutable $createdAt = null
-    ) {}
-
     /**
-     * Properties that should be cast to CarbonImmutable.
+     * The attributes that should be cast.
      *
-     * @return array<int, string>
+     * @var array<string, class-string|string>
      */
-    protected static function dates(): array
-    {
-        return ['firstOccurrenceAt', 'lastOccurrenceAt', 'resolvedAt', 'createdAt'];
-    }
-
-    /**
-     * Property mappings from API response keys to class properties.
-     *
-     * @return array<string, string>
-     */
-    protected static function propertyMappings(): array
-    {
-        return [
-            'vehicle_id'          => 'vehicleId',
-            'occurrence_count'    => 'occurrenceCount',
-            'first_occurrence_at' => 'firstOccurrenceAt',
-            'last_occurrence_at'  => 'lastOccurrenceAt',
-            'resolved_at'         => 'resolvedAt',
-            'created_at'          => 'createdAt',
-        ];
-    }
+    protected array $casts = [
+        'id'                => 'int',
+        'vehicleId'         => 'int',
+        'spn'               => 'int',
+        'fmi'               => 'int',
+        'occurrenceCount'   => 'int',
+        'resolved'          => 'bool',
+        'firstOccurrenceAt' => CarbonImmutable::class,
+        'lastOccurrenceAt'  => CarbonImmutable::class,
+        'resolvedAt'        => CarbonImmutable::class,
+        'createdAt'         => CarbonImmutable::class,
+    ];
 }

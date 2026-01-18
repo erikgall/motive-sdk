@@ -10,75 +10,47 @@ use Motive\Enums\WebhookStatus;
  * Webhook data transfer object.
  *
  * @author Erik Galloway <egalloway@motive.com>
+ *
+ * @property int $id
+ * @property int $companyId
+ * @property string $url
+ * @property array<int, WebhookEvent> $events
+ * @property WebhookStatus $status
+ * @property string|null $secret
+ * @property string|null $description
+ * @property CarbonImmutable|null $createdAt
+ * @property CarbonImmutable|null $updatedAt
  */
 class Webhook extends DataTransferObject
 {
     /**
-     * @param  array<int, WebhookEvent>  $events
+     * The attributes that should be cast.
+     *
+     * @var array<string, class-string|string>
      */
-    public function __construct(
-        public int $id,
-        public int $companyId,
-        public string $url,
-        public array $events,
-        public WebhookStatus $status,
-        public ?string $secret = null,
-        public ?string $description = null,
-        public ?CarbonImmutable $createdAt = null,
-        public ?CarbonImmutable $updatedAt = null
-    ) {}
+    protected array $casts = [
+        'id'        => 'int',
+        'companyId' => 'int',
+        'status'    => WebhookStatus::class,
+        'createdAt' => CarbonImmutable::class,
+        'updatedAt' => CarbonImmutable::class,
+    ];
 
     /**
-     * Properties that should be cast to CarbonImmutable.
+     * Process attributes after normalization.
      *
-     * @return array<int, string>
-     */
-    protected static function dates(): array
-    {
-        return ['createdAt', 'updatedAt'];
-    }
-
-    /**
-     * Properties that should be cast to enums.
-     *
-     * @return array<string, class-string>
-     */
-    protected static function enums(): array
-    {
-        return [
-            'status' => WebhookStatus::class,
-        ];
-    }
-
-    /**
-     * Custom processing for events array.
-     *
-     * @param  array<string, mixed>  $data
+     * @param  array<string, mixed>  $attributes
      * @return array<string, mixed>
      */
-    protected static function preprocessData(array $data): array
+    protected function processAttributes(array $attributes): array
     {
-        if (isset($data['events']) && is_array($data['events'])) {
-            $data['events'] = array_map(
-                fn (string $event) => WebhookEvent::from($event),
-                $data['events']
+        if (isset($attributes['events']) && is_array($attributes['events'])) {
+            $attributes['events'] = array_map(
+                fn (string|WebhookEvent $event) => $event instanceof WebhookEvent ? $event : WebhookEvent::from($event),
+                $attributes['events']
             );
         }
 
-        return $data;
-    }
-
-    /**
-     * Property mappings from API response keys to class properties.
-     *
-     * @return array<string, string>
-     */
-    protected static function propertyMappings(): array
-    {
-        return [
-            'company_id' => 'companyId',
-            'created_at' => 'createdAt',
-            'updated_at' => 'updatedAt',
-        ];
+        return $attributes;
     }
 }

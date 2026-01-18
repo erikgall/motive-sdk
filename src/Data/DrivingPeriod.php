@@ -8,52 +8,33 @@ use Carbon\CarbonImmutable;
  * Driving period data transfer object.
  *
  * @author Erik Galloway <egalloway@motive.com>
+ *
+ * @property int $id
+ * @property int $driverId
+ * @property CarbonImmutable $startTime
+ * @property int|null $vehicleId
+ * @property CarbonImmutable|null $endTime
+ * @property float|null $distance
+ * @property float|null $averageSpeed
+ * @property float|null $maxSpeed
+ * @property array<string, mixed>|null $startLocation
+ * @property array<string, mixed>|null $endLocation
  */
 class DrivingPeriod extends DataTransferObject
 {
     /**
-     * @param  array<string, mixed>|null  $startLocation
-     * @param  array<string, mixed>|null  $endLocation
-     */
-    public function __construct(
-        public int $id,
-        public int $driverId,
-        public CarbonImmutable $startTime,
-        public ?int $vehicleId = null,
-        public ?CarbonImmutable $endTime = null,
-        public ?float $distance = null,
-        public ?float $averageSpeed = null,
-        public ?float $maxSpeed = null,
-        public ?array $startLocation = null,
-        public ?array $endLocation = null
-    ) {}
-
-    /**
-     * Properties that should be cast to CarbonImmutable.
+     * The attributes that should be cast.
      *
-     * @return array<int, string>
+     * @var array<string, class-string|string>
      */
-    protected static function dates(): array
-    {
-        return ['startTime', 'endTime'];
-    }
-
-    /**
-     * Property mappings from API response keys to class properties.
-     *
-     * @return array<string, string>
-     */
-    protected static function propertyMappings(): array
-    {
-        return [
-            'driver_id'      => 'driverId',
-            'vehicle_id'     => 'vehicleId',
-            'start_time'     => 'startTime',
-            'end_time'       => 'endTime',
-            'average_speed'  => 'averageSpeed',
-            'max_speed'      => 'maxSpeed',
-            'start_location' => 'startLocation',
-            'end_location'   => 'endLocation',
-        ];
-    }
+    protected array $casts = [
+        'id'           => 'int',
+        'driverId'     => 'int',
+        'vehicleId'    => 'int',
+        'distance'     => 'float',
+        'averageSpeed' => 'float',
+        'maxSpeed'     => 'float',
+        'startTime'    => CarbonImmutable::class,
+        'endTime'      => CarbonImmutable::class,
+    ];
 }

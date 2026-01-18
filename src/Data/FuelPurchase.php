@@ -8,55 +8,39 @@ use Carbon\CarbonImmutable;
  * Fuel purchase data transfer object.
  *
  * @author Erik Galloway <egalloway@motive.com>
+ *
+ * @property int $id
+ * @property int $companyId
+ * @property string $fuelType
+ * @property float $quantity
+ * @property float $totalCost
+ * @property int|null $vehicleId
+ * @property int|null $driverId
+ * @property float|null $unitPrice
+ * @property int|null $odometer
+ * @property string|null $vendorName
+ * @property string|null $vendorAddress
+ * @property string|null $receiptNumber
+ * @property CarbonImmutable|null $purchasedAt
+ * @property CarbonImmutable|null $createdAt
  */
 class FuelPurchase extends DataTransferObject
 {
-    public function __construct(
-        public int $id,
-        public int $companyId,
-        public string $fuelType,
-        public float $quantity,
-        public float $totalCost,
-        public ?int $vehicleId = null,
-        public ?int $driverId = null,
-        public ?float $unitPrice = null,
-        public ?int $odometer = null,
-        public ?string $vendorName = null,
-        public ?string $vendorAddress = null,
-        public ?string $receiptNumber = null,
-        public ?CarbonImmutable $purchasedAt = null,
-        public ?CarbonImmutable $createdAt = null
-    ) {}
-
     /**
-     * Properties that should be cast to CarbonImmutable.
+     * The attributes that should be cast.
      *
-     * @return array<int, string>
+     * @var array<string, class-string|string>
      */
-    protected static function dates(): array
-    {
-        return ['purchasedAt', 'createdAt'];
-    }
-
-    /**
-     * Property mappings from API response keys to class properties.
-     *
-     * @return array<string, string>
-     */
-    protected static function propertyMappings(): array
-    {
-        return [
-            'company_id'     => 'companyId',
-            'vehicle_id'     => 'vehicleId',
-            'driver_id'      => 'driverId',
-            'fuel_type'      => 'fuelType',
-            'unit_price'     => 'unitPrice',
-            'total_cost'     => 'totalCost',
-            'vendor_name'    => 'vendorName',
-            'vendor_address' => 'vendorAddress',
-            'receipt_number' => 'receiptNumber',
-            'purchased_at'   => 'purchasedAt',
-            'created_at'     => 'createdAt',
-        ];
-    }
+    protected array $casts = [
+        'id'          => 'int',
+        'companyId'   => 'int',
+        'vehicleId'   => 'int',
+        'driverId'    => 'int',
+        'odometer'    => 'int',
+        'quantity'    => 'float',
+        'totalCost'   => 'float',
+        'unitPrice'   => 'float',
+        'purchasedAt' => CarbonImmutable::class,
+        'createdAt'   => CarbonImmutable::class,
+    ];
 }

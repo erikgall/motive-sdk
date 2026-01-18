@@ -8,63 +8,46 @@ use Carbon\CarbonImmutable;
  * IFTA report data transfer object.
  *
  * @author Erik Galloway <egalloway@motive.com>
+ *
+ * @property int $id
+ * @property int $companyId
+ * @property int $quarter
+ * @property int $year
+ * @property float|null $totalMiles
+ * @property float|null $totalGallons
+ * @property float|null $mpg
+ * @property float|null $totalTaxDue
+ * @property string|null $status
+ * @property array<int, IftaJurisdiction> $jurisdictions
+ * @property CarbonImmutable|null $generatedAt
+ * @property CarbonImmutable|null $createdAt
  */
 class IftaReport extends DataTransferObject
 {
     /**
-     * @param  array<int, IftaJurisdiction>  $jurisdictions
-     */
-    public function __construct(
-        public int $id,
-        public int $companyId,
-        public int $quarter,
-        public int $year,
-        public ?float $totalMiles = null,
-        public ?float $totalGallons = null,
-        public ?float $mpg = null,
-        public ?float $totalTaxDue = null,
-        public ?string $status = null,
-        public array $jurisdictions = [],
-        public ?CarbonImmutable $generatedAt = null,
-        public ?CarbonImmutable $createdAt = null
-    ) {}
-
-    /**
-     * Properties that should be cast to CarbonImmutable.
+     * The attributes that should be cast.
      *
-     * @return array<int, string>
+     * @var array<string, class-string|string>
      */
-    protected static function dates(): array
-    {
-        return ['generatedAt', 'createdAt'];
-    }
+    protected array $casts = [
+        'id'           => 'int',
+        'companyId'    => 'int',
+        'quarter'      => 'int',
+        'year'         => 'int',
+        'totalMiles'   => 'float',
+        'totalGallons' => 'float',
+        'mpg'          => 'float',
+        'totalTaxDue'  => 'float',
+        'generatedAt'  => CarbonImmutable::class,
+        'createdAt'    => CarbonImmutable::class,
+    ];
 
     /**
      * Properties that should be cast to arrays of DTOs.
      *
-     * @return array<string, class-string<DataTransferObject>>
+     * @var array<string, class-string<DataTransferObject>>
      */
-    protected static function nestedArrays(): array
-    {
-        return [
-            'jurisdictions' => IftaJurisdiction::class,
-        ];
-    }
-
-    /**
-     * Property mappings from API response keys to class properties.
-     *
-     * @return array<string, string>
-     */
-    protected static function propertyMappings(): array
-    {
-        return [
-            'company_id'    => 'companyId',
-            'total_miles'   => 'totalMiles',
-            'total_gallons' => 'totalGallons',
-            'total_tax_due' => 'totalTaxDue',
-            'generated_at'  => 'generatedAt',
-            'created_at'    => 'createdAt',
-        ];
-    }
+    protected array $nestedArrays = [
+        'jurisdictions' => IftaJurisdiction::class,
+    ];
 }

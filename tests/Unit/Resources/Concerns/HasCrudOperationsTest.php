@@ -173,13 +173,22 @@ class HasCrudOperationsTest extends TestCase
     }
 }
 
+/**
+ * Test DTO for CRUD operations.
+ *
+ * @property int $id
+ * @property string $name
+ * @property CarbonImmutable|null $createdAt
+ */
 class TestItemDto extends DataTransferObject
 {
-    public function __construct(
-        public int $id,
-        public string $name,
-        public ?CarbonImmutable $createdAt = null
-    ) {}
+    /**
+     * @var array<string, class-string|string>
+     */
+    protected array $casts = [
+        'id'        => 'int',
+        'createdAt' => CarbonImmutable::class,
+    ];
 }
 
 class CrudTestResource extends Resource

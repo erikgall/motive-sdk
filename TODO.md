@@ -625,6 +625,14 @@ This document tracks all implementation tasks organized by phase. Mark items wit
 - [ ] **11.2.2** Create `CHANGELOG.md`
 - [ ] **11.2.3** Create `CONTRIBUTING.md`
 - [ ] **11.2.4** Create `LICENSE.md` (MIT)
+- [ ] **11.2.5** Laravel Boost supported package documentation Format Requirements
+  - [ ] Use `.blade.php` file extension
+  - [ ] Wrap code examples in `@verbatim` blocks
+  - [ ] Use `<code-snippet name="..." lang="php">` for all examples
+  - [ ] Keep descriptions concise and actionable
+  - [ ] Focus on best practices and common patterns
+  - [ ] Include practical, copy-paste ready examples
+  - [ ] Test guidelines are discovered by `boost:install`
 
 ### 11.3 PHPDoc
 

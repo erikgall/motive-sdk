@@ -8,56 +8,47 @@ use Carbon\CarbonImmutable;
  * Form data transfer object.
  *
  * @author Erik Galloway <egalloway@motive.com>
+ *
+ * @property int $id
+ * @property int $companyId
+ * @property string $name
+ * @property string|null $description
+ * @property bool $active
+ * @property array<int, FormField> $fields
+ * @property CarbonImmutable|null $createdAt
+ * @property CarbonImmutable|null $updatedAt
  */
 class Form extends DataTransferObject
 {
     /**
-     * @param  array<int, FormField>  $fields
+     * The attributes that should be cast.
+     *
+     * @var array<string, class-string|string>
      */
-    public function __construct(
-        public int $id,
-        public int $companyId,
-        public string $name,
-        public ?string $description = null,
-        public bool $active = true,
-        public array $fields = [],
-        public ?CarbonImmutable $createdAt = null,
-        public ?CarbonImmutable $updatedAt = null
-    ) {}
+    protected array $casts = [
+        'id'        => 'int',
+        'companyId' => 'int',
+        'active'    => 'bool',
+        'createdAt' => CarbonImmutable::class,
+        'updatedAt' => CarbonImmutable::class,
+    ];
 
     /**
-     * Properties that should be cast to CarbonImmutable.
+     * Default values for properties.
      *
-     * @return array<int, string>
+     * @var array<string, mixed>
      */
-    protected static function dates(): array
-    {
-        return ['createdAt', 'updatedAt'];
-    }
+    protected array $defaults = [
+        'active' => true,
+        'fields' => [],
+    ];
 
     /**
      * Properties that should be cast to arrays of DTOs.
      *
-     * @return array<string, class-string<DataTransferObject>>
+     * @var array<string, class-string<DataTransferObject>>
      */
-    protected static function nestedArrays(): array
-    {
-        return [
-            'fields' => FormField::class,
-        ];
-    }
-
-    /**
-     * Property mappings from API response keys to class properties.
-     *
-     * @return array<string, string>
-     */
-    protected static function propertyMappings(): array
-    {
-        return [
-            'company_id' => 'companyId',
-            'created_at' => 'createdAt',
-            'updated_at' => 'updatedAt',
-        ];
-    }
+    protected array $nestedArrays = [
+        'fields' => FormField::class,
+    ];
 }

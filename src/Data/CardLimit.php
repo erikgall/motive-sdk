@@ -6,33 +6,38 @@ namespace Motive\Data;
  * Motive card limit data transfer object.
  *
  * @author Erik Galloway <egalloway@motive.com>
+ *
+ * @property int $id
+ * @property int $cardId
+ * @property float|null $dailyLimit
+ * @property float|null $weeklyLimit
+ * @property float|null $monthlyLimit
+ * @property float|null $perTransaction
+ * @property bool $fuelOnly
  */
 class CardLimit extends DataTransferObject
 {
-    public function __construct(
-        public int $id,
-        public int $cardId,
-        public ?float $dailyLimit = null,
-        public ?float $weeklyLimit = null,
-        public ?float $monthlyLimit = null,
-        public ?float $perTransaction = null,
-        public bool $fuelOnly = false
-    ) {}
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, class-string|string>
+     */
+    protected array $casts = [
+        'id'             => 'int',
+        'cardId'         => 'int',
+        'dailyLimit'     => 'float',
+        'weeklyLimit'    => 'float',
+        'monthlyLimit'   => 'float',
+        'perTransaction' => 'float',
+        'fuelOnly'       => 'bool',
+    ];
 
     /**
-     * Property mappings from API response keys to class properties.
+     * Default values for properties.
      *
-     * @return array<string, string>
+     * @var array<string, mixed>
      */
-    protected static function propertyMappings(): array
-    {
-        return [
-            'card_id'         => 'cardId',
-            'daily_limit'     => 'dailyLimit',
-            'weekly_limit'    => 'weeklyLimit',
-            'monthly_limit'   => 'monthlyLimit',
-            'per_transaction' => 'perTransaction',
-            'fuel_only'       => 'fuelOnly',
-        ];
-    }
+    protected array $defaults = [
+        'fuelOnly' => false,
+    ];
 }

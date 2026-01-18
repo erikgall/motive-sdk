@@ -9,73 +9,43 @@ use Motive\Enums\GeofenceType;
  * Geofence data transfer object.
  *
  * @author Erik Galloway <egalloway@motive.com>
+ *
+ * @property int $id
+ * @property int $companyId
+ * @property string $name
+ * @property GeofenceType $geofenceType
+ * @property float|null $latitude
+ * @property float|null $longitude
+ * @property int|null $radius
+ * @property string|null $externalId
+ * @property array<int, GeofenceCoordinate> $coordinates
+ * @property CarbonImmutable|null $createdAt
+ * @property CarbonImmutable|null $updatedAt
  */
 class Geofence extends DataTransferObject
 {
     /**
-     * @param  array<int, GeofenceCoordinate>  $coordinates
-     */
-    public function __construct(
-        public int $id,
-        public int $companyId,
-        public string $name,
-        public GeofenceType $geofenceType,
-        public ?float $latitude = null,
-        public ?float $longitude = null,
-        public ?int $radius = null,
-        public ?string $externalId = null,
-        public array $coordinates = [],
-        public ?CarbonImmutable $createdAt = null,
-        public ?CarbonImmutable $updatedAt = null
-    ) {}
-
-    /**
-     * Properties that should be cast to CarbonImmutable.
+     * The attributes that should be cast.
      *
-     * @return array<int, string>
+     * @var array<string, class-string|string>
      */
-    protected static function dates(): array
-    {
-        return ['createdAt', 'updatedAt'];
-    }
-
-    /**
-     * Properties that should be cast to enums.
-     *
-     * @return array<string, class-string>
-     */
-    protected static function enums(): array
-    {
-        return [
-            'geofenceType' => GeofenceType::class,
-        ];
-    }
+    protected array $casts = [
+        'id'           => 'int',
+        'companyId'    => 'int',
+        'latitude'     => 'float',
+        'longitude'    => 'float',
+        'radius'       => 'int',
+        'geofenceType' => GeofenceType::class,
+        'createdAt'    => CarbonImmutable::class,
+        'updatedAt'    => CarbonImmutable::class,
+    ];
 
     /**
      * Properties that should be cast to arrays of DTOs.
      *
-     * @return array<string, class-string<DataTransferObject>>
+     * @var array<string, class-string<DataTransferObject>>
      */
-    protected static function nestedArrays(): array
-    {
-        return [
-            'coordinates' => GeofenceCoordinate::class,
-        ];
-    }
-
-    /**
-     * Property mappings from API response keys to class properties.
-     *
-     * @return array<string, string>
-     */
-    protected static function propertyMappings(): array
-    {
-        return [
-            'company_id'    => 'companyId',
-            'geofence_type' => 'geofenceType',
-            'external_id'   => 'externalId',
-            'created_at'    => 'createdAt',
-            'updated_at'    => 'updatedAt',
-        ];
-    }
+    protected array $nestedArrays = [
+        'coordinates' => GeofenceCoordinate::class,
+    ];
 }

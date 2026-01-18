@@ -6,35 +6,30 @@ namespace Motive\Data;
  * Utilization day data transfer object.
  *
  * @author Erik Galloway <egalloway@motive.com>
+ *
+ * @property string $date
+ * @property float $totalMiles
+ * @property float|null $drivingTimeHours
+ * @property float|null $idleTimeHours
+ * @property float|null $stoppedTimeHours
+ * @property float|null $fuelUsedGallons
+ * @property float|null $averageSpeed
+ * @property float|null $maxSpeed
  */
 class UtilizationDay extends DataTransferObject
 {
-    public function __construct(
-        public string $date,
-        public float $totalMiles,
-        public ?float $drivingTimeHours = null,
-        public ?float $idleTimeHours = null,
-        public ?float $stoppedTimeHours = null,
-        public ?float $fuelUsedGallons = null,
-        public ?float $averageSpeed = null,
-        public ?float $maxSpeed = null
-    ) {}
-
     /**
-     * Property mappings from API response keys to class properties.
+     * The attributes that should be cast.
      *
-     * @return array<string, string>
+     * @var array<string, class-string|string>
      */
-    protected static function propertyMappings(): array
-    {
-        return [
-            'total_miles'        => 'totalMiles',
-            'driving_time_hours' => 'drivingTimeHours',
-            'idle_time_hours'    => 'idleTimeHours',
-            'stopped_time_hours' => 'stoppedTimeHours',
-            'fuel_used_gallons'  => 'fuelUsedGallons',
-            'average_speed'      => 'averageSpeed',
-            'max_speed'          => 'maxSpeed',
-        ];
-    }
+    protected array $casts = [
+        'totalMiles'       => 'float',
+        'drivingTimeHours' => 'float',
+        'idleTimeHours'    => 'float',
+        'stoppedTimeHours' => 'float',
+        'fuelUsedGallons'  => 'float',
+        'averageSpeed'     => 'float',
+        'maxSpeed'         => 'float',
+    ];
 }
