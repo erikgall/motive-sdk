@@ -7,117 +7,338 @@
   <meta name="description" content="A first-party-quality Laravel SDK for the Motive ELD API featuring expressive, elegant syntax with fluent, chainable methods.">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/sidebar.min.css" />
   <style>
     :root {
-      --theme-color: #3f51b5;
-      --theme-color-light: #7986cb;
+      --theme-color: #6366f1;
+      --theme-color-dark: #4f46e5;
+      --theme-color-light: #818cf8;
+      --sidebar-width: 280px;
       --code-font-family: 'JetBrains Mono', 'Fira Code', 'Source Code Pro', Consolas, monospace;
     }
 
+    /* Sidebar styles */
     .sidebar {
-      background-color: #f8f9fa;
+      background-color: #fafafa;
+      border-right: 1px solid #e5e7eb;
     }
 
-    .sidebar .sidebar-nav ul li a {
-      color: #364149;
+    .sidebar-nav {
+      padding: 1rem 0;
     }
 
-    .sidebar .sidebar-nav ul li a:hover {
+    .sidebar-nav > ul > li {
+      margin: 0;
+    }
+
+    /* Section headers */
+    .sidebar-nav > ul > li > strong,
+    .sidebar-nav > ul > li > p > strong {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #6b7280;
+      padding: 1rem 1rem 0.5rem 1.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .sidebar-nav > ul > li:first-child > strong,
+    .sidebar-nav > ul > li:first-child > p > strong {
+      margin-top: 0;
+    }
+
+    /* Sidebar links */
+    .sidebar-nav ul li a {
+      color: #374151;
+      font-size: 0.875rem;
+      padding: 0.4rem 1rem 0.4rem 1.5rem;
+      display: block;
+      border-left: 2px solid transparent;
+      transition: all 0.15s ease;
+    }
+
+    .sidebar-nav ul li a:hover {
       color: var(--theme-color);
+      background-color: #f3f4f6;
+      border-left-color: var(--theme-color-light);
     }
 
-    .sidebar .sidebar-nav ul li.active > a {
+    .sidebar-nav ul li.active > a {
       color: var(--theme-color);
       font-weight: 600;
+      background-color: #eef2ff;
+      border-left-color: var(--theme-color);
     }
 
+    /* Nested items */
+    .sidebar-nav ul ul {
+      padding-left: 0;
+    }
+
+    .sidebar-nav ul ul li a {
+      padding-left: 2.5rem;
+      font-size: 0.8125rem;
+    }
+
+    .sidebar-nav ul ul ul li a {
+      padding-left: 3.5rem;
+      font-size: 0.8125rem;
+    }
+
+    /* Collapse arrow */
+    .sidebar-nav .folder > a::after {
+      content: '';
+      display: inline-block;
+      width: 0.5rem;
+      height: 0.5rem;
+      border-right: 1.5px solid #9ca3af;
+      border-bottom: 1.5px solid #9ca3af;
+      transform: rotate(-45deg);
+      margin-left: auto;
+      margin-right: 0.5rem;
+      transition: transform 0.2s ease;
+    }
+
+    .sidebar-nav .folder.open > a::after {
+      transform: rotate(45deg);
+    }
+
+    /* Content area */
+    .content {
+      padding-top: 20px;
+    }
+
+    .markdown-section {
+      max-width: 800px;
+    }
+
+    .markdown-section h1 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      color: #111827;
+      margin-top: 0;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    .markdown-section h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #1f2937;
+      margin-top: 2.5rem;
+      padding-bottom: 0.25rem;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .markdown-section h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #374151;
+      margin-top: 2rem;
+    }
+
+    .markdown-section p {
+      color: #4b5563;
+      line-height: 1.75;
+    }
+
+    .markdown-section a {
+      color: var(--theme-color);
+      text-decoration: none;
+    }
+
+    .markdown-section a:hover {
+      text-decoration: underline;
+    }
+
+    /* Code styling */
     .markdown-section code {
       font-family: var(--code-font-family);
-      background-color: #f6f8fa;
+      background-color: #f3f4f6;
       border-radius: 4px;
       padding: 2px 6px;
+      font-size: 0.875em;
+      color: #1f2937;
     }
 
     .markdown-section pre {
-      background-color: #282c34;
+      background-color: #1e1e1e;
       border-radius: 8px;
+      padding: 1rem;
+      overflow-x: auto;
     }
 
     .markdown-section pre code {
       background-color: transparent;
-      color: #abb2bf;
+      color: #d4d4d4;
       padding: 0;
+      font-size: 0.8125rem;
+      line-height: 1.6;
     }
 
+    /* Table styling */
     .markdown-section table {
       display: table;
       width: 100%;
       border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: 0.875rem;
     }
 
     .markdown-section table th {
-      background-color: #f6f8fa;
+      background-color: #f9fafb;
       font-weight: 600;
+      text-align: left;
+      color: #374151;
     }
 
     .markdown-section table th,
     .markdown-section table td {
-      border: 1px solid #dfe2e5;
-      padding: 10px 16px;
+      border: 1px solid #e5e7eb;
+      padding: 0.75rem 1rem;
     }
 
     .markdown-section table tr:nth-child(2n) {
-      background-color: #f8f9fa;
+      background-color: #f9fafb;
     }
 
+    /* Coverpage */
     .cover-main {
-      background: linear-gradient(135deg, #3f51b5 0%, #7986cb 100%) !important;
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
     }
 
-    .cover-main .cover-main-cta .link-btn {
-      border-color: #fff;
+    .cover h1 {
+      font-size: 3rem;
+      font-weight: 700;
     }
 
+    .cover blockquote {
+      font-size: 1.25rem;
+      color: rgba(255,255,255,0.9);
+    }
+
+    /* Navbar */
     .app-nav {
       right: 20px;
     }
 
     .app-nav a {
       color: var(--theme-color) !important;
-    }
-
-    /* Tabs styling */
-    .docsify-tabs__tab {
-      font-family: inherit;
-    }
-
-    /* Copy code button styling */
-    .docsify-copy-code-button {
-      font-family: inherit !important;
+      font-weight: 500;
     }
 
     /* Alert boxes */
-    .markdown-section .tip,
-    .markdown-section .warn,
-    .markdown-section .note {
-      padding: 1rem;
-      border-radius: 4px;
-      margin: 1rem 0;
-    }
-
     .markdown-section .tip {
-      background-color: #e8f5e9;
-      border-left: 4px solid #4caf50;
+      padding: 1rem 1.25rem;
+      border-radius: 6px;
+      margin: 1.5rem 0;
+      background-color: #ecfdf5;
+      border-left: 4px solid #10b981;
     }
 
     .markdown-section .warn {
-      background-color: #fff3e0;
-      border-left: 4px solid #ff9800;
+      padding: 1rem 1.25rem;
+      border-radius: 6px;
+      margin: 1.5rem 0;
+      background-color: #fffbeb;
+      border-left: 4px solid #f59e0b;
     }
 
     .markdown-section .note {
-      background-color: #e3f2fd;
-      border-left: 4px solid #2196f3;
+      padding: 1rem 1.25rem;
+      border-radius: 6px;
+      margin: 1.5rem 0;
+      background-color: #eff6ff;
+      border-left: 4px solid #3b82f6;
+    }
+
+    /* Copy code button */
+    .docsify-copy-code-button {
+      font-family: inherit !important;
+      font-size: 0.75rem !important;
+    }
+
+    /* Search */
+    .search input {
+      border-radius: 6px;
+      border: 1px solid #e5e7eb;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.875rem;
+    }
+
+    .search input:focus {
+      border-color: var(--theme-color);
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+    }
+
+    /* Feature cards on homepage */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .feature-card {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 1.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .feature-card:hover {
+      border-color: var(--theme-color-light);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+    }
+
+    .feature-card h3 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1rem;
+      color: #1f2937;
+    }
+
+    .feature-card p {
+      margin: 0;
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+
+    /* Quick links */
+    .quick-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin: 1.5rem 0;
+    }
+
+    .quick-links a {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.5rem 1rem;
+      background: var(--theme-color);
+      color: white !important;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-decoration: none !important;
+      transition: background 0.2s ease;
+    }
+
+    .quick-links a:hover {
+      background: var(--theme-color-dark);
+    }
+
+    .quick-links a.secondary {
+      background: #f3f4f6;
+      color: #374151 !important;
+    }
+
+    .quick-links a.secondary:hover {
+      background: #e5e7eb;
     }
   </style>
 </head>
@@ -130,15 +351,15 @@
       loadSidebar: true,
       loadNavbar: true,
       coverpage: true,
-      subMaxLevel: 3,
+      subMaxLevel: 2,
       auto2top: true,
-      relativePath: true,
+      maxLevel: 3,
 
       // Search plugin configuration
       search: {
         maxAge: 86400000,
         paths: 'auto',
-        placeholder: 'Search documentation...',
+        placeholder: 'Search...',
         noData: 'No results found',
         depth: 3,
         hideOtherSidebarContent: false,
@@ -152,21 +373,15 @@
         crossChapterText: true,
       },
 
-      // Tabs
-      tabs: {
-        persist: true,
-        sync: true,
-        theme: 'classic',
-        tabComments: true,
-        tabHeadings: true,
-      },
-
       // Copy code
       copyCode: {
         buttonText: 'Copy',
         errorText: 'Error',
         successText: 'Copied!'
       },
+
+      // Sidebar collapse
+      sidebarDisplayLevel: 1,
 
       // Alias for cleaner URLs
       alias: {
@@ -188,8 +403,8 @@
   <!-- Pagination plugin -->
   <script src="https://cdn.jsdelivr.net/npm/docsify-pagination@2/dist/docsify-pagination.min.js"></script>
 
-  <!-- Tabs plugin -->
-  <script src="https://cdn.jsdelivr.net/npm/docsify-tabs@1"></script>
+  <!-- Sidebar collapse plugin -->
+  <script src="https://cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/docsify-sidebar-collapse.min.js"></script>
 
   <!-- PHP syntax highlighting -->
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-php.min.js"></script>
