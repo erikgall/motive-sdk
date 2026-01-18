@@ -115,5 +115,5 @@ Type-safe enums for all status and type fields:
 - PerformanceEventType, EventSeverity
 - FuelType, Scope
 
-[Unreleased]: https://github.com/motive/sdk/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/motive/sdk/releases/tag/v1.0.0
+[Unreleased]: https://github.com/erikgall/motive-sdk/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/erikgall/motive-sdk/releases/tag/v1.0.0

@@ -6,7 +6,7 @@ This package provides a fluent Laravel SDK for the Motive ELD (Electronic Loggin
 
 @verbatim
 <code-snippet name="Install via Composer" lang="bash">
-composer require motive/sdk
+composer require erikgall/motive-sdk
 </code-snippet>
 @endverbatim
 

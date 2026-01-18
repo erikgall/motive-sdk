@@ -1,5 +1,5 @@
 {
-    "name": "motive/sdk",
+    "name": "erikgall/motive-sdk",
     "type": "library",
     "autoload": {
         "psr-4": {

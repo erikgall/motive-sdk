@@ -6,7 +6,7 @@ A first-party-quality Laravel SDK for the Motive ELD API following Taylor Otwell
 
 ### Key Decisions
 
-- **Package**: `motive/sdk` with `Motive\` namespace
+- **Package**: `erikgall/motive-sdk` with `Motive\` namespace
 - **PHP**: 8.2+ (enums, property promotion, typed properties)
 - **Laravel**: 11+
 - **Auth**: Both API Key and OAuth 2.0

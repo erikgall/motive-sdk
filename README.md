@@ -10,7 +10,7 @@ A first-party-quality Laravel SDK for the [Motive ELD API](https://developer.gom
 ## Installation
 
 ```bash
-composer require motive/sdk
+composer require erikgall/motive-sdk
 ```
 
 Publish the configuration file:
