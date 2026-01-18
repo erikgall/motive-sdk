@@ -7,6 +7,38 @@ use Motive\Client\MotiveClient;
 use Motive\Contracts\TokenStore;
 use Motive\Contracts\Authenticator;
 use Motive\Auth\ApiKeyAuthenticator;
+use Motive\Resources\Forms\FormsResource;
+use Motive\Resources\Users\UsersResource;
+use Motive\Resources\Assets\AssetsResource;
+use Motive\Resources\Groups\GroupsResource;
+use Motive\Resources\Messages\MessagesResource;
+use Motive\Resources\Vehicles\VehiclesResource;
+use Motive\Resources\Webhooks\WebhooksResource;
+use Motive\Resources\Companies\CompaniesResource;
+use Motive\Resources\Documents\DocumentsResource;
+use Motive\Resources\Geofences\GeofencesResource;
+use Motive\Resources\Locations\LocationsResource;
+use Motive\Resources\Scorecard\ScorecardResource;
+use Motive\Resources\Timecards\TimecardsResource;
+use Motive\Resources\Vehicles\FaultCodesResource;
+use Motive\Resources\Camera\CameraControlResource;
+use Motive\Resources\Dispatches\DispatchesResource;
+use Motive\Resources\MotiveCard\MotiveCardResource;
+use Motive\Resources\HoursOfService\HosLogsResource;
+use Motive\Resources\ExternalIds\ExternalIdsResource;
+use Motive\Resources\FormEntries\FormEntriesResource;
+use Motive\Resources\IftaReports\IftaReportsResource;
+use Motive\Resources\Utilization\UtilizationResource;
+use Motive\Resources\Camera\CameraConnectionsResource;
+use Motive\Resources\FuelPurchases\FuelPurchasesResource;
+use Motive\Resources\HoursOfService\HosViolationsResource;
+use Motive\Resources\DrivingPeriods\DrivingPeriodsResource;
+use Motive\Resources\Inspections\InspectionReportsResource;
+use Motive\Resources\ReeferActivity\ReeferActivityResource;
+use Motive\Resources\HoursOfService\HosAvailabilityResource;
+use Motive\Resources\VehicleGateways\VehicleGatewaysResource;
+use Motive\Resources\FreightVisibility\FreightVisibilityResource;
+use Motive\Resources\DriverPerformance\DriverPerformanceEventsResource;
 
 /**
  * Manager for Motive API connections.
@@ -35,6 +67,34 @@ class MotiveManager
         $this->currentConnection = $config['default'] ?? 'default';
     }
 
+    // ============================================
+    // Resource Accessors
+    // ============================================
+
+    /**
+     * Get the assets resource.
+     */
+    public function assets(): AssetsResource
+    {
+        return new AssetsResource($this->client());
+    }
+
+    /**
+     * Get the camera connections resource.
+     */
+    public function cameraConnections(): CameraConnectionsResource
+    {
+        return new CameraConnectionsResource($this->client());
+    }
+
+    /**
+     * Get the camera control resource.
+     */
+    public function cameraControl(): CameraControlResource
+    {
+        return new CameraControlResource($this->client());
+    }
+
     /**
      * Get the HTTP client for making API requests.
      */
@@ -59,6 +119,14 @@ class MotiveManager
     }
 
     /**
+     * Get the companies resource.
+     */
+    public function companies(): CompaniesResource
+    {
+        return new CompaniesResource($this->client());
+    }
+
+    /**
      * Switch to a different connection.
      */
     public function connection(string $name): static
@@ -73,6 +141,94 @@ class MotiveManager
         $instance->client = null;
 
         return $instance;
+    }
+
+    /**
+     * Get the dispatches resource.
+     */
+    public function dispatches(): DispatchesResource
+    {
+        return new DispatchesResource($this->client());
+    }
+
+    /**
+     * Get the documents resource.
+     */
+    public function documents(): DocumentsResource
+    {
+        return new DocumentsResource($this->client());
+    }
+
+    /**
+     * Get the driver performance events resource.
+     */
+    public function driverPerformanceEvents(): DriverPerformanceEventsResource
+    {
+        return new DriverPerformanceEventsResource($this->client());
+    }
+
+    /**
+     * Get the driving periods resource.
+     */
+    public function drivingPeriods(): DrivingPeriodsResource
+    {
+        return new DrivingPeriodsResource($this->client());
+    }
+
+    /**
+     * Get the external IDs resource.
+     */
+    public function externalIds(): ExternalIdsResource
+    {
+        return new ExternalIdsResource($this->client());
+    }
+
+    /**
+     * Get the fault codes resource.
+     */
+    public function faultCodes(): FaultCodesResource
+    {
+        return new FaultCodesResource($this->client());
+    }
+
+    /**
+     * Get the form entries resource.
+     */
+    public function formEntries(): FormEntriesResource
+    {
+        return new FormEntriesResource($this->client());
+    }
+
+    /**
+     * Get the forms resource.
+     */
+    public function forms(): FormsResource
+    {
+        return new FormsResource($this->client());
+    }
+
+    /**
+     * Get the freight visibility resource.
+     */
+    public function freightVisibility(): FreightVisibilityResource
+    {
+        return new FreightVisibilityResource($this->client());
+    }
+
+    /**
+     * Get the fuel purchases resource.
+     */
+    public function fuelPurchases(): FuelPurchasesResource
+    {
+        return new FuelPurchasesResource($this->client());
+    }
+
+    /**
+     * Get the geofences resource.
+     */
+    public function geofences(): GeofencesResource
+    {
+        return new GeofencesResource($this->client());
     }
 
     /**
@@ -102,6 +258,142 @@ class MotiveManager
     public function getCurrentConnection(): string
     {
         return $this->currentConnection;
+    }
+
+    /**
+     * Get the groups resource.
+     */
+    public function groups(): GroupsResource
+    {
+        return new GroupsResource($this->client());
+    }
+
+    /**
+     * Get the HOS availability resource.
+     */
+    public function hosAvailability(): HosAvailabilityResource
+    {
+        return new HosAvailabilityResource($this->client());
+    }
+
+    /**
+     * Get the HOS logs resource.
+     */
+    public function hosLogs(): HosLogsResource
+    {
+        return new HosLogsResource($this->client());
+    }
+
+    /**
+     * Get the HOS violations resource.
+     */
+    public function hosViolations(): HosViolationsResource
+    {
+        return new HosViolationsResource($this->client());
+    }
+
+    /**
+     * Get the IFTA reports resource.
+     */
+    public function iftaReports(): IftaReportsResource
+    {
+        return new IftaReportsResource($this->client());
+    }
+
+    /**
+     * Get the inspection reports resource.
+     */
+    public function inspectionReports(): InspectionReportsResource
+    {
+        return new InspectionReportsResource($this->client());
+    }
+
+    /**
+     * Get the locations resource.
+     */
+    public function locations(): LocationsResource
+    {
+        return new LocationsResource($this->client());
+    }
+
+    /**
+     * Get the messages resource.
+     */
+    public function messages(): MessagesResource
+    {
+        return new MessagesResource($this->client());
+    }
+
+    /**
+     * Get the Motive card resource.
+     */
+    public function motiveCard(): MotiveCardResource
+    {
+        return new MotiveCardResource($this->client());
+    }
+
+    /**
+     * Get the reefer activity resource.
+     */
+    public function reeferActivity(): ReeferActivityResource
+    {
+        return new ReeferActivityResource($this->client());
+    }
+
+    /**
+     * Get the scorecard resource.
+     */
+    public function scorecard(): ScorecardResource
+    {
+        return new ScorecardResource($this->client());
+    }
+
+    /**
+     * Get the timecards resource.
+     */
+    public function timecards(): TimecardsResource
+    {
+        return new TimecardsResource($this->client());
+    }
+
+    /**
+     * Get the users resource.
+     */
+    public function users(): UsersResource
+    {
+        return new UsersResource($this->client());
+    }
+
+    /**
+     * Get the utilization resource.
+     */
+    public function utilization(): UtilizationResource
+    {
+        return new UtilizationResource($this->client());
+    }
+
+    /**
+     * Get the vehicle gateways resource.
+     */
+    public function vehicleGateways(): VehicleGatewaysResource
+    {
+        return new VehicleGatewaysResource($this->client());
+    }
+
+    /**
+     * Get the vehicles resource.
+     */
+    public function vehicles(): VehiclesResource
+    {
+        return new VehiclesResource($this->client());
+    }
+
+    /**
+     * Get the webhooks resource.
+     */
+    public function webhooks(): WebhooksResource
+    {
+        return new WebhooksResource($this->client());
     }
 
     /**
