@@ -1,86 +1,69 @@
 # Motive SDK
 
-A first-party-quality Laravel SDK for the [Motive ELD API](https://developer.gomotive.com/).
+A Laravel SDK for the [Motive ELD API](https://developer.gomotive.com/) with full coverage of fleet management, HOS compliance, dispatch, and safety endpoints.
 
-<div class="quick-links">
-  <a href="#/getting-started/installation">Get Started</a>
-  <a href="#/api-reference/README" class="secondary">API Reference</a>
-  <a href="https://github.com/erikgall/motive-sdk" class="secondary">GitHub</a>
-</div>
+## Installation
 
-## Why Motive SDK?
+```bash
+composer require erikgall/motive-sdk
+```
 
-Build fleet management integrations with clean, expressive code that feels native to Laravel.
+Add your API key to `.env`:
+
+```env
+MOTIVE_API_KEY=your-api-key
+```
+
+## Basic Usage
 
 ```php
 use Motive\Facades\Motive;
 
-// List vehicles with automatic pagination
-foreach (Motive::vehicles()->list() as $vehicle) {
-    echo "{$vehicle->number}: {$vehicle->make} {$vehicle->model}";
+// List vehicles
+$vehicles = Motive::vehicles()->list();
+
+foreach ($vehicles as $vehicle) {
+    echo "{$vehicle->number}: {$vehicle->make} {$vehicle->model}\n";
 }
 
-// Check driver HOS availability
+// Get driver HOS availability
 $availability = Motive::hosAvailability()->forDriver($driverId);
-echo "Drive time remaining: {$availability->driveTimeRemaining} minutes";
+
+// Create a dispatch
+$dispatch = Motive::dispatches()->create([
+    'driver_id' => $driverId,
+    'vehicle_id' => $vehicleId,
+]);
 ```
-
-## Features
-
-<div class="feature-grid">
-  <div class="feature-card">
-    <h3>31 API Resources</h3>
-    <p>Complete coverage of vehicles, drivers, HOS, dispatch, safety, and more.</p>
-  </div>
-  <div class="feature-card">
-    <h3>Type-Safe DTOs</h3>
-    <p>50+ data objects with automatic casting for dates, enums, and nested objects.</p>
-  </div>
-  <div class="feature-card">
-    <h3>Lazy Pagination</h3>
-    <p>Memory-efficient iteration over large datasets using Laravel collections.</p>
-  </div>
-  <div class="feature-card">
-    <h3>Dual Authentication</h3>
-    <p>Support for both API key and OAuth 2.0 with automatic token refresh.</p>
-  </div>
-  <div class="feature-card">
-    <h3>Multi-Tenancy</h3>
-    <p>Named connections for managing multiple Motive accounts in one app.</p>
-  </div>
-  <div class="feature-card">
-    <h3>Testing Utilities</h3>
-    <p>Built-in faking, factories, and assertions for comprehensive testing.</p>
-  </div>
-</div>
 
 ## Requirements
 
 - PHP 8.2+
 - Laravel 11+
 
-## Quick Install
+## Features
 
-```bash
-composer require erikgall/motive-sdk
-```
-
-```env
-MOTIVE_API_KEY=your-api-key
-```
+- **31 API Resources** — Vehicles, drivers, HOS, dispatch, safety, documents, and more
+- **Type-safe DTOs** — 50+ data objects with automatic casting for dates, enums, and nested objects
+- **Lazy pagination** — Memory-efficient iteration over large datasets
+- **Dual authentication** — API key and OAuth 2.0 with automatic token refresh
+- **Multi-tenancy** — Named connections for multiple Motive accounts
+- **Testing utilities** — Built-in faking, factories, and assertions
 
 ## Documentation
 
 | Section | Description |
 |---------|-------------|
-| [Getting Started](/getting-started/installation.md) | Installation, configuration, first API calls |
-| [Core Concepts](/core-concepts/architecture.md) | Architecture, resources, DTOs, error handling |
-| [Authentication](/authentication/api-key.md) | API key, OAuth, multi-tenant setup |
+| [Installation](/getting-started/installation.md) | Install and configure the SDK |
+| [Configuration](/getting-started/configuration.md) | Environment and config options |
+| [Quick Start](/getting-started/quick-start.md) | Common usage patterns |
 | [API Reference](/api-reference/README.md) | All 31 resources with examples |
-| [Webhooks](/webhooks/README.md) | Receiving real-time events |
+| [Authentication](/authentication/api-key.md) | API key and OAuth setup |
+| [Error Handling](/core-concepts/error-handling.md) | Exception types and handling |
 | [Testing](/testing/README.md) | Faking, factories, assertions |
 
-## Support
+## Links
 
-- [GitHub Issues](https://github.com/erikgall/motive-sdk/issues) — Bug reports and feature requests
-- [Motive API Docs](https://developer.gomotive.com/) — Official API reference
+- [GitHub Repository](https://github.com/erikgall/motive-sdk)
+- [Motive API Documentation](https://developer.gomotive.com/)
+- [Packagist](https://packagist.org/packages/erikgall/motive-sdk)
