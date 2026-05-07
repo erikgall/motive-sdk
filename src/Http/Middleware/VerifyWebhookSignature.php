@@ -12,6 +12,8 @@ use Motive\Exceptions\WebhookVerificationException;
  * Middleware to verify webhook signature.
  *
  * @author Erik Galloway <egalloway@motive.com>
+ *
+ * @phpstan-consistent-constructor
  */
 class VerifyWebhookSignature
 {
@@ -31,8 +33,8 @@ class VerifyWebhookSignature
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $signature = $request->header(self::SIGNATURE_HEADER);
-        $timestamp = $request->header(self::TIMESTAMP_HEADER);
+        $signature = $request->headers->get(self::SIGNATURE_HEADER);
+        $timestamp = $request->headers->get(self::TIMESTAMP_HEADER);
         $payload = $request->getContent();
 
         if ($signature === null) {
