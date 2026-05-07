@@ -4,8 +4,8 @@ A first-party-quality Laravel SDK for the [Motive ELD API](https://developer.gom
 
 ## Requirements
 
-- PHP 8.2+
-- Laravel 11+
+- PHP 8.2+ (Laravel 13 path requires PHP 8.3+)
+- Laravel 12 or Laravel 13
 
 ## Installation
 
