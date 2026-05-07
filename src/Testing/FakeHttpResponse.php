@@ -44,11 +44,16 @@ class FakeHttpResponse extends HttpResponse
     /**
      * Get the JSON decoded body of the response as an array or scalar value.
      *
+     * The third parameter `$flags` was added to `Illuminate\Http\Client\Response::json()`
+     * in Laravel 13. Accepting it here keeps the subclass LSP-compatible with both
+     * Laravel 12 and 13. The flag is ignored because the fake stores a pre-decoded array.
+     *
      * @param  array<string, mixed>|string|null  $key
      * @param  mixed|null  $default
+     * @param  mixed|null  $flags
      * @return ($key is null ? array<string, mixed> : mixed)
      */
-    public function json($key = null, $default = null): mixed
+    public function json($key = null, $default = null, $flags = null): mixed
     {
         if ($key === null) {
             return $this->fakeData;

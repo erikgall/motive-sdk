@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Support for Laravel 13 alongside Laravel 12 (`illuminate/*: ^12.47|^13.0`).
+- GitHub Actions matrix workflow covering PHP 8.2/8.3/8.4 across Laravel 12 and 13, plus one prefer-lowest leg.
+- Larastan integration for Laravel-aware static analysis.
+
+### Changed
+
+- `PaginatedResponse::count()` now clamps to a non-negative integer.
+- `VerifyWebhookSignature` reads request headers via the Symfony header bag (`$request->headers->get(...)`) for stability across Laravel 12 and 13.
+- `FakeHttpResponse::json()` accepts the new `$flags` parameter introduced in Laravel 13's `Illuminate\Http\Client\Response::json()` to remain LSP-compatible across both supported majors.
+- `DataTransferObject` and `WebhookSignature` annotated with `@phpstan-consistent-constructor`.
+- Bumped `laravel/pint` to `^1.29` (full PHP 8.4 syntax support).
+- Raised `phpstan/phpstan` floor to `^2.1.44` (required by Larastan 3.9).
+
+### Compatibility
+
+- Minimum PHP raised explicitly to 8.2 in `composer.json` (was previously implicit). Laravel 13 path requires PHP 8.3+ via the framework's own constraint.
+- `orchestra/testbench` widened to `^10.0|^11.0`.
+- `phpunit/phpunit` widened to `^11.0|^12.0`.
+
 ## [1.0.0] - 2026-01-17
 
 ### Added

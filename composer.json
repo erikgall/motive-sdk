@@ -1,6 +1,7 @@
 {
     "name": "erikgall/motive-sdk",
     "type": "library",
+    "license": "MIT",
     "autoload": {
         "psr-4": {
             "Motive\\": "src/"
@@ -18,15 +19,17 @@
         }
     ],
     "require": {
-        "illuminate/support": "^12.47",
-        "illuminate/http": "^12.47",
+        "php": "^8.2",
+        "illuminate/support": "^12.47|^13.0",
+        "illuminate/http": "^12.47|^13.0",
         "nesbot/carbon": "^3.11"
     },
     "require-dev": {
-        "laravel/pint": "^1.27",
-        "phpstan/phpstan": "^2.1",
-        "phpunit/phpunit": "^12.5",
+        "laravel/pint": "^1.29.1",
+        "phpstan/phpstan": "^2.1.44",
+        "larastan/larastan": "^3.9",
+        "phpunit/phpunit": "^11.0|^12.0",
         "mockery/mockery": "^1.6",
-        "orchestra/testbench": "^10.9"
+        "orchestra/testbench": "^10.0|^11.0"
     }
 }

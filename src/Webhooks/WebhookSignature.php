@@ -6,6 +6,8 @@ namespace Motive\Webhooks;
  * Webhook signature verification and generation.
  *
  * @author Erik Galloway <egalloway@motive.com>
+ *
+ * @phpstan-consistent-constructor
  */
 class WebhookSignature
 {

@@ -122,6 +122,20 @@ class PaginatedResponseTest extends TestCase
     }
 
     #[Test]
+    public function it_never_returns_a_negative_count(): void
+    {
+        $response = new PaginatedResponse(
+            items: new Collection,
+            total: 0,
+            perPage: 25,
+            currentPage: 1
+        );
+
+        $this->assertGreaterThanOrEqual(0, $response->count());
+        $this->assertSame(0, $response->count());
+    }
+
+    #[Test]
     public function it_returns_current_page(): void
     {
         $response = new PaginatedResponse(

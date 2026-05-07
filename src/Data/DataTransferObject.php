@@ -15,6 +15,8 @@ use Illuminate\Support\Fluent;
  * enums, dates, and nested DTOs.
  *
  * @author Erik Galloway <egalloway@motive.com>
+ *
+ * @phpstan-consistent-constructor
  */
 abstract class DataTransferObject extends Fluent
 {
@@ -169,12 +171,12 @@ abstract class DataTransferObject extends Fluent
 
         // Handle primitive casts
         return match ($castType) {
-            'int', 'integer' => (int) $value,
+            'int', 'integer'  => (int) $value,
             'float', 'double' => (float) $value,
-            'string' => (string) $value,
+            'string'          => (string) $value,
             'bool', 'boolean' => (bool) $value,
-            'array' => (array) $value,
-            default => $value,
+            'array'           => (array) $value,
+            default           => $value,
         };
     }
 
