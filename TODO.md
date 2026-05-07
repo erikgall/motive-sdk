@@ -11,9 +11,12 @@
 - [x] Create `.github/workflows/tests.yml` matrix covering PHP 8.2/8.3/8.4 × Laravel 12/13.
 - [x] Update `CHANGELOG.md` and `README.md`.
 - [x] Mirror to `PLAN.md` and `TODO.md`.
-- [ ] Run prefer-stable + prefer-lowest verification locally on the Laravel 12 path (current lockfile resolved to L13).
-- [ ] Push branch and open PR.
-- [ ] Wait for green CI across all six matrix legs before merging.
+- [x] Run prefer-stable + prefer-lowest verification locally on the Laravel 12 path.
+- [x] Push branch and open PR (#1).
+- [x] Add `"license": "MIT"` after CI flagged the missing field via `composer validate --strict`.
+- [x] Bump `laravel/pint` floor to `^1.29.1` after CI prefer-lowest leg surfaced a v1.29.0 fixer regression.
+- [x] All six matrix legs green.
+- [ ] Merge PR #1.
 
 ## Deferred (not blocking the L13 release)
 

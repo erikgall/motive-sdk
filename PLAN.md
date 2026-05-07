@@ -2,7 +2,7 @@
 
 Per `CLAUDE.md`, this file tracks active and recently completed initiatives. Detailed implementation plans live in `~/.claude/plans/` and are referenced from here.
 
-## Laravel 13 Support — In Review (CI green pending)
+## Laravel 13 Support — CI Green, Awaiting Merge
 
 **Branch:** `feat/laravel-13-support`
 **Plan:** `~/.claude/plans/iterative-wobbling-rainbow.md`
@@ -22,10 +22,15 @@ Per `CLAUDE.md`, this file tracks active and recently completed initiatives. Det
 
 **Outstanding:**
 
-- Local L13 path verified ✅ (resolved Laravel 13.8.0 + Testbench 11.1.0 + PHPUnit 12.5.24; full suite green).
-- Local L12 path needs an explicit verification pass (current `composer.lock` resolved to L13 because `--prefer-stable` picks the highest major) — covered by Task 9 of the plan.
-- CI matrix needs a green run before merge.
-- PR opening — planned next.
+- ✅ Local L13 path verified (Laravel 13.8.0 + Testbench 11.1.0 + PHPUnit 12.5.24; 771 tests, PHPStan, Pint all green).
+- ✅ Local L12 path verified (Laravel 12.58.0 + Testbench 10.11.0; 771 tests, PHPStan, Pint all green).
+- ✅ CI matrix all 6 legs green on PR #1: PHP 8.2/8.3/8.4 × L12 prefer-stable, PHP 8.3/8.4 × L13 prefer-stable, PHP 8.2 × L12 prefer-lowest.
+- ⏳ Merge — pending review.
+
+**Hot fixes during execution (added to commit history but not in original plan):**
+
+- `composer.json` was missing a `license` field, causing `composer validate --strict` to fail in CI. Added `"license": "MIT"`.
+- `laravel/pint v1.29.0` had a fixer-output regression on `DataTransferObject.php` that `v1.29.1` resolves; bumped floor from `^1.29` to `^1.29.1`.
 
 **Followup deferred from this initiative:**
 
